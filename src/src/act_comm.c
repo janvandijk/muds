@@ -15,10 +15,15 @@
  *  around, comes around.                                                  *
  ***************************************************************************/
 
+#if defined(macintosh)
+#include <types.h>
+#else
 #include <sys/types.h>
+#endif
+#include <ctype.h>
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include "merc.h"
 
@@ -30,6 +35,8 @@
 bool	is_note_to	args( ( CHAR_DATA *ch, NOTE_DATA *pnote ) );
 void	note_attach	args( ( CHAR_DATA *ch ) );
 void	note_remove	args( ( CHAR_DATA *ch, NOTE_DATA *pnote ) );
+void	talk_channel	args( ( CHAR_DATA *ch, char *argument,
+			    int channel, const char *verb ) );
 
 
 
@@ -196,7 +203,7 @@ void do_note( CHAR_DATA *ch, char *argument )
 	{
 	    if ( is_note_to( ch, pnote ) )
 	    {
-		sprintf( buf, "[%3d] %s: %s\n\r",
+		sprintf( buf, "[%3d] %s: %s\r\n",
 		    vnum, pnote->sender, pnote->subject );
 		send_to_char( buf, ch );
 		vnum++;
@@ -221,7 +228,7 @@ void do_note( CHAR_DATA *ch, char *argument )
 	}
 	else
 	{
-	    send_to_char( "Note read which number?\n\r", ch );
+	    send_to_char( "Note read which number?\r\n", ch );
 	    return;
 	}
 
@@ -230,7 +237,7 @@ void do_note( CHAR_DATA *ch, char *argument )
 	{
 	    if ( is_note_to( ch, pnote ) && ( vnum++ == anum || fAll ) )
 	    {
-		sprintf( buf, "[%3d] %s: %s\n\r%s\n\rTo: %s\n\r",
+		sprintf( buf, "[%3d] %s: %s\r\n%s\r\nTo: %s\r\n",
 		    vnum - 1,
 		    pnote->sender,
 		    pnote->subject,
@@ -243,7 +250,7 @@ void do_note( CHAR_DATA *ch, char *argument )
 	    }
 	}
 
-	send_to_char( "No such note.\n\r", ch );
+	send_to_char( "No such note.\r\n", ch );
 	return;
     }
 
@@ -253,15 +260,15 @@ void do_note( CHAR_DATA *ch, char *argument )
 	strcpy( buf, ch->pnote->text );
 	if ( strlen(buf) + strlen(argument) >= MAX_STRING_LENGTH - 4 )
 	{
-	    send_to_char( "Note too long.\n\r", ch );
+	    send_to_char( "Note too long.\r\n", ch );
 	    return;
 	}
 
 	strcat( buf, argument );
-	strcat( buf, "\n\r" );
+	strcat( buf, "\r\n" );
 	free_string( ch->pnote->text );
 	ch->pnote->text = str_dup( buf );
-	send_to_char( "Ok.\n\r", ch );
+	send_to_char( "Ok.\r\n", ch );
 	return;
     }
 
@@ -270,7 +277,7 @@ void do_note( CHAR_DATA *ch, char *argument )
 	note_attach( ch );
 	free_string( ch->pnote->subject );
 	ch->pnote->subject = str_dup( argument );
-	send_to_char( "Ok.\n\r", ch );
+	send_to_char( "Ok.\r\n", ch );
 	return;
     }
 
@@ -279,7 +286,7 @@ void do_note( CHAR_DATA *ch, char *argument )
 	note_attach( ch );
 	free_string( ch->pnote->to_list );
 	ch->pnote->to_list = str_dup( argument );
-	send_to_char( "Ok.\n\r", ch );
+	send_to_char( "Ok.\r\n", ch );
 	return;
     }
 
@@ -297,7 +304,7 @@ void do_note( CHAR_DATA *ch, char *argument )
 	    ch->pnote		= NULL;
 	}
 
-	send_to_char( "Ok.\n\r", ch );
+	send_to_char( "Ok.\r\n", ch );
 	return;
     }
 
@@ -305,11 +312,11 @@ void do_note( CHAR_DATA *ch, char *argument )
     {
 	if ( ch->pnote == NULL )
 	{
-	    send_to_char( "You have no note in progress.\n\r", ch );
+	    send_to_char( "You have no note in progress.\r\n", ch );
 	    return;
 	}
 
-	sprintf( buf, "%s: %s\n\rTo: %s\n\r",
+	sprintf( buf, "%s: %s\r\nTo: %s\r\n",
 	    ch->pnote->sender,
 	    ch->pnote->subject,
 	    ch->pnote->to_list
@@ -326,7 +333,7 @@ void do_note( CHAR_DATA *ch, char *argument )
 
 	if ( ch->pnote == NULL )
 	{
-	    send_to_char( "You have no note in progress.\n\r", ch );
+	    send_to_char( "You have no note in progress.\r\n", ch );
 	    return;
 	}
 
@@ -366,7 +373,7 @@ void do_note( CHAR_DATA *ch, char *argument )
 	}
 	fpReserve = fopen( NULL_FILE, "r" );
 
-	send_to_char( "Ok.\n\r", ch );
+	send_to_char( "Ok.\r\n", ch );
 	return;
     }
 
@@ -374,7 +381,7 @@ void do_note( CHAR_DATA *ch, char *argument )
     {
 	if ( !is_number( argument ) )
 	{
-	    send_to_char( "Note remove which number?\n\r", ch );
+	    send_to_char( "Note remove which number?\r\n", ch );
 	    return;
 	}
 
@@ -385,102 +392,25 @@ void do_note( CHAR_DATA *ch, char *argument )
 	    if ( is_note_to( ch, pnote ) && vnum++ == anum )
 	    {
 		note_remove( ch, pnote );
-		send_to_char( "Ok.\n\r", ch );
+		send_to_char( "Ok.\r\n", ch );
 		return;
 	    }
 	}
 
-	send_to_char( "No such note.\n\r", ch );
+	send_to_char( "No such note.\r\n", ch );
 	return;
     }
 
-    send_to_char( "Huh?  Type 'help note' for usage.\n\r", ch );
+    send_to_char( "Huh?  Type 'help note' for usage.\r\n", ch );
     return;
 }
 
 
 
-void do_auction( CHAR_DATA *ch, char *argument )
-{
-    char buf[MAX_STRING_LENGTH];
-    DESCRIPTOR_DATA *d;
-
-    if ( argument[0] == '\0' )
-    {
-	send_to_char( "Auction what?\n\r", ch );
-	return;
-    }
-
-    if ( !IS_NPC(ch) )
-	SET_BIT(ch->act, PLR_AUCTION);
-
-    sprintf( buf, "You auction '%s'.\n\r", argument );
-    send_to_char( buf, ch );
-    sprintf( buf, "$n auctions '%s'.", argument );
-    for ( d = descriptor_list; d != NULL; d = d->next )
-    {
-	CHAR_DATA *victim;
-	int position;
-
-	victim = d->original ? d->original : d->character;
-
-	if ( d->connected == CON_PLAYING
-	&&   d->character != ch
-	&&   IS_SET(victim->act, PLR_AUCTION) )
-	{
-	    position			= d->character->position;
-	    d->character->position	= POS_STANDING;
-	    act( buf, ch, NULL, d->character, TO_VICT );
-	    d->character->position	= position;
-	}
-    }
-
-    return;
-}
-
-
-
-void do_chat( CHAR_DATA *ch, char *argument )
-{
-    char buf[MAX_STRING_LENGTH];
-    DESCRIPTOR_DATA *d;
-
-    if ( argument[0] == '\0' )
-    {
-	send_to_char( "Chat what?\n\r", ch );
-	return;
-    }
-
-    if ( !IS_NPC(ch) )
-	SET_BIT(ch->act, PLR_CHAT);
-
-    sprintf( buf, "You chat '%s'.\n\r", argument );
-    send_to_char( buf, ch );
-    sprintf( buf, "$n chats '%s'.", argument );
-    for ( d = descriptor_list; d != NULL; d = d->next )
-    {
-	CHAR_DATA *victim;
-	int position;
-
-	victim = d->original ? d->original : d->character;
-
-	if ( d->connected == CON_PLAYING
-	&&   d->character != ch
-	&&   IS_SET(victim->act, PLR_CHAT) )
-	{
-	    position			= d->character->position;
-	    d->character->position	= POS_STANDING;
-	    act( buf, ch, NULL, d->character, TO_VICT );
-	    d->character->position	= position;
-	}
-    }
-
-    return;
-}
-
-
-
-void do_immtalk( CHAR_DATA *ch, char *argument )
+/*
+ * Generic channel function.
+ */
+void talk_channel( CHAR_DATA *ch, char *argument, int channel, const char *verb )
 {
     char buf[MAX_STRING_LENGTH];
     DESCRIPTOR_DATA *d;
@@ -488,27 +418,131 @@ void do_immtalk( CHAR_DATA *ch, char *argument )
 
     if ( argument[0] == '\0' )
     {
-	send_to_char( "Immtalk what?\n\r", ch );
+	sprintf( buf, "%s what?\r\n", verb );
+	buf[0] = UPPER(buf[0]);
 	return;
     }
 
-    sprintf( buf, "$n: %s.", argument );
-    position		= ch->position;
-    ch->position	= POS_STANDING;
-    act( buf, ch, NULL, NULL, TO_CHAR );
-    ch->position	= position;
+    if ( !IS_NPC(ch) && IS_SET(ch->act, PLR_SILENCE) )
+    {
+	sprintf( buf, "You can't %s.\r\n", verb );
+	send_to_char( buf, ch );
+	return;
+    }
+
+    REMOVE_BIT(ch->deaf, channel);
+
+    switch ( channel )
+    {
+    default:
+	sprintf( buf, "You %s '%s'.\r\n", verb, argument );
+	send_to_char( buf, ch );
+	sprintf( buf, "$n %ss '$t'.",     verb );
+	break;
+
+    case CHANNEL_IMMTALK:
+	sprintf( buf, "$n: $t." );
+	position	= ch->position;
+	ch->position	= POS_STANDING;
+	act( buf, ch, argument, NULL, TO_CHAR );
+	ch->position	= position;
+	break;
+    }
 
     for ( d = descriptor_list; d != NULL; d = d->next )
     {
-	if ( d->connected == CON_PLAYING && IS_HERO(d->character) )
+	CHAR_DATA *och;
+	CHAR_DATA *vch;
+
+	och = d->original ? d->original : d->character;
+	vch = d->character;
+
+	if ( d->connected == CON_PLAYING
+	&&   vch != ch
+	&&  !IS_SET(och->deaf, channel) )
 	{
-	    position			= d->character->position;
-	    d->character->position	= POS_STANDING;
-	    act( buf, ch, NULL, d->character, TO_VICT );
-	    d->character->position	= position;
+	    if ( channel == CHANNEL_IMMTALK && !IS_HERO(och) )
+		continue;
+	    if ( channel == CHANNEL_YELL
+	    &&   vch->in_room->area != ch->in_room->area )
+		continue;
+
+	    position		= vch->position;
+	    if ( channel != CHANNEL_SHOUT && channel != CHANNEL_YELL )
+		vch->position	= POS_STANDING;
+	    act( buf, ch, argument, vch, TO_VICT );
+	    vch->position	= position;
 	}
     }
 
+    return;
+}
+
+
+
+void do_auction( CHAR_DATA *ch, char *argument )
+{
+    talk_channel( ch, argument, CHANNEL_AUCTION, "auction" );
+    return;
+}
+
+
+
+void do_chat( CHAR_DATA *ch, char *argument )
+{
+    talk_channel( ch, argument, CHANNEL_CHAT, "chat" );
+    return;
+}
+
+
+
+/*
+ * Alander's new channels.
+ */
+void do_music( CHAR_DATA *ch, char *argument )
+{
+    talk_channel( ch, argument, CHANNEL_MUSIC, "music" );
+    return;
+}
+
+
+
+void do_question( CHAR_DATA *ch, char *argument )
+{
+    talk_channel( ch, argument, CHANNEL_QUESTION, "question" );
+    return;
+}
+
+
+
+void do_answer( CHAR_DATA *ch, char *argument )
+{
+    talk_channel( ch, argument, CHANNEL_QUESTION, "answer" );
+    return;
+}
+
+
+
+void do_shout( CHAR_DATA *ch, char *argument )
+{
+    talk_channel( ch, argument, CHANNEL_SHOUT, "shout" );
+    WAIT_STATE( ch, 12 );
+    return;
+}
+
+
+
+void do_yell( CHAR_DATA *ch, char *argument )
+{
+    talk_channel( ch, argument, CHANNEL_YELL, "yell" );
+    return;
+}
+
+
+
+void do_immtalk( CHAR_DATA *ch, char *argument )
+{
+    talk_channel( ch, argument, CHANNEL_IMMTALK, "immtalk" );
     return;
 }
 
@@ -518,7 +552,7 @@ void do_say( CHAR_DATA *ch, char *argument )
 {
     if ( argument[0] == '\0' )
     {
-	send_to_char( "Say what?\n\r", ch );
+	send_to_char( "Say what?\r\n", ch );
 	return;
     }
 
@@ -529,56 +563,15 @@ void do_say( CHAR_DATA *ch, char *argument )
 
 
 
-void do_shout( CHAR_DATA *ch, char *argument )
-{
-    char buf[MAX_STRING_LENGTH];
-    DESCRIPTOR_DATA *d;
-
-    if ( !IS_NPC(ch) && IS_SET(ch->act, PLR_NO_SHOUT) )
-    {
-	send_to_char( "You can't shout.\n\r", ch );
-	return;
-    }
-
-    if ( argument[0] == '\0' )
-    {
-	send_to_char( "Shout what?\n\r", ch );
-	return;
-    }
-
-    WAIT_STATE( ch, 12 );
-
-    act( "You shout '$T'.", ch, NULL, argument, TO_CHAR );
-    sprintf( buf, "$n shouts '%s'.", argument );
-    for ( d = descriptor_list; d != NULL; d = d->next )
-    {
-	CHAR_DATA *victim;
-
-	victim = d->original ? d->original : d->character;
-
-	if ( d->connected == CON_PLAYING
-	&&   d->character != ch
-	&&   !IS_SET(victim->act, PLR_NO_SHOUT) )
-	{
-	    act( buf, ch, NULL, d->character, TO_VICT );
-	}
-    }
-
-    return;
-}
-
-
-
 void do_tell( CHAR_DATA *ch, char *argument )
 {
-    char buf[MAX_STRING_LENGTH];
     char arg[MAX_INPUT_LENGTH];
     CHAR_DATA *victim;
     int position;
 
-    if ( !IS_NPC(ch) && IS_SET(ch->act, PLR_NO_TELL) )
+    if ( !IS_NPC(ch) && IS_SET(ch->act, PLR_SILENCE) )
     {
-	send_to_char( "Your message didn't get through.\n\r", ch );
+	send_to_char( "Your message didn't get through.\r\n", ch );
 	return;
     }
 
@@ -586,7 +579,7 @@ void do_tell( CHAR_DATA *ch, char *argument )
 
     if ( arg[0] == '\0' || argument[0] == '\0' )
     {
-	send_to_char( "Tell whom what?\n\r", ch );
+	send_to_char( "Tell whom what?\r\n", ch );
 	return;
     }
 
@@ -597,7 +590,7 @@ void do_tell( CHAR_DATA *ch, char *argument )
     if ( ( victim = get_char_world( ch, arg ) ) == NULL
     || ( IS_NPC(victim) && victim->in_room != ch->in_room ) )
     {
-	send_to_char( "They aren't here.\n\r", ch );
+	send_to_char( "They aren't here.\r\n", ch );
 	return;
     }
 
@@ -607,13 +600,10 @@ void do_tell( CHAR_DATA *ch, char *argument )
 	return;
     }
 
-    sprintf( buf, "You tell $N '%s'.", argument );
-    act( buf, ch, NULL, victim, TO_CHAR );
-
+    act( "You tell $N '$t'.", ch, argument, victim, TO_CHAR );
     position		= victim->position;
     victim->position	= POS_STANDING;
-    sprintf( buf, "$n tells you '%s'.", argument );
-    act( buf, ch, NULL, victim, TO_VICT );
+    act( "$n tells you '$t'.", ch, argument, victim, TO_VICT );
     victim->position	= position;
     victim->reply	= ch;
 
@@ -624,19 +614,18 @@ void do_tell( CHAR_DATA *ch, char *argument )
 
 void do_reply( CHAR_DATA *ch, char *argument )
 {
-    char buf[MAX_STRING_LENGTH];
     CHAR_DATA *victim;
     int position;
 
-    if ( !IS_NPC(ch) && IS_SET(ch->act, PLR_NO_TELL) )
+    if ( !IS_NPC(ch) && IS_SET(ch->act, PLR_SILENCE) )
     {
-	send_to_char( "Your message didn't get through.\n\r", ch );
+	send_to_char( "Your message didn't get through.\r\n", ch );
 	return;
     }
 
     if ( ( victim = ch->reply ) == NULL )
     {
-	send_to_char( "They aren't here.\n\r", ch );
+	send_to_char( "They aren't here.\r\n", ch );
 	return;
     }
 
@@ -646,12 +635,10 @@ void do_reply( CHAR_DATA *ch, char *argument )
 	return;
     }
 
-    sprintf( buf, "You tell $N '%s'.", argument );
-    act( buf, ch, NULL, victim, TO_CHAR );
+    act( "You tell $N '$t'.", ch, argument, victim, TO_CHAR );
     position		= victim->position;
     victim->position	= POS_STANDING;
-    sprintf( buf, "$n tells you '%s'.", argument );
-    act( buf, ch, NULL, victim, TO_VICT );
+    act( "$n tells you '$t'.", ch, argument, victim, TO_VICT );
     victim->position	= position;
     victim->reply	= ch;
 
@@ -660,51 +647,32 @@ void do_reply( CHAR_DATA *ch, char *argument )
 
 
 
-void do_yell( CHAR_DATA *ch, char *argument )
-{
-    char buf[MAX_STRING_LENGTH];
-    DESCRIPTOR_DATA *d;
-
-    if ( argument[0] == '\0' )
-    {
-	send_to_char( "Yell what?\n\r", ch );
-	return;
-    }
-
-    sprintf( buf, "You yell '%s'.\n\r", argument );
-    sprintf( buf, "$n yells '%s'.", argument );
-    for ( d = descriptor_list; d != NULL; d = d->next )
-    {
-	if ( d->connected == CON_PLAYING
-	&&   d->character != ch
-	&&   d->character->in_room != NULL
-	&&   d->character->in_room->area == ch->in_room->area )
-	{
-	    act( buf, ch, NULL, d->character, TO_VICT );
-	}
-    }
-
-    return;
-}
-
-
-
 void do_emote( CHAR_DATA *ch, char *argument )
 {
+    char buf[MAX_STRING_LENGTH];
+    char *plast;
+
     if ( !IS_NPC(ch) && IS_SET(ch->act, PLR_NO_EMOTE) )
     {
-	send_to_char( "You can't show your emotions.\n\r", ch );
+	send_to_char( "You can't show your emotions.\r\n", ch );
 	return;
     }
 
     if ( argument[0] == '\0' )
     {
-	send_to_char( "Emote what?\n\r", ch );
+	send_to_char( "Emote what?\r\n", ch );
 	return;
     }
 
-    act( "$n $T.", ch, NULL, argument, TO_ROOM );
-    act( "$n $T.", ch, NULL, argument, TO_CHAR );
+    for ( plast = argument; *plast != '\0'; plast++ )
+	;
+
+    strcpy( buf, argument );
+    if ( isalpha(plast[-1]) )
+	strcat( buf, "." );
+
+    act( "$n $T", ch, NULL, buf, TO_ROOM );
+    act( "$n $T", ch, NULL, buf, TO_CHAR );
     return;
 }
 
@@ -966,7 +934,7 @@ void do_pose( CHAR_DATA *ch, char *argument )
 void do_bug( CHAR_DATA *ch, char *argument )
 {
     append_file( ch, BUG_FILE, argument );
-    send_to_char( "Ok.  Thanks.\n\r", ch );
+    send_to_char( "Ok.  Thanks.\r\n", ch );
     return;
 }
 
@@ -975,7 +943,7 @@ void do_bug( CHAR_DATA *ch, char *argument )
 void do_idea( CHAR_DATA *ch, char *argument )
 {
     append_file( ch, IDEA_FILE, argument );
-    send_to_char( "Ok.  Thanks.\n\r", ch );
+    send_to_char( "Ok.  Thanks.\r\n", ch );
     return;
 }
 
@@ -984,7 +952,7 @@ void do_idea( CHAR_DATA *ch, char *argument )
 void do_typo( CHAR_DATA *ch, char *argument )
 {
     append_file( ch, TYPO_FILE, argument );
-    send_to_char( "Ok.  Thanks.\n\r", ch );
+    send_to_char( "Ok.  Thanks.\r\n", ch );
     return;
 }
 
@@ -992,7 +960,7 @@ void do_typo( CHAR_DATA *ch, char *argument )
 
 void do_rent( CHAR_DATA *ch, char *argument )
 {
-    send_to_char( "There is no rent here.  Just save and quit.\n\r", ch );
+    send_to_char( "There is no rent here.  Just save and quit.\r\n", ch );
     return;
 }
 
@@ -1000,7 +968,7 @@ void do_rent( CHAR_DATA *ch, char *argument )
 
 void do_qui( CHAR_DATA *ch, char *argument )
 {
-    send_to_char( "If you want to QUIT, you have to spell it out.\n\r", ch );
+    send_to_char( "If you want to QUIT, you have to spell it out.\r\n", ch );
     return;
 }
 
@@ -1015,18 +983,18 @@ void do_quit( CHAR_DATA *ch, char *argument )
 
     if ( ch->position == POS_FIGHTING )
     {
-	send_to_char( "No way! You are fighting.\n\r", ch );
+	send_to_char( "No way! You are fighting.\r\n", ch );
 	return;
     }
 
     if ( ch->position  < POS_STUNNED  )
     {
-	send_to_char( "You're not DEAD yet.\n\r", ch );
+	send_to_char( "You're not DEAD yet.\r\n", ch );
 	return;
     }
 
     send_to_char( 
-	"Had I but time--as this fell sergeant, Death,\n\rIs strict in his arrest--O, I could tell you--\n\rBut let it be.\n\r",
+	"Had I but time--as this fell sergeant, Death,\r\nIs strict in his arrest--O, I could tell you--\r\nBut let it be.\r\n",
 	ch );
     act( "$n has left the game.", ch, NULL, NULL, TO_ROOM );
     sprintf( log_buf, "%s has quit.", ch->name );
@@ -1053,12 +1021,12 @@ void do_save( CHAR_DATA *ch, char *argument )
 
     if ( ch->level < 2 )
     {
-	send_to_char( "You must be at least second level to save.\n\r", ch );
+	send_to_char( "You must be at least second level to save.\r\n", ch );
 	return;
     }
 
     save_char_obj( ch );
-    send_to_char( "Ok.\n\r", ch );
+    send_to_char( "Ok.\r\n", ch );
     return;
 }
 
@@ -1073,13 +1041,13 @@ void do_follow( CHAR_DATA *ch, char *argument )
 
     if ( arg[0] == '\0' )
     {
-	send_to_char( "Follow whom?\n\r", ch );
+	send_to_char( "Follow whom?\r\n", ch );
 	return;
     }
 
     if ( ( victim = get_char_room( ch, arg ) ) == NULL )
     {
-	send_to_char( "They aren't here.\n\r", ch );
+	send_to_char( "They aren't here.\r\n", ch );
 	return;
     }
 
@@ -1093,7 +1061,7 @@ void do_follow( CHAR_DATA *ch, char *argument )
     {
 	if ( ch->master == NULL )
 	{
-	    send_to_char( "You already follow yourself.\n\r", ch );
+	    send_to_char( "You already follow yourself.\r\n", ch );
 	    return;
 	}
 	stop_follower( ch );
@@ -1103,7 +1071,7 @@ void do_follow( CHAR_DATA *ch, char *argument )
     if ( ( ch->level - victim->level < -5 || ch->level - victim->level >  5 )
     &&   !IS_HERO(ch) )
     {
-	send_to_char( "You are not of the right caliber to follow.\n\r", ch );
+	send_to_char( "You are not of the right caliber to follow.\r\n", ch );
 	return;
     }
 
@@ -1186,7 +1154,6 @@ void die_follower( CHAR_DATA *ch )
 
 void do_order( CHAR_DATA *ch, char *argument )
 {
-    char buf[MAX_STRING_LENGTH];
     char arg[MAX_INPUT_LENGTH];
     CHAR_DATA *victim;
     CHAR_DATA *och;
@@ -1198,13 +1165,13 @@ void do_order( CHAR_DATA *ch, char *argument )
 
     if ( arg[0] == '\0' || argument[0] == '\0' )
     {
-	send_to_char( "Order whom to do what?\n\r", ch );
+	send_to_char( "Order whom to do what?\r\n", ch );
 	return;
     }
 
     if ( IS_AFFECTED( ch, AFF_CHARM ) )
     {
-	send_to_char( "You feel like taking, not giving, orders.\n\r", ch );
+	send_to_char( "You feel like taking, not giving, orders.\r\n", ch );
 	return;
     }
 
@@ -1218,19 +1185,19 @@ void do_order( CHAR_DATA *ch, char *argument )
 	fAll   = FALSE;
 	if ( ( victim = get_char_room( ch, arg ) ) == NULL )
 	{
-	    send_to_char( "They aren't here.\n\r", ch );
+	    send_to_char( "They aren't here.\r\n", ch );
 	    return;
 	}
 
 	if ( victim == ch )
 	{
-	    send_to_char( "Aye aye, right away!\n\r", ch );
+	    send_to_char( "Aye aye, right away!\r\n", ch );
 	    return;
 	}
 
 	if ( !IS_AFFECTED(victim, AFF_CHARM) || victim->master != ch )
 	{
-	    send_to_char( "Do it yourself!\n\r", ch );
+	    send_to_char( "Do it yourself!\r\n", ch );
 	    return;
 	}
     }
@@ -1245,16 +1212,15 @@ void do_order( CHAR_DATA *ch, char *argument )
 	&& ( fAll || och == victim ) )
 	{
 	    found = TRUE;
-	    sprintf( buf, "$n orders you to '%s'.", argument );
-	    act( buf, ch, NULL, och, TO_VICT );
+	    act( "$n orders you to '$t'.", ch, argument, och, TO_VICT );
 	    interpret( och, argument );
 	}
     }
 
     if ( found )
-	send_to_char( "Ok.\n\r", ch );
+	send_to_char( "Ok.\r\n", ch );
     else
-	send_to_char( "You have no followers here.\n\r", ch );
+	send_to_char( "You have no followers here.\r\n", ch );
     return;
 }
 
@@ -1274,7 +1240,7 @@ void do_group( CHAR_DATA *ch, char *argument )
 	CHAR_DATA *leader;
 
 	leader = (ch->leader != NULL) ? ch->leader : ch;
-	sprintf( buf, "%s's group:\n\r", PERS(leader, ch) );
+	sprintf( buf, "%s's group:\r\n", PERS(leader, ch) );
 	send_to_char( buf, ch );
 
 	for ( gch = char_list; gch != NULL; gch = gch->next )
@@ -1282,7 +1248,7 @@ void do_group( CHAR_DATA *ch, char *argument )
 	    if ( is_same_group( gch, ch ) )
 	    {
 		sprintf( buf,
-		"[%2d %s] %-16s %4d/%4d hp %4d/%4d mana %4d/%4d mv %5d xp\n\r",
+		"[%2d %s] %-16s %4d/%4d hp %4d/%4d mana %4d/%4d mv %5d xp\r\n",
 		    gch->level,
 		    IS_NPC(gch) ? "Mob" : class_table[gch->class].who_name,
 		    capitalize( PERS(gch, ch) ),
@@ -1298,13 +1264,13 @@ void do_group( CHAR_DATA *ch, char *argument )
 
     if ( ( victim = get_char_room( ch, arg ) ) == NULL )
     {
-	send_to_char( "They aren't here.\n\r", ch );
+	send_to_char( "They aren't here.\r\n", ch );
 	return;
     }
 
     if ( ch->master != NULL || ( ch->leader != NULL && ch->leader != ch ) )
     {
-	send_to_char( "But you are following someone else!\n\r", ch );
+	send_to_char( "But you are following someone else!\r\n", ch );
 	return;
     }
 
@@ -1358,7 +1324,7 @@ void do_split( CHAR_DATA *ch, char *argument )
 
     if ( arg[0] == '\0' )
     {
-	send_to_char( "Split how much?\n\r", ch );
+	send_to_char( "Split how much?\r\n", ch );
 	return;
     }
     
@@ -1366,19 +1332,19 @@ void do_split( CHAR_DATA *ch, char *argument )
 
     if ( amount < 0 )
     {
-	send_to_char( "Your group wouldn't like that.\n\r", ch );
+	send_to_char( "Your group wouldn't like that.\r\n", ch );
 	return;
     }
 
     if ( amount == 0 )
     {
-	send_to_char( "You hand out zero coins, but no one notices.\n\r", ch );
+	send_to_char( "You hand out zero coins, but no one notices.\r\n", ch );
 	return;
     }
 
     if ( ch->gold < amount )
     {
-	send_to_char( "You don't have that much gold.\n\r", ch );
+	send_to_char( "You don't have that much gold.\r\n", ch );
 	return;
     }
   
@@ -1391,7 +1357,7 @@ void do_split( CHAR_DATA *ch, char *argument )
 
     if ( members < 2 )
     {
-	send_to_char( "Just keep it all.\n\r", ch );
+	send_to_char( "Just keep it all.\r\n", ch );
 	return;
     }
 	    
@@ -1400,7 +1366,7 @@ void do_split( CHAR_DATA *ch, char *argument )
 
     if ( share == 0 )
     {
-	send_to_char( "Don't even bother, cheapskate.\n\r", ch );
+	send_to_char( "Don't even bother, cheapskate.\r\n", ch );
 	return;
     }
 
@@ -1408,7 +1374,7 @@ void do_split( CHAR_DATA *ch, char *argument )
     ch->gold += share + extra;
 
     sprintf( buf,
-	"You split %d gold coins.  Your share is %d gold coins.\n\r",
+	"You split %d gold coins.  Your share is %d gold coins.\r\n",
 	amount, share + extra );
     send_to_char( buf, ch );
 
@@ -1436,20 +1402,20 @@ void do_gtell( CHAR_DATA *ch, char *argument )
 
     if ( argument[0] == '\0' )
     {
-	send_to_char( "Tell your group what?\n\r", ch );
+	send_to_char( "Tell your group what?\r\n", ch );
 	return;
     }
 
     if ( IS_SET( ch->act, PLR_NO_TELL ) )
     {
-	send_to_char( "Your message didn't get through!\n\r", ch );
+	send_to_char( "Your message didn't get through!\r\n", ch );
 	return;
     }
 
     /*
      * Note use of send_to_char, so gtell works on sleepers.
      */
-    sprintf( buf, "%s tells the group '%s'.\n\r", ch->name, argument );
+    sprintf( buf, "%s tells the group '%s'.\r\n", ch->name, argument );
     for ( gch = char_list; gch != NULL; gch = gch->next )
     {
 	if ( is_same_group( gch, ch ) )

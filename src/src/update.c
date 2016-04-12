@@ -15,9 +15,14 @@
  *  around, comes around.                                                  *
  ***************************************************************************/
 
+#if defined(macintosh)
+#include <types.h>
+#else
 #include <sys/types.h>
+#endif
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 #include "merc.h"
 
 
@@ -73,7 +78,7 @@ void advance_level( CHAR_DATA *ch )
 	REMOVE_BIT( ch->act, PLR_BOUGHT_PET );
 
     sprintf( buf,
-	"Your gain is: %d/%d hp, %d/%d m, %d/%d mv %d/%d prac.\n\r",
+	"Your gain is: %d/%d hp, %d/%d m, %d/%d mv %d/%d prac.\r\n",
 	add_hp,		ch->max_hit,
 	add_mana,	ch->max_mana,
 	add_move,	ch->max_move,
@@ -222,16 +227,16 @@ void gain_condition( CHAR_DATA *ch, int iCond, int value )
 	switch ( iCond )
 	{
 	case COND_FULL:
-	    send_to_char( "You are hungry.\n\r",  ch );
+	    send_to_char( "You are hungry.\r\n",  ch );
 	    break;
 
 	case COND_THIRST:
-	    send_to_char( "You are thirsty.\n\r", ch );
+	    send_to_char( "You are thirsty.\r\n", ch );
 	    break;
 
 	case COND_DRUNK:
 	    if ( condition != 0 )
-		send_to_char( "You are sober.\n\r", ch );
+		send_to_char( "You are sober.\r\n", ch );
 	    break;
 	}
     }
@@ -258,11 +263,11 @@ void mobile_update( void )
     {
 	ch_next = ch->next;
 
-	if ( !IS_NPC(ch) || ch->in_room == NULL )
+	if ( !IS_NPC(ch) || ch->in_room == NULL || IS_AFFECTED(ch, AFF_CHARM) )
 	    continue;
 
 	/* Examine call for special procedure */
-	if ( ch->spec_fun != NULL && !IS_AFFECTED(ch, AFF_CHARM) )
+	if ( ch->spec_fun != 0 )
 	{
 	    if ( (*ch->spec_fun) ( ch ) )
 		continue;
@@ -304,11 +309,11 @@ void mobile_update( void )
 	if ( !IS_SET(ch->act, ACT_SENTINEL)
 	&& ( door = number_bits( 5 ) ) <= 5
 	&& ( pexit = ch->in_room->exit[door] ) != NULL
-	&&   pexit->u1.to_room != NULL
+	&&   pexit->to_room != NULL
 	&&   !IS_SET(pexit->exit_info, EX_CLOSED)
-	&&   !IS_SET(pexit->u1.to_room->room_flags, ROOM_NO_MOB)
+	&&   !IS_SET(pexit->to_room->room_flags, ROOM_NO_MOB)
 	&& ( !IS_SET(ch->act, ACT_STAY_AREA)
-	||   pexit->u1.to_room->area == ch->in_room->area ) )
+	||   pexit->to_room->area == ch->in_room->area ) )
 	{
 	    move_char( ch, door );
 	}
@@ -317,15 +322,15 @@ void mobile_update( void )
 	if ( ch->hit < ch->max_hit / 2
 	&& ( door = number_bits( 3 ) ) <= 5
 	&& ( pexit = ch->in_room->exit[door] ) != NULL
-	&&   pexit->u1.to_room != NULL
+	&&   pexit->to_room != NULL
 	&&   !IS_SET(pexit->exit_info, EX_CLOSED)
-	&&   !IS_SET(pexit->u1.to_room->room_flags, ROOM_NO_MOB) )
+	&&   !IS_SET(pexit->to_room->room_flags, ROOM_NO_MOB) )
 	{
 	    CHAR_DATA *rch;
 	    bool found;
 
 	    found = FALSE;
-	    for ( rch  = pexit->u1.to_room->people;
+	    for ( rch  = pexit->to_room->people;
 		  rch != NULL;
 		  rch  = rch->next_in_room )
 	    {
@@ -361,22 +366,22 @@ void weather_update( void )
     {
     case  5:
 	weather_info.sunlight = SUN_LIGHT;
-	strcat( buf, "The day has begun.\n\r" );
+	strcat( buf, "The day has begun.\r\n" );
 	break;
 
     case  6:
 	weather_info.sunlight = SUN_RISE;
-	strcat( buf, "The sun rises in the east.\n\r" );
+	strcat( buf, "The sun rises in the east.\r\n" );
 	break;
 
     case 19:
 	weather_info.sunlight = SUN_SET;
-	strcat( buf, "The sun slowly disappears in the west.\n\r" );
+	strcat( buf, "The sun slowly disappears in the west.\r\n" );
 	break;
 
     case 20:
 	weather_info.sunlight = SUN_DARK;
-	strcat( buf, "The night has begun.\n\r" );
+	strcat( buf, "The night has begun.\r\n" );
 	break;
 
     case 24:
@@ -424,7 +429,7 @@ void weather_update( void )
 	if ( weather_info.mmhg <  990
 	|| ( weather_info.mmhg < 1010 && number_bits( 2 ) == 0 ) )
 	{
-	    strcat( buf, "The sky is getting cloudy.\n\r" );
+	    strcat( buf, "The sky is getting cloudy.\r\n" );
 	    weather_info.sky = SKY_CLOUDY;
 	}
 	break;
@@ -433,13 +438,13 @@ void weather_update( void )
 	if ( weather_info.mmhg <  970
 	|| ( weather_info.mmhg <  990 && number_bits( 2 ) == 0 ) )
 	{
-	    strcat( buf, "It starts to rain.\n\r" );
+	    strcat( buf, "It starts to rain.\r\n" );
 	    weather_info.sky = SKY_RAINING;
 	}
 
 	if ( weather_info.mmhg > 1030 && number_bits( 2 ) == 0 )
 	{
-	    strcat( buf, "The clouds disappear.\n\r" );
+	    strcat( buf, "The clouds disappear.\r\n" );
 	    weather_info.sky = SKY_CLOUDLESS;
 	}
 	break;
@@ -447,14 +452,14 @@ void weather_update( void )
     case SKY_RAINING:
 	if ( weather_info.mmhg <  970 && number_bits( 2 ) == 0 )
 	{
-	    strcat( buf, "Lightning flashes in the sky.\n\r" );
+	    strcat( buf, "Lightning flashes in the sky.\r\n" );
 	    weather_info.sky = SKY_LIGHTNING;
 	}
 
 	if ( weather_info.mmhg > 1030
 	|| ( weather_info.mmhg > 1010 && number_bits( 2 ) == 0 ) )
 	{
-	    strcat( buf, "The rain stopped.\n\r" );
+	    strcat( buf, "The rain stopped.\r\n" );
 	    weather_info.sky = SKY_CLOUDY;
 	}
 	break;
@@ -463,7 +468,7 @@ void weather_update( void )
 	if ( weather_info.mmhg > 1010
 	|| ( weather_info.mmhg >  990 && number_bits( 2 ) == 0 ) )
 	{
-	    strcat( buf, "The lightning has stopped.\n\r" );
+	    strcat( buf, "The lightning has stopped.\r\n" );
 	    weather_info.sky = SKY_RAINING;
 	    break;
 	}
@@ -495,10 +500,12 @@ void char_update( void )
     CHAR_DATA *ch;
     CHAR_DATA *ch_next;
     CHAR_DATA *ch_save;
-    long save_time;
+    CHAR_DATA *ch_quit;
+    time_t save_time;
 
     save_time	= current_time;
     ch_save	= NULL;
+    ch_quit	= NULL;
     for ( ch = char_list; ch != NULL; ch = ch_next )
     {
 	AFFECT_DATA *paf;
@@ -559,7 +566,7 @@ void char_update( void )
 			stop_fighting( ch, TRUE );
 		    act( "$n disappears into the void.",
 			ch, NULL, NULL, TO_ROOM );
-		    send_to_char( "You disappear into the void.\n\r", ch );
+		    send_to_char( "You disappear into the void.\r\n", ch );
 		    save_char_obj( ch );
 		    char_from_room( ch );
 		    char_to_room( ch, get_room_index( ROOM_VNUM_LIMBO ) );
@@ -567,7 +574,7 @@ void char_update( void )
 	    }
 
 	    if ( ch->timer > 30 )
-		do_quit( ch, "" );
+		ch_quit = ch;
 
 	    gain_condition( ch, COND_DRUNK,  -1 );
 	    gain_condition( ch, COND_FULL,   -1 );
@@ -590,7 +597,7 @@ void char_update( void )
 		    if ( paf->type > 0 && skill_table[paf->type].msg_off )
 		    {
 			send_to_char( skill_table[paf->type].msg_off, ch );
-			send_to_char( "\n\r", ch );
+			send_to_char( "\r\n", ch );
 		    }
 		}
 	  
@@ -606,7 +613,7 @@ void char_update( void )
 	if ( IS_AFFECTED(ch, AFF_POISON) )
 	{
 	    act( "$n shivers and suffers.", ch, NULL, NULL, TO_ROOM );
-	    send_to_char( "You shiver and suffer.\n\r", ch );
+	    send_to_char( "You shiver and suffer.\r\n", ch );
 	    damage( ch, ch, 2, gsn_poison );
 	}
 	else if ( ch->position == POS_INCAP )
@@ -619,12 +626,24 @@ void char_update( void )
 	}
     }
 
-    if ( ch_save != NULL )
-	save_char_obj( ch_save );
+    /*
+     * Autosave and autoquit.
+     * Check that these chars still exist.
+     */
+    if ( ch_save != NULL || ch_quit != NULL )
+    {
+	for ( ch = char_list; ch != NULL; ch = ch_next )
+	{
+	    ch_next = ch->next;
+	    if ( ch == ch_save )
+		save_char_obj( ch );
+	    if ( ch == ch_quit )
+		do_quit( ch, "" );
+	}
+    }
 
     return;
 }
-
 
 
 

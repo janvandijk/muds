@@ -15,10 +15,15 @@
  *  around, comes around.                                                  *
  ***************************************************************************/
 
+#if defined(macintosh)
+#include <types.h>
+#else
 #include <sys/types.h>
+#endif
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
+#include <time.h>
 #include "merc.h"
 
 
@@ -42,7 +47,7 @@ void get_obj( CHAR_DATA *ch, OBJ_DATA *obj, OBJ_DATA *container )
 {
     if ( !CAN_WEAR(obj, ITEM_TAKE) )
     {
-	send_to_char( "You can't take that.\n\r", ch );
+	send_to_char( "You can't take that.\r\n", ch );
 	return;
     }
 
@@ -103,7 +108,7 @@ void do_get( CHAR_DATA *ch, char *argument )
     /* Get type. */
     if ( arg1[0] == '\0' )
     {
-	send_to_char( "Get what?\n\r", ch );
+	send_to_char( "Get what?\r\n", ch );
 	return;
     }
 
@@ -139,7 +144,7 @@ void do_get( CHAR_DATA *ch, char *argument )
 	    if ( !found ) 
 	    {
 		if ( arg1[3] == '\0' )
-		    send_to_char( "I see nothing here.\n\r", ch );
+		    send_to_char( "I see nothing here.\r\n", ch );
 		else
 		    act( "I see no $T here.", ch, NULL, &arg1[4], TO_CHAR );
 	    }
@@ -150,7 +155,7 @@ void do_get( CHAR_DATA *ch, char *argument )
 	/* 'get ... container' */
 	if ( !str_cmp( arg2, "all" ) || !str_prefix( "all.", arg2 ) )
 	{
-	    send_to_char( "You can't do that.\n\r", ch );
+	    send_to_char( "You can't do that.\r\n", ch );
 	    return;
 	}
 
@@ -163,7 +168,7 @@ void do_get( CHAR_DATA *ch, char *argument )
 	switch ( container->item_type )
 	{
 	default:
-	    send_to_char( "That's not a container.\n\r", ch );
+	    send_to_char( "That's not a container.\r\n", ch );
 	    return;
 
 	case ITEM_CONTAINER:
@@ -175,11 +180,10 @@ void do_get( CHAR_DATA *ch, char *argument )
 		char name[MAX_INPUT_LENGTH];
 		CHAR_DATA *gch;
 		char *pd;
-		bool fGroup;
 
 		if ( IS_NPC(ch) )
 		{
-		    send_to_char( "You can't do that.\n\r", ch );
+		    send_to_char( "You can't do that.\r\n", ch );
 		    return;
 		}
 
@@ -188,13 +192,11 @@ void do_get( CHAR_DATA *ch, char *argument )
 		pd = one_argument( pd, name );
 		pd = one_argument( pd, name );
 
-		fGroup = FALSE;
-		if ( !str_cmp( name, ch->name ) || IS_IMMORTAL(ch) )
+		if ( str_cmp( name, ch->name ) && !IS_IMMORTAL(ch) )
 		{
-		    fGroup = TRUE;
-		}
-		else
-		{
+		    bool fGroup;
+
+		    fGroup = FALSE;
 		    for ( gch = char_list; gch != NULL; gch = gch->next )
 		    {
 			if ( !IS_NPC(gch)
@@ -205,13 +207,12 @@ void do_get( CHAR_DATA *ch, char *argument )
 			    break;
 			}
 		    }
-		}
 
-		if ( !fGroup && !IS_SET(ch->act, PLR_THIEF) )
-		{
-		    SET_BIT(ch->act, PLR_THIEF);
-		    send_to_char( "*** You are now a THIEF!! ***\n\r", ch );
-		    save_char_obj( ch );
+		    if ( !fGroup )
+		    {
+			send_to_char( "You can't do that.\r\n", ch );
+			return;
+		    }
 		}
 	    }
 	}
@@ -279,13 +280,13 @@ void do_put( CHAR_DATA *ch, char *argument )
 
     if ( arg1[0] == '\0' || arg2[0] == '\0' )
     {
-	send_to_char( "Put what in what?\n\r", ch );
+	send_to_char( "Put what in what?\r\n", ch );
 	return;
     }
 
     if ( !str_cmp( arg2, "all" ) || !str_prefix( "all.", arg2 ) )
     {
-	send_to_char( "You can't do that.\n\r", ch );
+	send_to_char( "You can't do that.\r\n", ch );
 	return;
     }
 
@@ -297,7 +298,7 @@ void do_put( CHAR_DATA *ch, char *argument )
 
     if ( container->item_type != ITEM_CONTAINER )
     {
-	send_to_char( "That's not a container.\n\r", ch );
+	send_to_char( "That's not a container.\r\n", ch );
 	return;
     }
 
@@ -312,26 +313,26 @@ void do_put( CHAR_DATA *ch, char *argument )
 	/* 'put obj container' */
 	if ( ( obj = get_obj_carry( ch, arg1 ) ) == NULL )
 	{
-	    send_to_char( "You do not have that item.\n\r", ch );
+	    send_to_char( "You do not have that item.\r\n", ch );
 	    return;
 	}
 
 	if ( obj == container )
 	{
-	    send_to_char( "You can't fold it into itself.\n\r", ch );
+	    send_to_char( "You can't fold it into itself.\r\n", ch );
 	    return;
 	}
 
 	if ( !can_drop_obj( ch, obj ) )
 	{
-	    send_to_char( "You can't let go of it.\n\r", ch );
+	    send_to_char( "You can't let go of it.\r\n", ch );
 	    return;
 	}
 
 	if ( get_obj_weight( obj ) + get_obj_weight( container )
 	     > container->value[0] )
 	{
-	    send_to_char( "It won't fit.\n\r", ch );
+	    send_to_char( "It won't fit.\r\n", ch );
 	    return;
 	}
 
@@ -379,7 +380,7 @@ void do_drop( CHAR_DATA *ch, char *argument )
 
     if ( arg[0] == '\0' )
     {
-	send_to_char( "Drop what?\n\r", ch );
+	send_to_char( "Drop what?\r\n", ch );
 	return;
     }
 
@@ -393,13 +394,13 @@ void do_drop( CHAR_DATA *ch, char *argument )
 	if ( amount <= 0
 	|| ( str_cmp( arg, "coins" ) && str_cmp( arg, "coin" ) ) )
 	{
-	    send_to_char( "Sorry, you can't do that.\n\r", ch );
+	    send_to_char( "Sorry, you can't do that.\r\n", ch );
 	    return;
 	}
 
 	if ( ch->gold < amount )
 	{
-	    send_to_char( "You haven't got that many coins.\n\r", ch );
+	    send_to_char( "You haven't got that many coins.\r\n", ch );
 	    return;
 	}
 
@@ -425,7 +426,7 @@ void do_drop( CHAR_DATA *ch, char *argument )
 
 	obj_to_room( create_money( amount ), ch->in_room );
 	act( "$n drops some gold.", ch, NULL, NULL, TO_ROOM );
-	send_to_char( "OK.\n\r", ch );
+	send_to_char( "OK.\r\n", ch );
 	return;
     }
 
@@ -434,13 +435,13 @@ void do_drop( CHAR_DATA *ch, char *argument )
 	/* 'drop obj' */
 	if ( ( obj = get_obj_carry( ch, arg ) ) == NULL )
 	{
-	    send_to_char( "You do not have that item.\n\r", ch );
+	    send_to_char( "You do not have that item.\r\n", ch );
 	    return;
 	}
 
 	if ( !can_drop_obj( ch, obj ) )
 	{
-	    send_to_char( "You can't let go of it.\n\r", ch );
+	    send_to_char( "You can't let go of it.\r\n", ch );
 	    return;
 	}
 
@@ -498,7 +499,7 @@ void do_give( CHAR_DATA *ch, char *argument )
 
     if ( arg1[0] == '\0' || arg2[0] == '\0' )
     {
-	send_to_char( "Give what to whom?\n\r", ch );
+	send_to_char( "Give what to whom?\r\n", ch );
 	return;
     }
 
@@ -511,26 +512,26 @@ void do_give( CHAR_DATA *ch, char *argument )
 	if ( amount <= 0
 	|| ( str_cmp( arg2, "coins" ) && str_cmp( arg2, "coin" ) ) )
 	{
-	    send_to_char( "Sorry, you can't do that.\n\r", ch );
+	    send_to_char( "Sorry, you can't do that.\r\n", ch );
 	    return;
 	}
 
 	argument = one_argument( argument, arg2 );
 	if ( arg2[0] == '\0' )
 	{
-	    send_to_char( "Give what to whom?\n\r", ch );
+	    send_to_char( "Give what to whom?\r\n", ch );
 	    return;
 	}
 
 	if ( ( victim = get_char_room( ch, arg2 ) ) == NULL )
 	{
-	    send_to_char( "They aren't here.\n\r", ch );
+	    send_to_char( "They aren't here.\r\n", ch );
 	    return;
 	}
 
 	if ( ch->gold < amount )
 	{
-	    send_to_char( "You haven't got that much gold.\n\r", ch );
+	    send_to_char( "You haven't got that much gold.\r\n", ch );
 	    return;
 	}
 
@@ -539,31 +540,31 @@ void do_give( CHAR_DATA *ch, char *argument )
 	act( "$n gives you some gold.", ch, NULL, victim, TO_VICT    );
 	act( "$n gives $N some gold.",  ch, NULL, victim, TO_NOTVICT );
 	act( "You give $N some gold.",  ch, NULL, victim, TO_CHAR    );
-	send_to_char( "OK.\n\r", ch );
+	send_to_char( "OK.\r\n", ch );
 	return;
     }
 
     if ( ( obj = get_obj_carry( ch, arg1 ) ) == NULL )
     {
-	send_to_char( "You do not have that item.\n\r", ch );
+	send_to_char( "You do not have that item.\r\n", ch );
 	return;
     }
 
     if ( obj->wear_loc != WEAR_NONE )
     {
-	send_to_char( "You must remove it first.\n\r", ch );
+	send_to_char( "You must remove it first.\r\n", ch );
 	return;
     }
 
     if ( ( victim = get_char_room( ch, arg2 ) ) == NULL )
     {
-	send_to_char( "They aren't here.\n\r", ch );
+	send_to_char( "They aren't here.\r\n", ch );
 	return;
     }
 
     if ( !can_drop_obj( ch, obj ) )
     {
-	send_to_char( "You can't let go of it.\n\r", ch );
+	send_to_char( "You can't let go of it.\r\n", ch );
 	return;
     }
 
@@ -607,13 +608,13 @@ void do_fill( CHAR_DATA *ch, char *argument )
 
     if ( arg[0] == '\0' )
     {
-	send_to_char( "Fill what?\n\r", ch );
+	send_to_char( "Fill what?\r\n", ch );
 	return;
     }
 
     if ( ( obj = get_obj_carry( ch, arg ) ) == NULL )
     {
-	send_to_char( "You do not have that item.\n\r", ch );
+	send_to_char( "You do not have that item.\r\n", ch );
 	return;
     }
 
@@ -630,25 +631,25 @@ void do_fill( CHAR_DATA *ch, char *argument )
 
     if ( !found )
     {
-	send_to_char( "There is no fountain here!\n\r", ch );
+	send_to_char( "There is no fountain here!\r\n", ch );
 	return;
     }
 
     if ( obj->item_type != ITEM_DRINK_CON )
     {
-	send_to_char( "You can't fill that.\n\r", ch );
+	send_to_char( "You can't fill that.\r\n", ch );
 	return;
     }
 
     if ( obj->value[1] != 0 && obj->value[2] != 0 )
     {
-	send_to_char( "There is already another liquid in it.\n\r", ch );
+	send_to_char( "There is already another liquid in it.\r\n", ch );
 	return;
     }
 
     if ( obj->value[1] >= obj->value[0] )
     {
-	send_to_char( "Your container is full.\n\r", ch );
+	send_to_char( "Your container is full.\r\n", ch );
 	return;
     }
 
@@ -679,7 +680,7 @@ void do_drink( CHAR_DATA *ch, char *argument )
 
 	if ( obj == NULL )
 	{
-	    send_to_char( "Drink what?\n\r", ch );
+	    send_to_char( "Drink what?\r\n", ch );
 	    return;
 	}
     }
@@ -687,34 +688,34 @@ void do_drink( CHAR_DATA *ch, char *argument )
     {
 	if ( ( obj = get_obj_here( ch, arg ) ) == NULL )
 	{
-	    send_to_char( "You can't find it.\n\r", ch );
+	    send_to_char( "You can't find it.\r\n", ch );
 	    return;
 	}
     }
 
     if ( !IS_NPC(ch) && ch->pcdata->condition[COND_DRUNK] > 10 )
     {
-	send_to_char( "You fail to reach your mouth.  *Hic*\n\r", ch );
+	send_to_char( "You fail to reach your mouth.  *Hic*\r\n", ch );
 	return;
     }
 
     switch ( obj->item_type )
     {
     default:
-	send_to_char( "You can't drink from that.\n\r", ch );
+	send_to_char( "You can't drink from that.\r\n", ch );
 	break;
 
     case ITEM_FOUNTAIN:
 	if ( !IS_NPC(ch) )
 	    ch->pcdata->condition[COND_THIRST] = 48;
 	act( "$n drinks from the fountain.", ch, NULL, NULL, TO_ROOM );
-	send_to_char( "You are not thirsty.\n\r", ch );
+	send_to_char( "You are not thirsty.\r\n", ch );
 	break;
 
     case ITEM_DRINK_CON:
 	if ( obj->value[1] <= 0 )
 	{
-	    send_to_char( "It is already empty.\n\r", ch );
+	    send_to_char( "It is already empty.\r\n", ch );
 	    return;
 	}
 
@@ -740,11 +741,11 @@ void do_drink( CHAR_DATA *ch, char *argument )
 	    amount * liq_table[liquid].liq_affect[COND_THIRST ] );
 
 	if ( !IS_NPC(ch) && ch->pcdata->condition[COND_DRUNK]  > 10 )
-	    send_to_char( "You feel drunk.\n\r", ch );
+	    send_to_char( "You feel drunk.\r\n", ch );
 	if ( !IS_NPC(ch) && ch->pcdata->condition[COND_FULL]   > 40 )
-	    send_to_char( "You are full.\n\r", ch );
+	    send_to_char( "You are full.\r\n", ch );
 	if ( !IS_NPC(ch) && ch->pcdata->condition[COND_THIRST] > 40 )
-	    send_to_char( "You do not feel thirsty.\n\r", ch );
+	    send_to_char( "You do not feel thirsty.\r\n", ch );
 	
 	if ( obj->value[3] != 0 )
 	{
@@ -752,7 +753,7 @@ void do_drink( CHAR_DATA *ch, char *argument )
 	    AFFECT_DATA af;
 
 	    act( "$n chokes and gags.", ch, NULL, NULL, TO_ROOM );
-	    send_to_char( "You choke and gag.\n\r", ch );
+	    send_to_char( "You choke and gag.\r\n", ch );
 	    af.type      = gsn_poison;
 	    af.duration  = 3 * amount;
 	    af.location  = APPLY_NONE;
@@ -764,7 +765,7 @@ void do_drink( CHAR_DATA *ch, char *argument )
 	obj->value[1] -= amount;
 	if ( obj->value[1] <= 0 )
 	{
-	    send_to_char( "The empty container vanishes.\n\r", ch );
+	    send_to_char( "The empty container vanishes.\r\n", ch );
 	    extract_obj( obj );
 	}
 	break;
@@ -783,13 +784,13 @@ void do_eat( CHAR_DATA *ch, char *argument )
     one_argument( argument, arg );
     if ( arg[0] == '\0' )
     {
-	send_to_char( "Eat what?\n\r", ch );
+	send_to_char( "Eat what?\r\n", ch );
 	return;
     }
 
     if ( ( obj = get_obj_carry( ch, arg ) ) == NULL )
     {
-	send_to_char( "You do not have that item.\n\r", ch );
+	send_to_char( "You do not have that item.\r\n", ch );
 	return;
     }
 
@@ -797,18 +798,18 @@ void do_eat( CHAR_DATA *ch, char *argument )
     {
 	if ( obj->item_type != ITEM_FOOD && obj->item_type != ITEM_PILL )
 	{
-	    send_to_char( "That's not edible.\n\r", ch );
+	    send_to_char( "That's not edible.\r\n", ch );
 	    return;
 	}
 
 	if ( !IS_NPC(ch) && ch->pcdata->condition[COND_FULL] > 40 )
 	{   
-	    send_to_char( "You are too full to eat more.\n\r", ch );
+	    send_to_char( "You are too full to eat more.\r\n", ch );
 	    return;
 	}
     }
 
-    act( "$n eats $p",  ch, obj, NULL, TO_ROOM );
+    act( "$n eats $p.",  ch, obj, NULL, TO_ROOM );
     act( "You eat $p.", ch, obj, NULL, TO_CHAR );
 
     switch ( obj->item_type )
@@ -822,9 +823,9 @@ void do_eat( CHAR_DATA *ch, char *argument )
 	    condition = ch->pcdata->condition[COND_FULL];
 	    gain_condition( ch, COND_FULL, obj->value[0] );
 	    if ( condition == 0 && ch->pcdata->condition[COND_FULL] > 0 )
-		send_to_char( "You are no longer hungry.\n\r", ch );
+		send_to_char( "You are no longer hungry.\r\n", ch );
 	    else if ( ch->pcdata->condition[COND_FULL] > 40 )
-		send_to_char( "You are full.\n\r", ch );
+		send_to_char( "You are full.\r\n", ch );
 	}
 
 	if ( obj->value[3] != 0 )
@@ -833,7 +834,7 @@ void do_eat( CHAR_DATA *ch, char *argument )
 	    AFFECT_DATA af;
 
 	    act( "$n chokes and gags.", ch, 0, 0, TO_ROOM );
-	    send_to_char( "You choke and gag.\n\r", ch );
+	    send_to_char( "You choke and gag.\r\n", ch );
 
 	    af.type      = gsn_poison;
 	    af.duration  = 2 * obj->value[0];
@@ -895,7 +896,7 @@ void wear_obj( CHAR_DATA *ch, OBJ_DATA *obj, bool fReplace )
 
     if ( ch->level < obj->level )
     {
-	sprintf( buf, "You must be level %d to use this object.\n\r",
+	sprintf( buf, "You must be level %d to use this object.\r\n",
 	    obj->level );
 	send_to_char( buf, ch );
 	act( "$n tries to use $p, but is too inexperienced.",
@@ -938,7 +939,7 @@ void wear_obj( CHAR_DATA *ch, OBJ_DATA *obj, bool fReplace )
 	}
 
 	bug( "Wear_obj: no free finger.", 0 );
-	send_to_char( "You already wear two rings.\n\r", ch );
+	send_to_char( "You already wear two rings.\r\n", ch );
 	return;
     }
 
@@ -967,7 +968,7 @@ void wear_obj( CHAR_DATA *ch, OBJ_DATA *obj, bool fReplace )
 	}
 
 	bug( "Wear_obj: no free neck.", 0 );
-	send_to_char( "You already wear two neck items.\n\r", ch );
+	send_to_char( "You already wear two neck items.\r\n", ch );
 	return;
     }
 
@@ -1080,7 +1081,7 @@ void wear_obj( CHAR_DATA *ch, OBJ_DATA *obj, bool fReplace )
 	}
 
 	bug( "Wear_obj: no free wrist.", 0 );
-	send_to_char( "You already wear two wrist items.\n\r", ch );
+	send_to_char( "You already wear two wrist items.\r\n", ch );
 	return;
     }
 
@@ -1101,7 +1102,7 @@ void wear_obj( CHAR_DATA *ch, OBJ_DATA *obj, bool fReplace )
 
 	if ( get_obj_weight( obj ) > str_app[get_curr_str(ch)].wield )
 	{
-	    send_to_char( "It is too heavy for you to wield.\n\r", ch );
+	    send_to_char( "It is too heavy for you to wield.\r\n", ch );
 	    return;
 	}
 
@@ -1122,7 +1123,7 @@ void wear_obj( CHAR_DATA *ch, OBJ_DATA *obj, bool fReplace )
     }
 
     if ( fReplace )
-	send_to_char( "You can't wear, wield, or hold that.\n\r", ch );
+	send_to_char( "You can't wear, wield, or hold that.\r\n", ch );
 
     return;
 }
@@ -1138,7 +1139,7 @@ void do_wear( CHAR_DATA *ch, char *argument )
 
     if ( arg[0] == '\0' )
     {
-	send_to_char( "Wear, wield, or hold what?\n\r", ch );
+	send_to_char( "Wear, wield, or hold what?\r\n", ch );
 	return;
     }
 
@@ -1158,7 +1159,7 @@ void do_wear( CHAR_DATA *ch, char *argument )
     {
 	if ( ( obj = get_obj_carry( ch, arg ) ) == NULL )
 	{
-	    send_to_char( "You do not have that item.\n\r", ch );
+	    send_to_char( "You do not have that item.\r\n", ch );
 	    return;
 	}
 
@@ -1179,13 +1180,13 @@ void do_remove( CHAR_DATA *ch, char *argument )
 
     if ( arg[0] == '\0' )
     {
-	send_to_char( "Remove what?\n\r", ch );
+	send_to_char( "Remove what?\r\n", ch );
 	return;
     }
 
     if ( ( obj = get_obj_wear( ch, arg ) ) == NULL )
     {
-	send_to_char( "You do not have that item.\n\r", ch );
+	send_to_char( "You do not have that item.\r\n", ch );
 	return;
     }
 
@@ -1214,7 +1215,7 @@ void do_sacrifice( CHAR_DATA *ch, char *argument )
     obj = get_obj_list( ch, arg, ch->in_room->contents );
     if ( obj == NULL )
     {
-	send_to_char( "You can't find it.\n\r", ch );
+	send_to_char( "You can't find it.\r\n", ch );
 	return;
     }
 
@@ -1224,18 +1225,8 @@ void do_sacrifice( CHAR_DATA *ch, char *argument )
 	return;
     }
 
-    if ( obj->item_type == ITEM_CORPSE_NPC )
-    {
-	send_to_char(
-	    "God gives you one experience point for your sacrifice.\n\r", ch );
-	gain_exp( ch, 1 );
-    }
-    else
-    {
-	send_to_char(
-	    "God gives you one gold coin for your sacrifice.\n\r", ch );
-	ch->gold += 1;
-    }
+    send_to_char( "God gives you one gold coin for your sacrifice.\r\n", ch );
+    ch->gold += 1;
 
     act( "$n sacrifices $p to God.", ch, obj, NULL, TO_ROOM );
     extract_obj( obj );
@@ -1253,19 +1244,19 @@ void do_quaff( CHAR_DATA *ch, char *argument )
 
     if ( arg[0] == '\0' )
     {
-	send_to_char( "Quaff what?\n\r", ch );
+	send_to_char( "Quaff what?\r\n", ch );
 	return;
     }
 
     if ( ( obj = get_obj_carry( ch, arg ) ) == NULL )
     {
-	send_to_char( "You do not have that potion.\n\r", ch );
+	send_to_char( "You do not have that potion.\r\n", ch );
 	return;
     }
 
     if ( obj->item_type != ITEM_POTION )
     {
-	send_to_char( "You can quaff only potions.\n\r", ch );
+	send_to_char( "You can quaff only potions.\r\n", ch );
 	return;
     }
 
@@ -1295,13 +1286,13 @@ void do_recite( CHAR_DATA *ch, char *argument )
 
     if ( ( scroll = get_obj_carry( ch, arg1 ) ) == NULL )
     {
-	send_to_char( "You do not have that scroll.\n\r", ch );
+	send_to_char( "You do not have that scroll.\r\n", ch );
 	return;
     }
 
     if ( scroll->item_type != ITEM_SCROLL )
     {
-	send_to_char( "You can recite only scrolls.\n\r", ch );
+	send_to_char( "You can recite only scrolls.\r\n", ch );
 	return;
     }
 
@@ -1315,7 +1306,7 @@ void do_recite( CHAR_DATA *ch, char *argument )
 	if ( ( victim = get_char_room ( ch, arg2 ) ) == NULL
 	&&   ( obj    = get_obj_here  ( ch, arg2 ) ) == NULL )
 	{
-	    send_to_char( "You can't find it.\n\r", ch );
+	    send_to_char( "You can't find it.\r\n", ch );
 	    return;
 	}
     }
@@ -1342,19 +1333,19 @@ void do_brandish( CHAR_DATA *ch, char *argument )
 
     if ( ( staff = get_eq_char( ch, WEAR_HOLD ) ) == NULL )
     {
-	send_to_char( "You hold nothing in your hand.\n\r", ch );
+	send_to_char( "You hold nothing in your hand.\r\n", ch );
 	return;
     }
 
     if ( staff->item_type != ITEM_STAFF )
     {
-	send_to_char( "You can brandish only with a staff.\n\r", ch );
+	send_to_char( "You can brandish only with a staff.\r\n", ch );
 	return;
     }
 
     if ( ( sn = staff->value[3] ) < 0
     ||   sn >= MAX_SKILL
-    ||   skill_table[sn].spell_fun == NULL )
+    ||   skill_table[sn].spell_fun == 0 )
     {
 	bug( "Do_brandish: bad sn %d.", sn );
 	return;
@@ -1423,19 +1414,19 @@ void do_zap( CHAR_DATA *ch, char *argument )
     one_argument( argument, arg );
     if ( arg[0] == '\0' && ch->fighting == NULL )
     {
-	send_to_char( "Zap whom or what?\n\r", ch );
+	send_to_char( "Zap whom or what?\r\n", ch );
 	return;
     }
 
     if ( ( wand = get_eq_char( ch, WEAR_HOLD ) ) == NULL )
     {
-	send_to_char( "You hold nothing in your hand.\n\r", ch );
+	send_to_char( "You hold nothing in your hand.\r\n", ch );
 	return;
     }
 
     if ( wand->item_type != ITEM_WAND )
     {
-	send_to_char( "You can zap only with a wand.\n\r", ch );
+	send_to_char( "You can zap only with a wand.\r\n", ch );
 	return;
     }
 
@@ -1448,7 +1439,7 @@ void do_zap( CHAR_DATA *ch, char *argument )
 	}
 	else
 	{
-	    send_to_char( "Zap whom or what?\n\r", ch );
+	    send_to_char( "Zap whom or what?\r\n", ch );
 	    return;
 	}
     }
@@ -1457,7 +1448,7 @@ void do_zap( CHAR_DATA *ch, char *argument )
 	if ( ( victim = get_char_room ( ch, arg ) ) == NULL
 	&&   ( obj    = get_obj_here  ( ch, arg ) ) == NULL )
 	{
-	    send_to_char( "You can't find it.\n\r", ch );
+	    send_to_char( "You can't find it.\r\n", ch );
 	    return;
 	}
     }
@@ -1506,19 +1497,19 @@ void do_steal( CHAR_DATA *ch, char *argument )
 
     if ( arg1[0] == '\0' || arg2[0] == '\0' )
     {
-	send_to_char( "Steal what from whom?\n\r", ch );
+	send_to_char( "Steal what from whom?\r\n", ch );
 	return;
     }
 
     if ( ( victim = get_char_room( ch, arg2 ) ) == NULL )
     {
-	send_to_char( "They aren't here.\n\r", ch );
+	send_to_char( "They aren't here.\r\n", ch );
 	return;
     }
 
     if ( victim == ch )
     {
-	send_to_char( "That's pointless.\n\r", ch );
+	send_to_char( "That's pointless.\r\n", ch );
 	return;
     }
 
@@ -1533,9 +1524,9 @@ void do_steal( CHAR_DATA *ch, char *argument )
 	/*
 	 * Failure.
 	 */
-	send_to_char( "Oops.\n\r", ch );
-	act( "$n tried to steal from you.\n\r", ch, NULL, victim, TO_VICT    );
-	act( "$n tried to steal from $N.\n\r",  ch, NULL, victim, TO_NOTVICT );
+	send_to_char( "Oops.\r\n", ch );
+	act( "$n tried to steal from you.\r\n", ch, NULL, victim, TO_VICT    );
+	act( "$n tried to steal from $N.\r\n",  ch, NULL, victim, TO_NOTVICT );
 	sprintf( buf, "%s is a bloody thief!", ch->name );
 	do_shout( victim, buf );
 	if ( !IS_NPC(ch) )
@@ -1550,7 +1541,7 @@ void do_steal( CHAR_DATA *ch, char *argument )
 		if ( !IS_SET(ch->act, PLR_THIEF) )
 		{
 		    SET_BIT(ch->act, PLR_THIEF);
-		    send_to_char( "*** You are now a THIEF!! ***\n\r", ch );
+		    send_to_char( "*** You are now a THIEF!! ***\r\n", ch );
 		    save_char_obj( ch );
 		}
 	    }
@@ -1568,20 +1559,20 @@ void do_steal( CHAR_DATA *ch, char *argument )
 	amount = victim->gold * number_range(1, 10) / 100;
 	if ( amount <= 0 )
 	{
-	    send_to_char( "You couldn't get any gold.\n\r", ch );
+	    send_to_char( "You couldn't get any gold.\r\n", ch );
 	    return;
 	}
 
 	ch->gold     += amount;
 	victim->gold -= amount;
-	sprintf( buf, "Bingo!  You got %d gold coins.\n\r", amount );
+	sprintf( buf, "Bingo!  You got %d gold coins.\r\n", amount );
 	send_to_char( buf, ch );
 	return;
     }
 
     if ( ( obj = get_obj_carry( victim, arg1 ) ) == NULL )
     {
-	send_to_char( "You can't find it.\n\r", ch );
+	send_to_char( "You can't find it.\r\n", ch );
 	return;
     }
 	
@@ -1589,25 +1580,25 @@ void do_steal( CHAR_DATA *ch, char *argument )
     ||   IS_SET(obj->extra_flags, ITEM_INVENTORY)
     ||   obj->level > ch->level )
     {
-	send_to_char( "You can't pry it away.\n\r", ch );
+	send_to_char( "You can't pry it away.\r\n", ch );
 	return;
     }
 
     if ( ch->carry_number + get_obj_number( obj ) > can_carry_n( ch ) )
     {
-	send_to_char( "You have your hands full.\n\r", ch );
+	send_to_char( "You have your hands full.\r\n", ch );
 	return;
     }
 
     if ( ch->carry_weight + get_obj_weight( obj ) > can_carry_w( ch ) )
     {
-	send_to_char( "You can't carry that much weight.\n\r", ch );
+	send_to_char( "You can't carry that much weight.\r\n", ch );
 	return;
     }
 
     obj_from_char( obj );
     obj_to_char( obj, ch );
-    send_to_char( "Ok.\n\r", ch );
+    send_to_char( "Ok.\r\n", ch );
     return;
 }
 
@@ -1631,7 +1622,7 @@ CHAR_DATA *find_keeper( CHAR_DATA *ch )
 
     if ( pShop == NULL )
     {
-	send_to_char( "You can't do that here.\n\r", ch );
+	send_to_char( "You can't do that here.\r\n", ch );
 	return NULL;
     }
 
@@ -1641,7 +1632,7 @@ CHAR_DATA *find_keeper( CHAR_DATA *ch )
     if ( !IS_NPC(ch) && IS_SET(ch->act, PLR_KILLER) )
     {
 	do_say( keeper, "Killers are not welcome!" );
-	sprintf( buf, "%s the KILLER is over here!\n\r", ch->name );
+	sprintf( buf, "%s the KILLER is over here!\r\n", ch->name );
 	do_shout( keeper, buf );
 	return NULL;
     }
@@ -1649,7 +1640,7 @@ CHAR_DATA *find_keeper( CHAR_DATA *ch )
     if ( !IS_NPC(ch) && IS_SET(ch->act, PLR_THIEF) )
     {
 	do_say( keeper, "Thieves are not welcome!" );
-	sprintf( buf, "%s the THIEF is over here!\n\r", ch->name );
+	sprintf( buf, "%s the THIEF is over here!\r\n", ch->name );
 	do_shout( keeper, buf );
 	return NULL;
     }
@@ -1713,7 +1704,10 @@ int get_cost( CHAR_DATA *keeper, OBJ_DATA *obj, bool fBuy )
 	for ( obj2 = keeper->carrying; obj2; obj2 = obj2->next_content )
 	{
 	    if ( obj->pIndexData == obj2->pIndexData )
-		cost /= 2;
+	    {
+		cost = 0;
+		break;
+	    }
 	}
     }
 
@@ -1733,7 +1727,7 @@ void do_buy( CHAR_DATA *ch, char *argument )
 
     if ( arg[0] == '\0' )
     {
-	send_to_char( "Buy what?\n\r", ch );
+	send_to_char( "Buy what?\r\n", ch );
 	return;
     }
 
@@ -1751,7 +1745,7 @@ void do_buy( CHAR_DATA *ch, char *argument )
 	if ( pRoomIndexNext == NULL )
 	{
 	    bug( "Do_buy: bad pet shop at vnum %d.", ch->in_room->vnum );
-	    send_to_char( "Sorry, you can't buy that here.\n\r", ch );
+	    send_to_char( "Sorry, you can't buy that here.\r\n", ch );
 	    return;
 	}
 
@@ -1762,25 +1756,25 @@ void do_buy( CHAR_DATA *ch, char *argument )
 
 	if ( pet == NULL || !IS_SET(pet->act, ACT_PET) )
 	{
-	    send_to_char( "Sorry, you can't buy that here.\n\r", ch );
+	    send_to_char( "Sorry, you can't buy that here.\r\n", ch );
 	    return;
 	}
 
 	if ( IS_SET(ch->act, PLR_BOUGHT_PET) )
 	{
-	    send_to_char( "You already bought one pet this level.\n\r", ch );
+	    send_to_char( "You already bought one pet this level.\r\n", ch );
 	    return;
 	}
 
 	if ( ch->gold < 10 * pet->level * pet->level )
 	{
-	    send_to_char( "You can't afford it.\n\r", ch );
+	    send_to_char( "You can't afford it.\r\n", ch );
 	    return;
 	}
 
 	if ( ch->level < pet->level )
 	{
-	    send_to_char( "You're not ready for this pet.\n\r", ch );
+	    send_to_char( "You're not ready for this pet.\r\n", ch );
 	    return;
 	}
 
@@ -1798,14 +1792,14 @@ void do_buy( CHAR_DATA *ch, char *argument )
 	    pet->name = str_dup( buf );
 	}
 
-	sprintf( buf, "%sA neck tag says 'I belong to %s'.\n\r",
+	sprintf( buf, "%sA neck tag says 'I belong to %s'.\r\n",
 	    pet->description, ch->name );
 	free_string( pet->description );
 	pet->description = str_dup( buf );
 
 	char_to_room( pet, ch->in_room );
 	add_follower( pet, ch );
-	send_to_char( "Enjoy your pet.\n\r", ch );
+	send_to_char( "Enjoy your pet.\r\n", ch );
 	act( "$n bought $N as a pet.", ch, NULL, pet, TO_ROOM );
 	return;
     }
@@ -1847,13 +1841,13 @@ void do_buy( CHAR_DATA *ch, char *argument )
 
 	if ( ch->carry_number + get_obj_number( obj ) > can_carry_n( ch ) )
 	{
-	    send_to_char( "You can't carry that many items.\n\r", ch );
+	    send_to_char( "You can't carry that many items.\r\n", ch );
 	    return;
 	}
 
 	if ( ch->carry_weight + get_obj_weight( obj ) > can_carry_w( ch ) )
 	{
-	    send_to_char( "You can't carry that much weight.\n\r", ch );
+	    send_to_char( "You can't carry that much weight.\r\n", ch );
 	    return;
 	}
 
@@ -1888,7 +1882,7 @@ void do_list( CHAR_DATA *ch, char *argument )
 	if ( pRoomIndexNext == NULL )
 	{
 	    bug( "Do_list: bad pet shop at vnum %d.", ch->in_room->vnum );
-	    send_to_char( "You can't do that here.\n\r", ch );
+	    send_to_char( "You can't do that here.\r\n", ch );
 	    return;
 	}
 
@@ -1900,9 +1894,9 @@ void do_list( CHAR_DATA *ch, char *argument )
 		if ( !found )
 		{
 		    found = TRUE;
-		    send_to_char( "Pets for sale:\n\r", ch );
+		    send_to_char( "Pets for sale:\r\n", ch );
 		}
-		sprintf( buf, "[%2d] %8d - %s\n\r",
+		sprintf( buf, "[%2d] %8d - %s\r\n",
 		    pet->level,
 		    10 * pet->level * pet->level,
 		    pet->short_descr );
@@ -1910,15 +1904,18 @@ void do_list( CHAR_DATA *ch, char *argument )
 	    }
 	}
 	if ( !found )
-	    send_to_char( "Sorry, we're out of pets right now.\n\r", ch );
+	    send_to_char( "Sorry, we're out of pets right now.\r\n", ch );
 	return;
     }
     else
     {
+	char arg[MAX_INPUT_LENGTH];
 	CHAR_DATA *keeper;
 	OBJ_DATA *obj;
 	int cost;
 	bool found;
+
+	one_argument( argument, arg );
 
 	if ( ( keeper = find_keeper( ch ) ) == NULL )
 	    return;
@@ -1928,22 +1925,28 @@ void do_list( CHAR_DATA *ch, char *argument )
 	{
 	    if ( obj->wear_loc == WEAR_NONE
 	    &&   can_see_obj( ch, obj )
-	    &&   ( cost = get_cost( keeper, obj, TRUE ) ) > 0 )
+	    && ( cost = get_cost( keeper, obj, TRUE ) ) > 0
+	    && ( arg[0] == '\0' || is_name( arg, obj->name ) ) )
 	    {
 		if ( !found )
 		{
 		    found = TRUE;
-		    send_to_char( "[Lv Price] Item\n\r", ch );
+		    send_to_char( "[Lv Price] Item\r\n", ch );
 		}
 
-		sprintf( buf, "[%2d %5d] %s.\n\r",
+		sprintf( buf, "[%2d %5d] %s.\r\n",
 		    obj->level, cost, capitalize( obj->short_descr ) );
 		send_to_char( buf, ch );
 	    }
 	}
 
 	if ( !found )
-	    send_to_char( "You can't buy anything here.\n\r", ch );
+	{
+	    if ( arg[0] == '\0' )
+		send_to_char( "You can't buy anything here.\r\n", ch );
+	    else
+		send_to_char( "You can't buy that here.\r\n", ch );
+	}
 	return;
     }
 }
@@ -1962,7 +1965,7 @@ void do_sell( CHAR_DATA *ch, char *argument )
 
     if ( arg[0] == '\0' )
     {
-	send_to_char( "Sell what?\n\r", ch );
+	send_to_char( "Sell what?\r\n", ch );
 	return;
     }
 
@@ -1979,7 +1982,7 @@ void do_sell( CHAR_DATA *ch, char *argument )
 
     if ( !can_drop_obj( ch, obj ) )
     {
-	send_to_char( "You can't let go of it.\n\r", ch );
+	send_to_char( "You can't let go of it.\r\n", ch );
 	return;
     }
 
@@ -2025,7 +2028,7 @@ void do_value( CHAR_DATA *ch, char *argument )
 
     if ( arg[0] == '\0' )
     {
-	send_to_char( "Value what?\n\r", ch );
+	send_to_char( "Value what?\r\n", ch );
 	return;
     }
 
@@ -2042,7 +2045,7 @@ void do_value( CHAR_DATA *ch, char *argument )
 
     if ( !can_drop_obj( ch, obj ) )
     {
-	send_to_char( "You can't let go of it.\n\r", ch );
+	send_to_char( "You can't let go of it.\r\n", ch );
 	return;
     }
 

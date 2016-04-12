@@ -57,8 +57,6 @@ typedef struct	shop_data		SHOP_DATA;
 typedef struct	time_info_data		TIME_INFO_DATA;
 typedef struct	weather_data		WEATHER_DATA;
 
-
-
 /*
  * Function types.
  */
@@ -654,27 +652,51 @@ struct	kill_data
 #define PLR_IS_NPC		      1		/* Don't EVER set.	*/
 #define PLR_BOUGHT_PET		      2
 
-#define PLR_AUCTION		      4
 #define PLR_AUTOEXIT		      8
 #define PLR_AUTOLOOT		     16
 #define PLR_AUTOSAC                  32
 #define PLR_BLANK		     64
 #define PLR_BRIEF		    128
-#define PLR_CHAT		    256
 #define PLR_COMBINE		    512
 #define PLR_PROMPT		   1024
+#define PLR_TELNET_GA		   2048
 
 #define PLR_HOLYLIGHT		   4096
 #define PLR_WIZINVIS		   8192
 
+#define	PLR_SILENCE		  32768
 #define PLR_NO_EMOTE		  65536
-#define PLR_NO_SHOUT		 131072
 #define PLR_NO_TELL		 262144
 #define PLR_LOG			 524288
 #define PLR_DENY		1048576
 #define PLR_FREEZE		2097152
 #define PLR_THIEF		4194304
 #define PLR_KILLER		8388608
+
+
+
+/*
+ * Obsolete bits.
+ */
+#if 0
+#define PLR_AUCTION		      4	/* Obsolete	*/
+#define PLR_CHAT		    256	/* Obsolete	*/
+#define PLR_NO_SHOUT		 131072	/* Obsolete	*/
+#endif
+
+
+
+/*
+ * Channel bits.
+ */
+#define	CHANNEL_AUCTION		      1
+#define	CHANNEL_CHAT		      2
+#define	CHANNEL_HACKER		      4
+#define	CHANNEL_IMMTALK		      8
+#define	CHANNEL_MUSIC		     16
+#define	CHANNEL_QUESTION	     32
+#define	CHANNEL_SHOUT		     64
+#define	CHANNEL_YELL		    128
 
 
 
@@ -707,7 +729,7 @@ struct	mob_index_data
     short		damnodice;		/* Unused */
     short		damsizedice;		/* Unused */
     short		damplus;		/* Unused */
-    short		gold;			/* Unused */
+    int			gold;			/* Unused */
 };
 
 
@@ -766,6 +788,7 @@ struct	char_data
     short		damroll;
     short		armor;
     short		wimpy;
+    short		deaf;
 };
 
 
@@ -840,8 +863,8 @@ struct	obj_index_data
     short		wear_flags;
     short		count;
     short		weight;
-    short		cost;			/* Unused */
-    short		value	[4];
+    int			cost;			/* Unused */
+    int			value	[4];
 };
 
 
@@ -868,10 +891,10 @@ struct	obj_data
     short		wear_flags;
     short		wear_loc;
     short		weight;
-    short		cost;
+    int			cost;
     short		level;
     short		timer;
-    short		value	[4];
+    int			value	[4];
 };
 
 
@@ -881,11 +904,8 @@ struct	obj_data
  */
 struct	exit_data
 {
-    union
-    {
-	ROOM_INDEX_DATA *	to_room;
-	short			vnum;
-    } u1;
+    ROOM_INDEX_DATA *	to_room;
+    short		vnum;
     short		exit_info;
     short		key;
     char *		keyword;
@@ -1049,9 +1069,6 @@ extern	short	gsn_sleep;
 #define IS_HERO(ch)		(get_trust(ch) >= LEVEL_HERO)
 #define IS_AFFECTED(ch, sn)	(IS_SET((ch)->affected_by, (sn)))
 
-#define GET_AGE(ch)		((int) (17 + ((ch)->played \
-				    + current_time - (ch)->logon )/7200))
-
 #define IS_GOOD(ch)		(ch->alignment >= 350)
 #define IS_EVIL(ch)		(ch->alignment <= -350)
 #define IS_NEUTRAL(ch)		(!IS_GOOD(ch) && !IS_EVIL(ch))
@@ -1162,7 +1179,7 @@ extern		OBJ_DATA	  *	obj_free;
 extern		PC_DATA		  *	pcdata_free;
 
 extern		char			bug_buf		[];
-extern		long			current_time;
+extern		time_t			current_time;
 extern		bool			fLogAll;
 extern		FILE *			fpReserve;
 extern		KILL_DATA		kill_table	[];
@@ -1178,6 +1195,7 @@ extern		WEATHER_DATA		weather_info;
  */
 DECLARE_DO_FUN(	do_advance	);
 DECLARE_DO_FUN(	do_allow	);
+DECLARE_DO_FUN(	do_answer	);
 DECLARE_DO_FUN(	do_areas	);
 DECLARE_DO_FUN(	do_at		);
 DECLARE_DO_FUN(	do_auction	);
@@ -1189,11 +1207,12 @@ DECLARE_DO_FUN(	do_brandish	);
 DECLARE_DO_FUN(	do_bug		);
 DECLARE_DO_FUN(	do_buy		);
 DECLARE_DO_FUN(	do_cast		);
+DECLARE_DO_FUN(	do_channels	);
 DECLARE_DO_FUN(	do_chat		);
 DECLARE_DO_FUN(	do_close	);
 DECLARE_DO_FUN(	do_commands	);
 DECLARE_DO_FUN(	do_compare	);
-DECLARE_DO_FUN(	do_configure	);
+DECLARE_DO_FUN(	do_config	);
 DECLARE_DO_FUN(	do_consider	);
 DECLARE_DO_FUN(	do_credits	);
 DECLARE_DO_FUN(	do_deny		);
@@ -1241,9 +1260,9 @@ DECLARE_DO_FUN(	do_mstat	);
 DECLARE_DO_FUN(	do_mwhere	);
 DECLARE_DO_FUN(	do_murde	);
 DECLARE_DO_FUN(	do_murder	);
+DECLARE_DO_FUN(	do_music	);
 DECLARE_DO_FUN(	do_noemote	);
 DECLARE_DO_FUN(	do_north	);
-DECLARE_DO_FUN(	do_noshout	);
 DECLARE_DO_FUN(	do_note		);
 DECLARE_DO_FUN(	do_notell	);
 DECLARE_DO_FUN(	do_ofind	);
@@ -1261,6 +1280,7 @@ DECLARE_DO_FUN(	do_practice	);
 DECLARE_DO_FUN(	do_purge	);
 DECLARE_DO_FUN(	do_put		);
 DECLARE_DO_FUN(	do_quaff	);
+DECLARE_DO_FUN(	do_question	);
 DECLARE_DO_FUN(	do_qui		);
 DECLARE_DO_FUN(	do_quit		);
 DECLARE_DO_FUN(	do_reboo	);
@@ -1286,12 +1306,14 @@ DECLARE_DO_FUN(	do_sell		);
 DECLARE_DO_FUN(	do_shout	);
 DECLARE_DO_FUN(	do_shutdow	);
 DECLARE_DO_FUN(	do_shutdown	);
+DECLARE_DO_FUN(	do_silence	);
 DECLARE_DO_FUN(	do_sla		);
 DECLARE_DO_FUN(	do_slay		);
 DECLARE_DO_FUN(	do_sleep	);
 DECLARE_DO_FUN(	do_slookup	);
 DECLARE_DO_FUN(	do_sneak	);
 DECLARE_DO_FUN(	do_snoop	);
+DECLARE_DO_FUN(	do_socials	);
 DECLARE_DO_FUN(	do_south	);
 DECLARE_DO_FUN(	do_split	);
 DECLARE_DO_FUN(	do_sset		);
@@ -1369,9 +1391,11 @@ DECLARE_SPELL_FUN(	spell_fireball		);
 DECLARE_SPELL_FUN(	spell_flamestrike	);
 DECLARE_SPELL_FUN(	spell_fly		);
 DECLARE_SPELL_FUN(	spell_gate		);
+DECLARE_SPELL_FUN(	spell_general_purpose	);
 DECLARE_SPELL_FUN(	spell_giant_strength	);
 DECLARE_SPELL_FUN(	spell_harm		);
 DECLARE_SPELL_FUN(	spell_heal		);
+DECLARE_SPELL_FUN(	spell_high_explosive	);
 DECLARE_SPELL_FUN(	spell_identify		);
 DECLARE_SPELL_FUN(	spell_infravision	);
 DECLARE_SPELL_FUN(	spell_invis		);
@@ -1400,8 +1424,6 @@ DECLARE_SPELL_FUN(	spell_fire_breath	);
 DECLARE_SPELL_FUN(	spell_frost_breath	);
 DECLARE_SPELL_FUN(	spell_gas_breath	);
 DECLARE_SPELL_FUN(	spell_lightning_breath	);
-
-
 
 char *	crypt		args( ( const char *key, const char *salt ) );
 
@@ -1463,7 +1485,7 @@ void	write_to_buffer	args( ( DESCRIPTOR_DATA *d, const char *txt,
 			    int length ) );
 void	send_to_char	args( ( const char *txt, CHAR_DATA *ch ) );
 void	act		args( ( const char *format, CHAR_DATA *ch,
-			    OBJ_DATA *obj, const void *vo, int type ) );
+			    const void *arg1, const void *arg2, int type ) );
 
 /* db.c */
 void	boot_db		args( ( void ) );
@@ -1491,6 +1513,7 @@ int	number_range	args( ( int from, int to ) );
 int	number_percent	args( ( void ) );
 int	number_door	args( ( void ) );
 int	number_bits	args( ( int width ) );
+int	number_mm	args( ( void ) );
 int	dice		args( ( int number, int size ) );
 int	interpolate	args( ( int level, int value_00, int value_32 ) );
 void	smash_tilde	args( ( char *str ) );
@@ -1514,6 +1537,7 @@ void	stop_fighting	args( ( CHAR_DATA *ch, bool fBoth ) );
 
 /* handler.c */
 int	get_trust	args( ( CHAR_DATA *ch ) );
+int	get_age		args( ( CHAR_DATA *ch ) );
 int	get_curr_str	args( ( CHAR_DATA *ch ) );
 int	get_curr_int	args( ( CHAR_DATA *ch ) );
 int	get_curr_wis	args( ( CHAR_DATA *ch ) );
@@ -1573,7 +1597,7 @@ char *	one_argument	args( ( char *argument, char *arg_first ) );
 /* magic.c */
 int	skill_lookup	args( ( const char *name ) );
 int	slot_lookup	args( ( int slot ) );
-bool	saves_spell	args( ( CHAR_DATA *ch, CHAR_DATA *victim ) );
+bool	saves_spell	args( ( int level, CHAR_DATA *victim ) );
 void	obj_cast_spell	args( ( int sn, int level, CHAR_DATA *ch,
 				    CHAR_DATA *victim, OBJ_DATA *obj ) );
 
