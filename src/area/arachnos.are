@@ -1,4 +1,4 @@
-#AREA	{ 5 20} Anon    Arachnos~
+#AREA	{ 5 20} Mahatma Arachnos~
 
 
 
@@ -924,7 +924,7 @@ S
 A Link in the Ethereal Web~
      This is another link in the ethereal web.  Various creatures
 seem to get caught (or hypnotized) by its sticky strands.  To
-the north you sense the heavy breathing of a fiery animal.
+the west you sense the heavy breathing of a fiery animal.
 ~
 63 0 2
 D0
@@ -1187,6 +1187,8 @@ S
 
 
 #RESETS
+* Arachnos originally made by Mahatma (Mr. Melo)
+*
 M 0 6319 1 6134  		Queen Spider
 G 1 6308 10        		  10,000 gold
 M 0 6318 3 6134  		Poisonous spider

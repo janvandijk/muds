@@ -1,9 +1,8 @@
-Merc Release 2.1
-Sunday 01 August 1993
+Merc Release 2.2
+Wednesday 24 November 1993
 
-Furey	mec@shell.portal.com
-Hatchet	hatchet@uclink.berkeley.edu
-Kahn	michael@uclink.berkeley.edu
+Kahn
+Hatchet
 
 
 
@@ -17,26 +16,17 @@ and we'll fix it in the next release.
 
 === Contribution Policy
 
-We welcome contributions to Merc.
+We welcome contributions to the Merc Mailing List at merc@kpc.com.
 
-You can send us areas, spells, skills, bug reports, bug fixes, code, ideas,
-comments on our documentation, interesting stories, or anything else, to any of
-our addresses above.
+You can send the mailing list areas, spells, skills, bug reports, bug fixes,
+code, ideas, comments on our documentation, interesting stories, or anything
+else.
 
-We particularly would like to get copies of 'bugs.txt', 'ideas.txt', and
-'typos.txt' from any site running a Merc mud.
-
-If we use your contribution, we will credit you for it in this file and in the
-source files.  The 'areas' command lists authors within the game, and 'help
-merc' credits major contributions as well.
 
 Merc is devoted to open release.  Once we accept a contribution, it will
 become available to the entire mud community.  Also, once we accept a
 contribution and integrate it into Merc, we will not remove it later if you
 change your mind.
-
-We usually rework code contributions into our own style, just as we've reworked
-100% of our released code into a consistent style.
 
 You are welcome to use any element of Merc in your own mud, as long as you
 follow the terms in 'license.doc' and 'license.txt'.  If you take things from
@@ -68,6 +58,20 @@ and grape.ecs.clarkson.edu.
 
 === New Area Contributions
 
+--- Merc 2.2
+
+Casret contributed Ultima.are.
+
+Mahatma contributed Haven.are.
+
+Andersen contributed Astral.are.
+
+--- Merc 2.1
+
+Glop wrote Mega1.are.
+
+--- Merc 2.0
+
 Vamplestat reworked and extended Miden'nir.
 
 Nirrad contributed the Fire Newt area.
@@ -90,29 +94,23 @@ Village, Dwarven Day Care Center, Old Marsh, Draconia, and Olympus.
 John Brothers of Silly Mud gave us permission to use Silly areas.  Although we
 haven't taken any yet, we appreciate having 2 megabytes of areas to draw on!
 
-Glop contributed Mega-City One (from the Judge Dredd comic books).
-
 
 
 === Code and Idea Contributions
 
-Zrin contributed an 'auto-exit' function.
+N'atas-Ha and Blackstar contributed on the pager.
 
-Alander contributed the 'stats over 18 from magic items', as well as the
-new 'who', 'visible', 'commands' commands and some shop code.  We first
-saw a donation pit on Alander's 'Rivers of Mud'.
+N'atas-Ha sent us the versatile MOBPrograms.  See MOBProgram.txt.
 
-Grodyn contributed the 'configure' command.
+Morgenes of Aldara Mud contributed the player settable prompt.
 
-Diavolo contributed the gruesome 'death_cry' function.
+Alander sent in an addition to the note system.
+
+John Daub is porting MERC 2.2 to the MacIntosh sometime soon.  Keep an eye
+out on posts.
 
 Many other imps and players gave us hundreds of suggestions, some of which are
 now realized.  Thanks to you all!
-
-Aod and Cauchy of Generic gave us permission to use Generic code.
-
-John Brothers of Silly gave us permission to use Silly code.  Although we
-haven't used any Silly code yet, we appreciate having it available.
 
 Onethumb, Baka, and Penn of the Drool Co. sent us a long list of ideas,
 which we've included here as 'drool.txt'.
@@ -120,6 +118,20 @@ which we've included here as 'drool.txt'.
 
 
 === Porting Contributions
+
+--- MERC 2.2
+
+	With the additions of MOBPrograms, MERC 2.2 does not have as many
+ports available compared to MERC 2.0.  Compile and fix to your system if
+necessary.
+
+sgromoll@ic.sunyeb.edu contributed the Interactive and Solaris SYSV ports
+for our comm.c code.  Nothing was done in regards to MOBPrograms with
+these ports.
+
+Loki ported MERC 2.2 in its entirety for Linux.
+
+--- MERC 2.0
 
 Hind and Quin (not the original Quinn of Diku, another Quin) helped on the
 Ultrix port.
@@ -136,15 +148,28 @@ one of the more painful machines we've encounterd.
 
 Alan Drew contributed the Mips Risc/OS port.
 
-Trienne contributed the makefile changes for Solaris 2.1.
+Torsten Spindler contributed the makefile changes for Solaris 2.1.
 
-Oleg contributed the Macintosh port.
-
-Jdpierce contributed the Interactive Systems changes.
+Oleg Etiffin contributed the Macintosh port.
 
 
 
 === Bug Reports and Bug Fixes
+
+--- MERC 2.2
+
+Alander sent in the fix for the vicious bind socket problem.
+
+Da Pub pointed out the switch and purge problems.
+
+Ikee, Chaos, Kraze, Maxx, Thoth, Zolstead, Zavod, VampLestat, Cyric,
+Kelvin, and Jackal extensively playtested prerelease MERC 2.2 and
+provided constructive input.
+
+Many others have sent us tweeks which have been put in.
+
+
+--- MERC 2.0
 
 Mud Lite, Vego Mud, Final Mud, Rivers of Mud, Ruhr Mud, Chase Mud, and
 Mystic Realms sent us their 'bugs.txt', 'ideas.txt', and 'typos.txt' files.
@@ -169,15 +194,3 @@ Morgenes found and fixed the nasty 'aligned object drop corruption'
 in equip_char.
 
 Rivit play-tested the post-2.0-Beta version.
-
-Alander of Rivers of Mud has published *many* bug fixes and changes for
-2.0 on the Merc list, which we've picked up.
-
-Tony Chamberlain published a correct, recursive implementation of
-get_obj_number.
-
-Tuan Doan pointed out a bug in 'check_parry' and 'check_dodge',
-as well as some other rough edges.
-
-Alex found the right fix for the act() problems with channels,
-the 'rstat' problem with room exits, and some other bugs.

@@ -261,6 +261,8 @@ You see a sub issue dagger here.~
 5 64 1|8192
 0 2 3 11
 5 0 5
+A
+17 -5
 E
 dagger~
 You see a dagger of great but cheap craftsmanship.  Imprinted on the side is:
@@ -1358,7 +1360,7 @@ You see a dark murky dungeon below.
 grate~
 1 -1 3748
 E
-sign~
+sign big~
 Those with high bravery or low senses of cautiousness might wish to go below
 to the Dungeon.  However, know that there are aggressive monsters down there,
 and there is no quick escape back out of here when you are in the dungeon.

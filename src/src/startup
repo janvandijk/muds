@@ -3,7 +3,7 @@
 # With additions from Tony.
 
 # Set the port number.
-set port = 4000
+set port = 9500
 if ( "$1" != "" ) set port="$1"
 
 # Change to area directory.
@@ -11,7 +11,6 @@ cd ../area
 
 # Set limits.
 nohup
-nice
 limit stack 1024k
 if ( -e shutdown.txt ) rm -f shutdown.txt
 
@@ -25,13 +24,18 @@ while ( 1 )
 	@ index++
     end
 
-    # Run merc.
-    ../src/merc $port >&! $logfile
+    # Record initial charges
+    charges >> $logfile
 
-    # Delete this out if no adb.
-    if ( -e core ) then
-	    echo '$c' | adb ../src/merc
+    # Run merc.
+    # Check if already running
+    set matches = `netstat -a | grep ":$port " | grep -c LISTEN`
+    if ( $matches >= 1 ) then
+        # Already running
+        echo MUD Already running.
+        exit 0
     endif
+    ../src/merc $port >&! $logfile
 
     # Restart, giving old connections a chance to die.
     if ( -e shutdown.txt ) then

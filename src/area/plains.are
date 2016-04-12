@@ -645,6 +645,11 @@ The plains extend far to the west.
 ~
 ~
 0 -1 318
+D4
+You see a strange moongate here!
+~
+moongate~
+1 -1 2400
 E
 sign~
 The sign says:

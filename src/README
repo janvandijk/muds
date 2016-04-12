@@ -1,10 +1,8 @@
-Merc Release 2.1
-Sunday 01 August 1993
+Merc Release 2.2
+Wednesday 24 November 1993
 
-Furey	mec@shell.portal.com
-Hatchet	hatchet@uclink.berkeley.edu
-Kahn	michael@uclink.berkeley.edu
-
+Kahn
+Hatchet
 
 
 === Introduction
@@ -15,7 +13,7 @@ and you'll be in there too!
 
 Enjoy our mud.  May your visit here be ... Mercenary.
 
-This is the 2.1 production release of Merc.
+This is the 2.2 production release of Merc.
 
 
 
@@ -51,15 +49,17 @@ credit for their work.
 First, group with your highest level Unix guru, and have him or her tank.
 Merc is easier to install than other muds, but every site is different.
 
-(1) Get the release Merc_21.tar.gz from one of these fine anonymous ftp
-    sites:
+(1) Get the release Merc_22.tar.gz from one of these fine
+    anonymous ftp sites:
 
-	ftp.tcp.com (formerly ferkel.ucsb.edu)
+	ferkel.ucsb.edu (most files moved to ftp.tcp.com)
 	ftp.math.okstate.edu
-    
-(2) Unpack the release:
+	marble.bu.edu
+	zen.btc.uwe.ac.uk
 
-	gzip -d -c Merc_21.tar.gz | tar xvf -
+(2) Unpack the release.
+
+	gzip -d Merc_22.tar.gz | tar xvf -
 
 (3) Go into the 'src' directory.  Choose the Makefile for your operating
     system and copy it into 'Makefile':
@@ -67,13 +67,11 @@ Merc is easier to install than other muds, but every site is different.
 	Makefile	Most machines with 'gcc'
 	Makefile.aix	AIX
 	Makefile.hp	Hp/UX
-	Makefile.isc	Interactive Systems Unix
 	Makefile.mip	Mips Risc/OS
 	Makefile.nex	NeXT
 	Makefile.sol	SunSoft Solaris 2.1
 	Makefile.tra	Traditional C (see 'trad.txt')
 
-    Merc.exe, a pre-built MsDos executable, is included in the release.
     See 'port.txt' for more information on porting, including the
     single-user MsDos and Macintosh versions.
 
@@ -86,7 +84,7 @@ Merc is easier to install than other muds, but every site is different.
 
     If you encounter errors with 'make', send us your 'make.out' file:
 
-	mail -s make.out mec@shell.portal.com < make.out
+	mail -s make.out merc@garnet.berkeley.edu < make.out
 
     Also we'll need to know what kind of hardware, operating system,
     and C compiler you have.
@@ -123,7 +121,7 @@ keeping them up-to-date since.
 Also check the 'wizhelp' command and read the 'help' descriptions for the
 individual immortal commands.
 
-There is a mailing list at 'merc@kpc.com'.  Send mail to 'merc-request@kpc.com'
+We have a mailing list, at 'merc@kpc.com'.  Send mail to 'merc-request@kpc.com'
 to join the list.
 
 You can write to us directly at the e-mail addresses at the top of this
@@ -145,12 +143,18 @@ since the release.
 
 === Future Plans
 
-We have finished core development of Merc.  There will never be a Merc 3.
-It's your mud now -- the end of our development is the beginning of yours.
+Merc 2.2 is THE last release of MERC Industries.  MERC Industries had
+officially disolved October 13, 1993.  MERC 2.2 is a compilation of
+various bug and typo fixes along with a few new worlds.  MERC 2.2 also has
+a variable line pager, MOBPrograms, and player settable prompt.
 
-We will continue making maintenance releases to fix bugs, add new platform
-support, and fold in contributed code and areas.  The next release of Merc,
-version 2.2, will be on 05 Sep 1993.
+All future correspondence should be forwarded to the merc mailing list at
+merc@kpc.com.  The end of our development is the beginning of yours.
 
-Originally released 8/1/1993.
+Enjoy,
+Kahn
+Hatchet
+MERC Industries  11/24/93
+
+Originally released 11/24/1993.
 Updated for GCC4 compatibility 2/22/2006 by Samson.

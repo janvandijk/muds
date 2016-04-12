@@ -809,21 +809,21 @@ S
 
 #RESETS
 M 0 8900 1 8905		the Hierophant
-E 1 8910 99 5		wields a staff
-E 1 8911 99 16		wears a robe
+E 1 8910 99 15		wields a staff
+E 1 8911 99 5		wears a robe
 G 1 8919 99		pink herbs
 G 1 8918 99		orange herbs
 M 0 8901 1 8901		the female Hierophant
-E 1 8910 99 5		wields a staff
-E 1 8911 99 16		wears a robe
+E 1 8910 99 16		wields a staff
+E 1 8911 99 5		wears a robe
 G 1 8913 99		blue herbs
 G 1 8915 99		black herbs
 M 0 8902 1 8902		the elder druid
-E 1 8910 99 5		wields a staff
+E 1 8910 99 16		wields a staff
 G 1 8914 99		purple herbs
 G 1 8916 99		grey herbs
 M 0 8903 1 8904		the elder druidess
-E 1 8910 99 5		wields a staff
+E 1 8910 99 16		wields a staff
 G 1 8919 99		pink herbs
 G 1 8917 99		red herbs
 M 0 8904 2 8905		doe

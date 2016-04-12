@@ -4637,24 +4637,26 @@ D 1 7280 4 1
 *
 * -- Sewer Maze
 *
-* The lair
-D 0 7201 3 2     Lock stone door
-D 0 7201 2 1     Close wood door
-D 0 7202 0 1     Close wood door
-D 0 7208 0 1     Close door
+* The lair - Thanks Andersen of Marble Mud for bug fixing
+D 0 7200 1 2    Close door
+D 0 7201 3 2    Lock stone door
+D 0 7201 2 1    Close wood door
+D 0 7204 2 1	Close door
+D 0 7202 0 1    Close wood door
+D 0 7208 0 1    Close door
 *
-M 0 7200 1 7201  Load master mindflayer
-E 1 7200 4 16      Equip master with devil rod
-E 1 7203 4 3     Equip master with cloak 
-G 1 7205 7200    Give key to master
-O 0 7204 6 7200  Potion into treasury
-M 0 7201 1 7203  Load senior mindflayer
-E 1 7201 4 16 Equip with large mace
-M 0 7202 2 7205  Junior mindflayer
-E 1 7202 8 16 Equip with large mace
-M 0 7202 2 7207  Load junior mindflayer
-E 1 7202 8 16 Equip with small mace
-O 0 7206 4 7206  Load Skull
+M 0 7200 1 7201 Load master mindflayer
+E 1 7200 4 16	Equip master with devil rod
+E 1 7203 4 3    Equip master with cloak 
+G 1 7205 7200   Give key to master
+O 0 7204 6 7200 Potion into treasury
+M 0 7201 1 7203 Load senior mindflayer
+E 1 7201 4 16 	Equip with large mace
+M 0 7202 2 7205 Junior mindflayer
+E 1 7202 8 16 	Equip with large mace
+M 0 7202 2 7207 Load junior mindflayer
+E 1 7202 8 16 	Equip with small mace
+O 0 7206 4 7206 Load Skull
 * The sewermaze
 M 0 7203 10 7214 Load wererat
 E 1 7211 16 16 Equip with short sword

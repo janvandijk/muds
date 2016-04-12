@@ -474,7 +474,7 @@ silvery cloak~
 a silvery cloak~
 A silvery cloak lies here.~
 ~
-9 64|1024 1025
+9 1|64 1025
 7 0 0 0
 3 10000 4500
 A
@@ -506,7 +506,7 @@ mithril axe~
 a mithril axe~
 A mithril axe lies here.~
 ~
-5 28677 8193
+5 2|64 8193
 0 2 8 5
 12 4000 2000
 A
@@ -516,7 +516,7 @@ thain girth~
 the thain girth~
 The girth of the thain lies here.~
 ~
-9 8192 2049
+9 0 2049
 5 3 0 0
 4 1000 200
 A

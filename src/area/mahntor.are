@@ -1,4 +1,4 @@
-#AREA	{ 5 35} Chris   The Keep of Mahn-Tor~
+#AREA	{15 35} Chris   The Keep of Mahn-Tor~
 
 
 
@@ -3783,8 +3783,8 @@ D 0 2362 2 1
 * Summer, 1992
 *
 * Converted into Merc 2.0 and debugged by Hatchet of Merc Mud.
-* Following are some randomizing in the two mazes in this zone.
-* Note that this * is not compatible with other Muds.
+* Following are some randomizing in the two mazes in this zone.  Note that this
+* is not compatible with other Muds.
 * Hatchet, Merc Industries, May 8, 1992
 *
 R 0 2332 4

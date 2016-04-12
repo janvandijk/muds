@@ -141,6 +141,32 @@ the look in his eyes that he enjoys seeing you cower in his presence.
 50 -10 -20 1d1+1499 1d4+30
 5000 500000
 8 8 1
+>fight_prog 40~
+cackle
+~
+>greet_prog 50~
+look $n
+if isgood($n)
+	smile $n
+	say How are you doing?
+else
+	mpechoaround $n $I eyes $n suspiciously.
+	mpechoat $n $I eyes you suspiciously.
+endif
+~
+>speech_prog p looking at?~
+growl $n
+say An insect!
+if rand(5)
+	if isgood($n)
+		mpechoaround $n $I eyes $n suspiciously.
+		mpechoat $n $I eyes you suspiciously.
+	else
+		mpkill $n
+	endif
+endif
+~
+|
 #3012
 healer~
 the healer~
@@ -152,6 +178,14 @@ Although retired from adventuring, the healer still lends a hand.
 40 -10 -20 1d1+29999 2d4+30
 0 -99000
 8 8 1
+>greet_prog 40~
+bow $n
+say How may I help you?
+~
+>act_prog p chats~
+chat My most sincere congratulations to you, may dear!
+~
+|
 #3020
 guildmaster master~
 the guildmaster~
@@ -381,6 +415,17 @@ around his teeth.
 0 20 10 1d6+4 1d4+0
 10 25
 8 8 1
+>greet_prog 40~
+bark $n
+if name($n) == mayor
+	growl $n
+	kill $n
+endif
+~
+>rand_prog 10~
+emote leaves a deposit on the ground.
+~
+|
 #3063
 vagabond~
 the vagabond~
@@ -525,6 +570,11 @@ for coming here more often.
 23 2 -2 6d10+390 1d8+12
 2000 80000
 8 8 2
+>act_prog shivers~
+shiver
+say Oh!  I would never work in a graveyard let alone walk past it.
+~
+|
 #3120
 sexton~
 the sexton~
@@ -536,6 +586,13 @@ The sexton looks like he is relaxing after another grave-digging job.
 3 18 7 2d6+35 1d7+0
 13 350
 6 6 1
+>rand_prog 20~
+if rand(70)
+	say I tell ya.  All those dead bodies are giving me the creeps.
+	shiver
+endif
+~
+|
 #3121
 swan~
 the swan~
@@ -626,6 +683,34 @@ He is a stocky, middle-aged man with thin, grey hair.
 23 2 -2 6d10+500 1d8+12
 1000 120000
 4 4 1
+>rand_prog 20~
+if isfight($i)
+else
+	if rand(25)
+		say I hate fidos.
+		say Fidos are such disgusting creatures.
+	else
+		if rand(50)
+			grumble
+			say Day in.  Day out.  I always do the same thing.
+		else
+			say Boring!  I lead such a boring life.
+		endif
+	endif
+endif
+~
+>entry_prog 5~
+if ispc($n)
+	say Here.  I just can't stand this job anymore!
+	yell I quit!
+	remove key
+	give key $n
+	emote runs out of town.
+	mpasound $I runs out of town laughing histerically.
+	mppurge mayor
+endif
+~
+|
 #3144
 crier~
 the town crier~
@@ -639,7 +724,16 @@ He is very good at his job - completely dissolved in tears.
 8 8 1
 #0
 
-
+#MOBPROGS
+M 3060 mid_cit.prg
+M 3061 janitor.prg
+M 3063 vagabond.prg
+M 3064 drunk.prg
+M 3065 beggar.prg
+M 3067 gategrd.prg
+M 3068 gategrd2.prg
+M 3144 crier.prg
+S
 
 #OBJECTS
 #3000
@@ -2156,6 +2250,11 @@ You see the common square.
 ~
 ~
 0 -1 3025
+D5
+Below you, you see a dark stairway.
+~
+grate~
+1 -1 3801
 E
 guild~
 It is the thieves guild, don't enter if you care about your health or money.
@@ -2792,7 +2891,7 @@ By the Temple Altar~
 A huge altar made from white polished marble is standing in front of you and
 behind it is a ten foot tall sitting statue of Odin, the King of the Gods.
 ~
-30 8|1024 0
+30 4|8|1024 0
 D2
 You see the southern end of the temple.
 ~
@@ -3663,7 +3762,7 @@ D1
 D3
 You see the river flowing west into the Forest of Haon-Dor.~
 ~
-0 -1 -1
+0 -1 1801
 E
 wall~
 It is built from large grey rocks that have been fastened to each other with

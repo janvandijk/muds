@@ -1,77 +1,54 @@
-Merc Release 2.1
-Sunday 01 August 1993
+Merc Release 2.2
+Wednesday 24 November 1993
 
-Furey	mec@shell.portal.com
-Hatchet	hatchet@uclink.berkeley.edu
-Kahn	michael@uclink.berkeley.edu
-
+Kahn
+Hatchet
 
 
-=== What's new in 2.1
+=== What's new in 2.2
 
-2.1 is a maintenance release, and contains mainly bug fixes and
-contributions after 2.0.
+Many of the changes from 2.1 to 2.2 were contributed by the MERC imps out
+on the net as well as from our playtesters.  Kudos to them!
+See 'contrib.txt' for acknowledgements.
 
-Affects in player files are stored with skill/spell names now, rather
-than sn's.  Old 2.0 player files with numbers are accepted and work
-fine as long as 'skill_table' in const.c doesn't change.
+We have 'lost' a few platforms due to the addition of MOBPrograms.
+'mob_prog.c' and 'mob_commands.c' might provide warnings and/or errors on
+certain platforms.  John Daub is working on the MacIntosh platform on his
+own and will post the reported MERC to the net.
 
-The 'list' command takes an optional argument.
+We now have a startup for those using SH instead of CSH.
 
-Several small problems, and one memory corruption, related to voided
-characters have been fixed.
+MERC 2.2 will not lockup a port anymore.
 
-'Check_parry' and 'check_dodge' now use the victim's level
-rather than attacker's level for base percentage.  (Oops!)
+Flying enables the player to walk over water.
 
-The 'oload' command takes an optional level number.
+Dispel Magic has been removed pending YOUR rewrite.  I had no time to fix
+that source of crashes so I just killed it.
 
-Container object numbers work now.
+New Commands were added:
+	OWHERE is an immortal version of 'locate object'.
+	SPELLS shows the mana cost of your spells.
+	SLIST shows the spells available for your level.
+	AUTOEXIT, AUTOSAC, AUTOLOOT, etc were added for more flexibilty.
+	WIZIFY sets player bits to allow certain players to bypass wizlock.
+	PAGELENGTH enables a player to set the number of lines paged on screen.
+	PROMPT toggles the prompt display plus allows the player to
+	  set it to his/her own liking.
 
-Saving while fighting now works properly.
+MOBPrograms which enable mobiles more versatility with out coding a
+spec_proc.
 
-Pets and charmed creatures no longer scavenge.
+A screen pager.
 
-Immortals have no carry limit or weight limit.
+Decompression of Pfiles at login.
 
-The 'compare' command has a one-argument form now.
+A Parsed Pfile directory for ease of Pfile search.
 
-The channel code is modular now, but not table-driven yet.  Some of the
-channel flags have changed, so players will need to reconfigure their
-channels.  Channels no longer pass user input as format strings to 'act'.
+More accurate consider command.
 
-The mysterious port-binding bug is fixed.
+Other various tweeks, additions and bugfixes.
 
-Merc no longer uses the host system random generator, using its own instead
-(the Mitchell-Moore algorithm from Knuth Volume 2).
-
-NPC's no longer steal from immortals.
-
-The anti-corpse-looting code now simply prohibits looting corpses of people in
-your group, rather than giving a flag.  Similarly, killing charmed creatures is
-simply prohibited rather than flagged (although murdering them is allowed).
-Players were getting flagged too easily by accident.
-
-The telnet GA option is now configurable, and the default is off.
-
-There is a donation pit at the altar.
-
-No-exit rooms are automatically given the no-mob attribute.
-
-Eq level randomization is a little more random.
-
-There is a new 'socials' command, analogous to 'commands' and 'wizhelp'.
-
-Corpse sacrificing no longer gives experience points, not even 1.
-
-Non-prime attributes may raise as high as 20 with magical aid.  The 18
-training limit is still in effect.
-
-Fleeing and recalling don't cost as many xp.
-
-
-
-=== What was new in 2.0
+=== What's new in 2.0
 
 Many of the changes from 2.0 Beta to 2.0 were contributed by our beta testers.
 See 'contrib.txt' for acknowledgements.
