@@ -8,6 +8,9 @@
  *  Envy Diku Mud improvements copyright (C) 1994 by Michael Quan, David   *
  *  Love, Guilherme 'Willie' Arnold, and Mitchell Tse.                     *
  *                                                                         *
+ *  EnvyMud 2.0 improvements copyright (C) 1995 by Michael Quan and        *
+ *  Mitchell Tse.                                                          *
+ *                                                                         *
  *  In order to use any part of this Envy Diku Mud, you must comply with   *
  *  the original Diku license in 'license.doc', the Merc license in        *
  *  'license.txt', as well as the Envy license in 'license.nvy'.           *
@@ -49,21 +52,32 @@ NOTE_DATA *		note_list;
 OBJ_DATA *		object_list;
 TIME_INFO_DATA		time_info;
 WEATHER_DATA		weather_info;
-char *                  down_time;
-char *                  warning1;
-char *                  warning2;
+time_t                  down_time;
+time_t                  warning1;
+time_t                  warning2;
+bool                    Reboot;
 
 int			gsn_backstab;
+int                     gsn_berserk;		/* by Thelonius */
+int                     gsn_breathe_water;	/* by Thelonius */
+int                     gsn_burning_hands;
+int                     gsn_circle;		/* by Thelonius */
+int			gsn_disarm;
 int			gsn_dodge;
 int			gsn_hide;
 int			gsn_peek;
 int			gsn_pick_lock;
+int                     gsn_poison_weapon;	/* by Thelonius */
+int                     gsn_scrolls;		/* by Binky / Thelonius */
+int                     gsn_snare;		/* by Binky / Thelonius */
 int			gsn_sneak;
+int                     gsn_staves;		/* by Binky / Thelonius */
 int			gsn_steal;
-int			gsn_disarm;
-int                     gsn_poison_weapon;
+int                     gsn_untangle;		/* by Thelonius */
+int                     gsn_wands;		/* by Binky / Thelonius */
 
 int                     gsn_bash;
+int                     gsn_dual;		/* by Thelonius */
 int			gsn_enhanced_damage;
 int			gsn_kick;
 int			gsn_parry;
@@ -76,71 +90,28 @@ int			gsn_charm_person;
 int			gsn_curse;
 int			gsn_invis;
 int			gsn_mass_invis;
+int			gsn_mute;		/* by Thelonius */
 int			gsn_poison;
 int			gsn_sleep;
+int			gsn_turn_undead;
 
-int                     gsn_advance;
-int                     gsn_allow;
-int                     gsn_at;
-int                     gsn_bamfin;
-int                     gsn_bamfout;
-int                     gsn_ban;
-int                     gsn_deny;
-int                     gsn_disconnect;
-int                     gsn_echo;
-int                     gsn_force;
-int                     gsn_freeze;
-int                     gsn_goto;
-int                     gsn_holylight;
-int                     gsn_immtalk;
-int                     gsn_log;
-int                     gsn_memory;
-int                     gsn_mfind;
-int                     gsn_mload;
-int                     gsn_mset;
-int                     gsn_mstat;
-int                     gsn_mwhere;
-int                     gsn_newlock;
-int                     gsn_noemote;
-int                     gsn_notell;
-int                     gsn_numlock;
-int                     gsn_ofind;
-int                     gsn_oload;
-int                     gsn_oset;
-int                     gsn_ostat;
-int                     gsn_owhere;
-int                     gsn_pardon;
-int                     gsn_peace;
-int                     gsn_purge;
-int                     gsn_reboot;
-int                     gsn_recho;
-int                     gsn_restore;
-int                     gsn_return;
-int                     gsn_rset;
-int                     gsn_rstat;
-int                     gsn_shutdown;
-int                     gsn_silence;
-int                     gsn_slay;
-int                     gsn_slookup;
-int                     gsn_snoop;
-int                     gsn_sset;
-int                     gsn_sstime;
-int                     gsn_switch;
-int                     gsn_transfer;
-int                     gsn_trust;
-int                     gsn_users;
-int                     gsn_wizhelp;
-int                     gsn_wizify;
-int                     gsn_wizinvis;
-int                     gsn_wizlock;
 
 /*
- * Psionicist gsn's.
+ * Psionicist gsn's (by Thelonius).
  */
 int                     gsn_chameleon;
 int                     gsn_domination;
 int                     gsn_heighten;
 int                     gsn_shadow;
+
+
+int                     gsn_stake;
+
+/*
+ * Race gsn's (by Kahn).
+ */
+int                     gsn_vampiric_bite;
+
 
 /*
  * Locals.
@@ -173,18 +144,7 @@ int			top_shop;
  * Increase MAX_STRING from 1500000 if you have too.
  * Tune the others only if you understand what you're doing.
  */
-#define			MAX_STRING      1500000
-
-#if defined( machintosh )
-#define			MAX_PERM_BLOCK  131072
-#define			MAX_MEM_LIST    11
-
-void *			rgFreeList              [ MAX_MEM_LIST       ];
-const int		rgSizeList              [ MAX_MEM_LIST       ]  =
-{
-    16, 32, 64, 128, 256, 1024, 2048, 4096, 8192, 16384, 32768-64
-};
-#else
+#define			MAX_STRING      1600000
 #define			MAX_PERM_BLOCK  131072
 #define			MAX_MEM_LIST    12
 
@@ -193,7 +153,6 @@ const int		rgSizeList              [ MAX_MEM_LIST       ]  =
 {
     16, 32, 64, 128, 256, 1024, 2048, 4096, 8192, 16384, 32768, 65536
 };
-#endif
 
 int			nAllocString;
 int			sAllocString;
@@ -226,6 +185,7 @@ void	load_rooms      args( ( FILE *fp ) );
 void	load_shops      args( ( FILE *fp ) );
 void	load_specials   args( ( FILE *fp ) );
 void	load_notes      args( ( void ) );
+void	load_ban        args( ( void ) );
 void    load_down_time  args( ( void ) );
 void	fix_exits       args( ( void ) );
 
@@ -394,6 +354,7 @@ void boot_db( void )
 	fBootDb = FALSE;
 	area_update( );
 	load_notes( );
+	load_ban( );
 	load_down_time( );
     }
 
@@ -436,14 +397,18 @@ void load_area( FILE *fp )
 void load_helps( FILE *fp )
 {
     HELP_DATA *pHelp;
+    char      *keyword;
+    int        level;
 
     for ( ; ; )
     {
-	pHelp		= alloc_perm( sizeof( *pHelp ) );
-	pHelp->level	= fread_number( fp );
-	pHelp->keyword	= fread_string( fp );
-	if ( pHelp->keyword[0] == '$' )
+        level           = fread_number( fp );
+	keyword         = fread_string( fp );
+	if ( keyword[0] == '$' )
 	    break;
+	pHelp		= alloc_perm( sizeof( *pHelp ) );
+	pHelp->level	= level;
+	pHelp->keyword	= keyword;
 	pHelp->text	= fread_string( fp );
 
 	if ( !str_cmp( pHelp->keyword, "greeting" ) )
@@ -497,9 +462,10 @@ void load_mobiles( FILE *fp )
 
     for ( ; ; )
     {
-	char letter;
-	int  vnum;
-	int  iHash;
+	char *race;
+	char  letter;
+	int   vnum;
+	int   iHash;
 
 	letter				= fread_letter( fp );
 	if ( letter != '#' )
@@ -556,8 +522,15 @@ void load_mobiles( FILE *fp )
 	pMobIndex->gold                 = fread_number( fp );   /* Unused */
 	/* xp           */                fread_number( fp );   /* Unused */
 	/* position	*/                fread_number( fp );   /* Unused */
-	/* start pos	*/                fread_number( fp );   /* Unused */
+	race                            = fread_string( fp );
 	pMobIndex->sex			= fread_number( fp );
+
+	pMobIndex->race = race_lookup( race );
+	if ( pMobIndex->race < 0 )
+	{
+	    bug( "Load_mobiles: vnum %d bad race.", vnum );
+	    pMobIndex->race = 0;
+	}
 
 	if ( letter != 'S' )
 	{
@@ -978,16 +951,18 @@ void load_rooms( FILE *fp )
 void load_shops( FILE *fp )
 {
     SHOP_DATA *pShop;
+    int keeper = 0;
 
     for ( ; ; )
     {
 	MOB_INDEX_DATA *pMobIndex;
 	int iTrade;
 
-	pShop			= alloc_perm( sizeof( *pShop ) );
-	pShop->keeper		= fread_number( fp );
-	if ( pShop->keeper == 0 )
+	keeper                  = fread_number( fp );
+	if ( keeper == 0 )
 	    break;
+	pShop			= alloc_perm( sizeof( *pShop ) );
+	pShop->keeper		= keeper;
 	for ( iTrade = 0; iTrade < MAX_TRADE; iTrade++ )
 	    pShop->buy_type[iTrade] = fread_number( fp );
 	pShop->profit_buy	= fread_number( fp );
@@ -1021,7 +996,7 @@ void load_specials( FILE *fp )
     for ( ; ; )
     {
 	MOB_INDEX_DATA *pMobIndex;
-	char letter;
+	char            letter;
 
 	switch ( letter = fread_letter( fp ) )
 	{
@@ -1126,10 +1101,12 @@ void load_notes( void )
 void load_down_time( void )
 {
     FILE *fp;
+    int   number = 0;
 
-    down_time = str_dup ( "*" );
-    warning1  = str_dup ( "*" );
-    warning2  = str_dup ( "*" );
+    down_time = 0;
+    warning1  = 0;
+    warning2  = 0;
+    Reboot    = FALSE;
 
     if ( !( fp = fopen( DOWN_TIME_FILE, "r" ) ) )
         return;
@@ -1145,6 +1122,19 @@ void load_down_time( void )
 	    if ( feof( fp ) )
 	    {
 		fclose( fp );
+		if ( down_time > 0 && down_time < 301 )
+		{
+		    down_time  = current_time + 300;
+		    warning2   = down_time - 150;
+		    warning1   = warning2  - 75;
+		}
+		else
+		    if ( down_time > 0 )
+		    {
+			down_time += current_time;
+			warning2   = down_time - 150;
+			warning1   = warning2  - 150;
+		    }
 		return;
 	    }
 	}
@@ -1153,22 +1143,69 @@ void load_down_time( void )
 	
 	word = fread_word( fp );
 
-	if ( !str_cmp( word, "DOWNTIME" ) )
+	if ( !str_cmp( word, "HOUR" ) )
 	{
-	    free_string( down_time );
-	    down_time = fread_string( fp );
+	    number = fread_number( fp );
+	    if ( number > 0 )
+	        down_time += (time_t) ( number * 3600 );
 	}
-	if ( !str_cmp( word, "WARNINGA" ) )
+	if ( !str_cmp( word, "MINUTE" ) )
 	{
-	    free_string( warning1 );
-	    warning1 = fread_string( fp );
+	    number = fread_number( fp );
+	    if ( number > 0 )
+	        down_time += (time_t) ( number * 60 );
 	}
-	if ( !str_cmp( word, "WARNINGB" ) )
+	if ( !str_cmp( word, "REBOOT" ) )
 	{
-	    free_string( warning2 );
-	    warning2 = fread_string( fp );
+	    Reboot = TRUE;
 	}
     }
+}
+
+/*
+ * Load up the ban file
+ */
+void load_ban( void )
+{
+    BAN_DATA  *pban;
+    FILE      *fp;
+
+    if ( !( fp = fopen( BAN_FILE, "r" ) ) )
+        return;
+
+    for ( ; ; )
+    {
+        char   letter;
+
+	do
+	{
+	    letter = getc( fp );
+	    if ( feof( fp ) )
+	    {
+		fclose( fp );
+		return;
+	    }
+	}
+	while ( isspace( letter ) );
+	ungetc( letter, fp );
+
+	if ( ban_free == NULL )
+	{
+	    pban     = alloc_perm( sizeof( *pban ) );
+	}
+	else
+	{
+	    pban     = ban_free;
+	    ban_free = ban_free->next;
+	}
+
+	pban->name   = fread_string( fp );
+
+	pban->next   = ban_list;
+	ban_list     = pban;
+
+    }
+
 }
 
 /*
@@ -1337,15 +1374,40 @@ void reset_area( AREA_DATA *pArea )
 		continue;
 	    }
 
-	    if ( ( pMobIndex->spec_fun == spec_lookup( "spec_cast_ghost" ) &&
-		 ( weather_info.sunlight != SUN_DARK ) ) ) continue;
-
-	    level = URANGE( 0, pMobIndex->level - 2, LEVEL_HERO );
-	    if ( pMobIndex->count >= pReset->arg2 )
+	    if ( ( pMobIndex->spec_fun == spec_lookup( "spec_cast_ghost" )
+		  && ( weather_info.sunlight != SUN_DARK ) ) )
 	    {
 		last = FALSE;
-		break;
+		continue;
 	    }
+
+	    level = URANGE( 0, pMobIndex->level - 2, LEVEL_HERO );
+
+	    /* If sentinel, then maximum number indicates in room instead
+	       of in world. -Kahn */
+	    /* Midgaard mayor is special case as it has a spec proc which
+	       moves it.  Dislike such specific coding.  Shrug.  -Kahn */
+	    if ( IS_SET( pMobIndex->act, ACT_SENTINEL )
+		&& pMobIndex->vnum != MOB_VNUM_MIDGAARD_MAYOR )
+	    {
+		CHAR_DATA *ch;
+		int        count = 0;
+		
+		for ( ch = pRoomIndex->people; ch; ch = ch->next_in_room )
+		    if ( IS_NPC( ch ) && ch->pIndexData == pMobIndex )
+		        count++;
+		if ( count >= pReset->arg2 )
+		{
+		    last = FALSE;
+		    break;
+		}
+	    }
+	    else
+	        if ( pMobIndex->count >= pReset->arg2 )
+		{
+		    last = FALSE;
+		    break;
+		}
 
 	    mob = create_mobile( pMobIndex );
 
@@ -1453,6 +1515,7 @@ void reset_area( AREA_DATA *pArea )
 		case ITEM_WAND:		olevel = number_range( 10, 20 ); break;
 		case ITEM_STAFF:	olevel = number_range( 15, 25 ); break;
 		case ITEM_ARMOR:	olevel = number_range(  5, 15 ); break;
+		case ITEM_FURNITURE:    olevel = number_range(  5, 15 ); break;
 		case ITEM_WEAPON:	if ( pReset->command == 'G' )
 		                            olevel = number_range( 5, 15 );
 		                        else
@@ -1566,13 +1629,16 @@ CHAR_DATA *create_mobile( MOB_INDEX_DATA *pMobIndex )
     mob->long_descr	= pMobIndex->long_descr;
     mob->description	= pMobIndex->description;
     mob->spec_fun	= pMobIndex->spec_fun;
-    mob->prompt         = str_dup( "<%hhp %mm %vmv> " );
 
     mob->level		= number_fuzzy( pMobIndex->level );
     mob->act		= pMobIndex->act;
     mob->affected_by	= pMobIndex->affected_by;
     mob->alignment	= pMobIndex->alignment;
     mob->sex		= pMobIndex->sex;
+    mob->race           = pMobIndex->race;
+    mob->gold           = number_fuzzy( 10 )
+                        * number_fuzzy( pMobIndex->level )
+			* number_fuzzy( pMobIndex->level );
 
     mob->armor		= interpolate( mob->level, 100, -100 );
 
@@ -1633,7 +1699,7 @@ OBJ_DATA *create_object( OBJ_INDEX_DATA *pObjIndex, int level )
     obj->value[2]	= pObjIndex->value[2];
     obj->value[3]	= pObjIndex->value[3];
     obj->weight		= pObjIndex->weight;
-    obj->cost		= number_fuzzy( 10 )
+    obj->cost		= number_fuzzy( 4 )
 			* number_fuzzy( level ) * number_fuzzy( level );
     obj->deleted        = FALSE;
 
@@ -1711,12 +1777,12 @@ void clear_char( CHAR_DATA *ch )
     ch->short_descr		= &str_empty[0];
     ch->long_descr		= &str_empty[0];
     ch->description		= &str_empty[0];
-    ch->prompt                  = &str_empty[0];
     ch->last_note               = 0;
     ch->logon			= current_time;
     ch->armor			= 100;
     ch->position		= POS_STANDING;
     ch->level                   = 0;
+    ch->race                    = 0;
     ch->practice		= 21;
     ch->hit			= 20;
     ch->max_hit			= 20;
@@ -1760,14 +1826,15 @@ void free_char( CHAR_DATA *ch )
     free_string( ch->short_descr	);
     free_string( ch->long_descr		);
     free_string( ch->description	);
-    free_string( ch->prompt             );
 
     if ( ch->pcdata )
     {
 	free_string( ch->pcdata->pwd		);
 	free_string( ch->pcdata->bamfin		);
 	free_string( ch->pcdata->bamfout	);
+	free_string( ch->pcdata->immskll	);
 	free_string( ch->pcdata->title		);
+	free_string( ch->pcdata->prompt         );
 	ch->pcdata->next = pcdata_free;
 	pcdata_free      = ch->pcdata;
     }
@@ -2273,22 +2340,23 @@ void do_areas( CHAR_DATA *ch, char *argument )
 {
     AREA_DATA *pArea1;
     AREA_DATA *pArea2;
-    char        buf  [ MAX_STRING_LENGTH   ];
-    char        buf1 [ MAX_STRING_LENGTH*2 ];
-    int         iArea;
-    int         iAreaHalf;
+    char       buf  [ MAX_STRING_LENGTH   ];
+    char       buf1 [ MAX_STRING_LENGTH*4 ];
+    int        iArea;
+    int        iAreaHalf;
 
     buf1[0] = '\0';
     iAreaHalf = ( top_area + 1 ) / 2;
     pArea1    = area_first;
     pArea2    = area_first;
+
     for ( iArea = 0; iArea < iAreaHalf; iArea++ )
-	pArea2 = pArea2->next;
+        pArea2 = pArea2->next;
 
     for ( iArea = 0; iArea < iAreaHalf; iArea++ )
     {
-	sprintf( buf, "%-39s%-39s\r\n",
-	    pArea1->name, ( pArea2 ) ? pArea2->name : "" );
+	sprintf( buf, "%-39s%-39s\r\n", pArea1->name,
+		( pArea2 ) ? pArea2->name : "" );
 	strcat( buf1, buf );
 	pArea1 = pArea1->next;
 	if ( pArea2 )
@@ -2308,7 +2376,7 @@ void do_memory( CHAR_DATA *ch, char *argument )
 
     rch = get_char( ch );
     
-    if ( !authorized( rch, gsn_memory ) )
+    if ( !authorized( rch, "memory" ) )
         return;
 
     sprintf( buf, "Affects %5d\r\n", top_affect    ); send_to_char( buf, ch );
@@ -2700,7 +2768,7 @@ void bug( const char *str, int param )
 	sprintf( buf, "[*****] FILE: %s LINE: %d", strArea, iLine );
 	log_string( buf );
 
-	if ( ( fp = fopen( "shutdown.txt", "a" ) ) )
+	if ( ( fp = fopen( "SHUTDOWN.TXT", "a" ) ) )
 	{
 	    fprintf( fp, "[*****] %s\n", buf );
 	    fclose( fp );
