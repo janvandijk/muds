@@ -6,7 +6,7 @@
 #define MAX_BUF_LENGTH              240
 
 #define TYPE_UNDEFINED               -1
-#define SPELL_RESERVED_DBC            0  /* SKILL NUMBER ZERO */
+#define SPELL_RESERVED_DBC            0 /* SKILL NUMBER ZERO */
 #define SPELL_ARMOR                   1 /* Reserved Skill[] DO NOT CHANGE */
 #define SPELL_TELEPORT                2 /* Reserved Skill[] DO NOT CHANGE */
 #define SPELL_BLESS                   3 /* Reserved Skill[] DO NOT CHANGE */
@@ -82,11 +82,11 @@
 #define TYPE_BLUDGEON                101
 #define TYPE_PIERCE                  102
 #define TYPE_SLASH                   103
-#define TYPE_WHIP                    104 /* EXAMPLE */
-#define TYPE_CLAW                    105  /* NO MESSAGES WRITTEN YET! */
-#define TYPE_BITE                    106  /* NO MESSAGES WRITTEN YET! */
-#define TYPE_STING                   107  /* NO MESSAGES WRITTEN YET! */
-#define TYPE_CRUSH                   108  /* NO MESSAGES WRITTEN YET! */
+#define TYPE_WHIP                    104        /* EXAMPLE */
+#define TYPE_CLAW                    105        /* NO MESSAGES WRITTEN YET! */
+#define TYPE_BITE                    106        /* NO MESSAGES WRITTEN YET! */
+#define TYPE_STING                   107        /* NO MESSAGES WRITTEN YET! */
+#define TYPE_CRUSH                   108        /* NO MESSAGES WRITTEN YET! */
 
 
 
@@ -106,7 +106,7 @@
 #define SAVING_SPELL  4
 
 
-#define MAX_SPL_LIST	127
+#define MAX_SPL_LIST  127
 
 
 #define TAR_IGNORE        1
@@ -114,24 +114,23 @@
 #define TAR_CHAR_WORLD    4
 #define TAR_FIGHT_SELF    8
 #define TAR_FIGHT_VICT   16
-#define TAR_SELF_ONLY    32 /* Only a check, use with ei. TAR_CHAR_ROOM */
-#define TAR_SELF_NONO    64 /* Only a check, use with ei. TAR_CHAR_ROOM */
+#define TAR_SELF_ONLY    32     /* Only a check, use with ei. TAR_CHAR_ROOM */
+#define TAR_SELF_NONO    64     /* Only a check, use with ei. TAR_CHAR_ROOM */
 #define TAR_OBJ_INV     128
 #define TAR_OBJ_ROOM    256
 #define TAR_OBJ_WORLD   512
 #define TAR_OBJ_EQUIP  1024
 
-struct spell_info_type
-{
-	void (*spell_pointer) (byte level, struct char_data *ch, char *arg, int type,
-	                       struct char_data *tar_ch, struct obj_data *tar_obj);
-	byte minimum_position;  /* Position for caster 						 */
-	ubyte min_usesmana;     /* Amount of mana used by a spell	 */
-	byte beats;             /* Heartbeats until ready for next */
+struct spell_info_type {
+  void (*spell_pointer) (byte level, struct char_data * ch, char *arg,
+    int type, struct char_data * tar_ch, struct obj_data * tar_obj);
+  byte minimum_position;        /* Position for caster             */
+  ubyte min_usesmana;           /* Amount of mana used by a spell  */
+  byte beats;                   /* Heartbeats until ready for next */
 
-	byte min_level_cleric;  /* Level required for cleric       */
-	byte min_level_magic;   /* Level required for magic user   */
-	short targets;         /* See below for use with TAR_XXX  */
+  byte min_level_cleric;        /* Level required for cleric       */
+  byte min_level_magic;         /* Level required for magic user   */
+  sh_int targets;               /* See below for use with TAR_XXX  */
 };
 
 /* Possible Targets:
@@ -162,4 +161,200 @@ struct attack_hit_type {
   char *singular;
   char *plural;
 };
+
+
+extern void spell_armor (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_teleport (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_bless (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_blindness (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_create_food (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_create_water (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_cure_blind (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_cure_critic (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_cure_light (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_curse (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_detect_evil (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_detect_invisibility (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_detect_magic (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_detect_poison (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_dispel_evil (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_enchant_weapon (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_heal (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_invisibility (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_locate_object (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_poison (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_protection_from_evil (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_remove_curse (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_remove_poison (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_sanctuary (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_sleep (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_strength (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_word_of_recall (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_summon (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_charm_person (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_sense_life (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_identify (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_fire_breath (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_frost_breath (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_acid_breath (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_gas_breath (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_lightning_breath (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_magic_missile (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_chill_touch (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_burning_hands (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_shocking_grasp (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_lightning_bolt (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_colour_spray (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_energy_drain (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_fireball (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_earthquake (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_call_lightning (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_harm (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_clone (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_control_weather (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+extern void spell_ventriloquate (byte level, struct char_data *ch,
+  struct char_data *victim, struct obj_data *obj);
+
+
+
+/* Extern procedures */
+extern void cast_armor (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_teleport (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_bless (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_blindness (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_burning_hands (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_call_lightning (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_charm_person (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_chill_touch (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_shocking_grasp (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_clone (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_colour_spray (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_control_weather (byte level, struct char_data *ch, char *arg,
+  int si, struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_create_food (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_create_water (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_cure_blind (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_cure_critic (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_cure_light (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_curse (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_detect_evil (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_detect_invisibility (byte level, struct char_data *ch, char *arg,
+  int si, struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_detect_magic (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_detect_poison (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_dispel_evil (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_earthquake (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_enchant_weapon (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_energy_drain (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_fireball (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_harm (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_heal (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_invisibility (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_lightning_bolt (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_locate_object (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_magic_missile (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_poison (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_protection_from_evil (byte level, struct char_data *ch, char *arg,
+  int si, struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_remove_curse (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_sanctuary (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_sleep (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_strength (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_summon (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_ventriloquate (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_word_of_recall (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_remove_poison (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_sense_life (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
+extern void cast_identify (byte level, struct char_data *ch, char *arg, int si,
+  struct char_data *tar_ch, struct obj_data *tar_obj);
 

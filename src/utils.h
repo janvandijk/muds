@@ -15,19 +15,19 @@
 /* #define MAX(a,b) (((a) > (b)) ? (a) : (b)) */
 /* #define MIN(a,b) (((a) < (b)) ? (a) : (b)) */
 
-#define ISNEWL(ch) ((ch) == '\n' || (ch) == '\r') 
+#define ISNEWL(ch) ((ch) == '\n' || (ch) == '\r')
 
 #define IF_STR(st) ((st) ? (st) : "\0")
 
 #define CAP(st)  (*(st) = UPPER(*(st)), st)
 
 #define CREATE(result, type, number)  do {\
-	if (!((result) = (type *) calloc ((number), sizeof(type))))\
-		{ perror("malloc failure"); abort(); } } while(0)
+  if (!((result) = (type *) calloc ((number), sizeof(type))))\
+    { perror("malloc failure"); abort(); } } while(0)
 
 #define RECREATE(result,type,number) do {\
   if (!((result) = (type *) realloc ((result), sizeof(type) * (number))))\
-		{ perror("realloc failure"); abort(); } } while(0)
+    { perror("realloc failure"); abort(); } } while(0)
 
 #define IS_SET(flag,bit)  ((flag) & (bit))
 
@@ -55,14 +55,14 @@
 (i<10 ? "Average" :(i<14 ? "Fair"    :(i<20 ? "Good"    :(i<24 ? "Very good" :\
         "Superb" )))))))
 
-#define HSHR(ch) ((ch)->player.sex ?					\
-	(((ch)->player.sex == 1) ? "his" : "her") : "its")
+#define HSHR(ch) ((ch)->player.sex ?          \
+  (((ch)->player.sex == 1) ? "his" : "her") : "its")
 
-#define HSSH(ch) ((ch)->player.sex ?					\
-	(((ch)->player.sex == 1) ? "he" : "she") : "it")
+#define HSSH(ch) ((ch)->player.sex ?          \
+  (((ch)->player.sex == 1) ? "he" : "she") : "it")
 
-#define HMHR(ch) ((ch)->player.sex ? 					\
-	(((ch)->player.sex == 1) ? "him" : "her") : "it")	
+#define HMHR(ch) ((ch)->player.sex ?          \
+  (((ch)->player.sex == 1) ? "him" : "her") : "it")
 
 #define ANA(obj) (index("aeiouyAEIOUY", *(obj)->name) ? "An" : "A")
 
@@ -84,7 +84,7 @@
 
 #define GET_CLASS(ch)   ((ch)->player.class)
 
-#define GET_HOME(ch)		((ch)->player.hometown)
+#define GET_HOME(ch)    ((ch)->player.hometown)
 
 #define GET_AGE(ch)     (age(ch).year)
 
@@ -146,9 +146,9 @@
 /* Object And Carry related macros */
 
 #define CAN_SEE_OBJ(sub, obj)                                    \
-	( (( !IS_SET((obj)->obj_flags.extra_flags, ITEM_INVISIBLE) ||   \
-	     IS_AFFECTED((sub),AFF_DETECT_INVISIBLE) ) &&               \
-	     !IS_AFFECTED((sub),AFF_BLIND)) && IS_LIGHT(sub->in_room) )
+  ( (( !IS_SET((obj)->obj_flags.extra_flags, ITEM_INVISIBLE) ||   \
+       IS_AFFECTED((sub),AFF_DETECT_INVISIBLE) ) &&               \
+       !IS_AFFECTED((sub),AFF_BLIND)) && IS_LIGHT(sub->in_room) )
 
 #define GET_ITEM_TYPE(obj) ((obj)->obj_flags.type_flag)
 
@@ -179,15 +179,15 @@
 /* char name/short_desc(for mobs) or someone?  */
 
 #define PERS(ch, vict)   (                                          \
-	CAN_SEE(vict, ch) ?						                                    \
-	  (!IS_NPC(ch) ? (ch)->player.name : (ch)->player.short_descr) :	\
-	  "someone")
+  CAN_SEE(vict, ch) ?                                               \
+    (!IS_NPC(ch) ? (ch)->player.name : (ch)->player.short_descr) :  \
+    "someone")
 
 #define OBJS(obj, vict) (CAN_SEE_OBJ((vict), (obj)) ? \
-	(obj)->short_description  : "something")
+  (obj)->short_description  : "something")
 
 #define OBJN(obj, vict) (CAN_SEE_OBJ((vict), (obj)) ? \
-	fname((obj)->name) : "something")
+  fname((obj)->name) : "something")
 
 #define OUTSIDE(ch) (!IS_SET(world[(ch)->in_room].room_flags,INDOORS))
 

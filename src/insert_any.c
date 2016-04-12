@@ -4,10 +4,7 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ***************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-#include <time.h>
+#include "os.h"
 
 #define MAX_LINE  256
 
@@ -17,145 +14,145 @@
 
 
 
-void assume(int faktisk, int antal, int place, char *errmsg)
+void assume (int faktisk, int antal, int place, char *errmsg)
 {
-	if (antal != faktisk) {
-		printf("Error has occured at #%d.\r\n", place);
-		printf("Message is : %s\r\n", errmsg);
-		printf("Actual number read is %d\r\n", faktisk);
-		exit();
-	}
+  if (antal != faktisk) {
+    printf ("Error has occured at #%d.\n\r", place);
+    printf ("Message is : %s\n\r", errmsg);
+    printf ("Actual number read is %d\n\r", faktisk);
+    exit (1);
+  }
 }
 
-void merge(FILE *fl1, FILE *fl2)
+void merge (FILE * fl1, FILE * fl2)
 {
-	int antal;
-	int eof1, eof2;
-	int num1, num2;
-	char buf1[MAX_LINE], buf2[MAX_LINE];
-	char tbuf1[MAX_LINE], tbuf2[MAX_LINE];
+  int antal;
+  int eof1, eof2;
+  int num1, num2;
+  char buf1[MAX_LINE], buf2[MAX_LINE];
+  char tbuf1[MAX_LINE], tbuf2[MAX_LINE];
 
-	eof1 = 0;
-	eof2 = 0;
+  eof1 = 0;
+  eof2 = 0;
 
-	fgets(buf1, MAX_LINE, fl1);
-	antal = sscanf(buf1, " #%d ", &num1);
-	assume(antal, 1, 0, "No #xxxx found next (old)");
+  FGETS (buf1, MAX_LINE, fl1);
+  antal = sscanf (buf1, " #%d ", &num1);
+  assume (antal, 1, 0, "No #xxxx found next (old)");
 
-	fgets(buf2, MAX_LINE, fl2);
-	antal = sscanf(buf2, " #%d ", &num2);
-	assume(antal, 1, 0, "No #xxxx found next (new)");
+  FGETS (buf2, MAX_LINE, fl2);
+  antal = sscanf (buf2, " #%d ", &num2);
+  assume (antal, 1, 0, "No #xxxx found next (new)");
 
 
-	fgets(buf1, MAX_LINE, fl1);
-	eof1 = (buf1[0] == '$');
+  FGETS (buf1, MAX_LINE, fl1);
+  eof1 = (buf1[0] == '$');
 
-	fgets(buf2, MAX_LINE, fl2);
-	eof2 = (buf2[0] == '$');
+  FGETS (buf2, MAX_LINE, fl2);
+  eof2 = (buf2[0] == '$');
 
-	for (;;) {
+  for (;;) {
 
-		if (eof1) {
-			/* Purge file 2 */
+    if (eof1) {
+      /* Purge file 2 */
 
-			printf("#%d\n", num2);
-			printf("%s", buf2);
-			while (fgets(buf2, MAX_LINE, fl2))
-				printf("%s", buf2);
-			return;
-		}
+      printf ("#%d\n", num2);
+      printf ("%s", buf2);
+      while (FGETS (buf2, MAX_LINE, fl2))
+        printf ("%s", buf2);
+      return;
+    }
 
-		if (eof2) {
-			/* Purge file 1 */
-			printf("#%d\n", num1);
-			printf("%s", buf1);
-			while (fgets(buf1, MAX_LINE, fl1))
-				printf("%s", buf1);
-			return;
-		}
-			
+    if (eof2) {
+      /* Purge file 1 */
+      printf ("#%d\n", num1);
+      printf ("%s", buf1);
+      while (FGETS (buf1, MAX_LINE, fl1))
+        printf ("%s", buf1);
+      return;
+    }
 
-		/* Merge the rooms */
 
-		if (num1 < num2) {
-			printf("#%d\n", num1);
-			printf("%s", buf1);
-			do {
-				fgets(buf1, MAX_LINE, fl1);
-				antal = sscanf(buf1, " #%d ", &num1);
-				if (antal!=1)
-					printf("%s", buf1);
-			} while (antal != 1);
+    /* Merge the rooms */
 
-			fgets(buf1, MAX_LINE, fl1);
-			eof1 = (buf1[0] == '$');
+    if (num1 < num2) {
+      printf ("#%d\n", num1);
+      printf ("%s", buf1);
+      do {
+        FGETS (buf1, MAX_LINE, fl1);
+        antal = sscanf (buf1, " #%d ", &num1);
+        if (antal != 1)
+          printf ("%s", buf1);
+      } while (antal != 1);
 
-		} else if (num1 == num2) {    /* Replace the room */
+      FGETS (buf1, MAX_LINE, fl1);
+      eof1 = (buf1[0] == '$');
 
-			printf("#%d\n", num1);
-			printf("%s", buf1);
-			do { /* Print from "new" file */
-				fgets(buf1, MAX_LINE, fl1);
-				antal = sscanf(buf1, " #%d ", &num1);
-				if (antal!=1)
-					printf("%s", buf1);
-			} while (antal != 1);
+    } else if (num1 == num2) {  /* Replace the room */
 
-			do { /* Skip the "old" file */
-				fgets(buf2, MAX_LINE, fl2);
-				antal = sscanf(buf2, " #%d ", &num2);
-			} while (antal != 1);
+      printf ("#%d\n", num1);
+      printf ("%s", buf1);
+      do {                      /* Print from "new" file */
+        FGETS (buf1, MAX_LINE, fl1);
+        antal = sscanf (buf1, " #%d ", &num1);
+        if (antal != 1)
+          printf ("%s", buf1);
+      } while (antal != 1);
 
-			fgets(buf1, MAX_LINE, fl1);
-			eof1 = (buf1[0] == '$');
+      do {                      /* Skip the "old" file */
+        FGETS (buf2, MAX_LINE, fl2);
+        antal = sscanf (buf2, " #%d ", &num2);
+      } while (antal != 1);
 
-			fgets(buf2, MAX_LINE, fl2);
-			eof2 = (buf2[0] == '$');
+      FGETS (buf1, MAX_LINE, fl1);
+      eof1 = (buf1[0] == '$');
 
-		} else { /* Print a room from "old" file */
+      FGETS (buf2, MAX_LINE, fl2);
+      eof2 = (buf2[0] == '$');
 
-			printf("#%d\n", num2);
-			printf("%s", buf2);
-			do {
-				fgets(buf2, MAX_LINE, fl2);
-				antal = sscanf(buf2, " #%d ", &num2);
-				if (antal!=1)
-					printf("%s", buf2);
-			} while (antal != 1);
+    } else {                    /* Print a room from "old" file */
 
-			fgets(buf2, MAX_LINE, fl2);
-			eof2 = (buf2[0] == '$');
+      printf ("#%d\n", num2);
+      printf ("%s", buf2);
+      do {
+        FGETS (buf2, MAX_LINE, fl2);
+        antal = sscanf (buf2, " #%d ", &num2);
+        if (antal != 1)
+          printf ("%s", buf2);
+      } while (antal != 1);
 
-		}
+      FGETS (buf2, MAX_LINE, fl2);
+      eof2 = (buf2[0] == '$');
 
-	}
+    }
+
+  }
 }
 
 
-int main(int argc, char *argv[])
+int main (int argc, char *argv[])
 {
-	FILE *fl_m1, *fl_m2;
+  FILE *fl_m1, *fl_m2;
 
   if (argc != 3) {
-		printf("Usage : insert_any <New Merge File> <Old Merge File>\r\n");
-		printf("Both files must use # numbering system, and terminate with $~\r\n");
-		exit(0);
-	}
+    printf ("Usage : insert_any <New Merge File> <Old Merge File>\n\r");
+    printf
+      ("Both files must use # numbering system, and terminate with $~\n\r");
+    exit (0);
+  }
 
-	if (!(fl_m1 = fopen(argv[1], "r")))
-	{
-		printf("Could not open the builders file.\r\n");
-		exit();
-	}
+  if (!(fl_m1 = fopen (argv[1], "rb"))) {
+    printf ("Could not open the builders file.\n\r");
+    exit (1);
+  }
 
-	if (!(fl_m2 = fopen(argv[2], "r")))
-	{
-		printf("Could not open 'old' file.\r\n");
-		exit();
-	}
+  if (!(fl_m2 = fopen (argv[2], "rb"))) {
+    printf ("Could not open 'old' file.\n\r");
+    exit (1);
+  }
 
-	merge(fl_m1, fl_m2);
+  merge (fl_m1, fl_m2);
 
-	fclose(fl_m1);
-	fclose(fl_m2);
+  fclose (fl_m1);
+  fclose (fl_m2);
+  return 0;
 }

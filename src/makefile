@@ -1,92 +1,102 @@
-CC=gcc 
-CFLAGS = -g3 -fno-builtin-log
-HEADERFILES = structs.h utils.h comm.h interpreter.h db.h
-dmserver : comm.o act.comm.o act.informative.o act.movement.o act.obj1.o act.obj2.o act.offensive.o act.other.o act.social.o act.wizard.o handler.o db.o interpreter.o utility.o spec_assign.o shop.o limits.o mobact.o fight.o modify.o weather.o spell_parser.o spells1.o spells2.o reception.o constants.o spec_procs.o signals.o board.o mar_fiz_maz.o magic.o
-comm.o : comm.c structs.h utils.h comm.h interpreter.h handler.h db.h
-	$(CC) -c $(CFLAGS) comm.c
-act.comm.o : act.comm.c structs.h utils.h comm.h interpreter.h handler.h \
-  db.h spells.h
-	$(CC) -c $(CFLAGS) act.comm.c
-act.informative.o : act.informative.c structs.h utils.h comm.h \
-  interpreter.h handler.h db.h spells.h limits.h
-	$(CC) -c $(CFLAGS) act.informative.c
-act.movement.o : act.movement.c structs.h utils.h comm.h interpreter.h \
-  handler.h db.h spells.h
-	$(CC) -c $(CFLAGS) act.movement.c
-act.obj1.o : act.obj1.c structs.h utils.h comm.h interpreter.h handler.h \
-  db.h spells.h
-	$(CC) -c $(CFLAGS) act.obj1.c
-act.obj2.o : act.obj2.c structs.h utils.h comm.h interpreter.h handler.h \
-  db.h spells.h
-	$(CC) -c $(CFLAGS) act.obj2.c
-act.offensive.o : act.offensive.c structs.h utils.h comm.h interpreter.h \
-  handler.h db.h spells.h
-	$(CC) -c $(CFLAGS) act.offensive.c
-act.other.o : act.other.c structs.h utils.h comm.h interpreter.h handler.h \
-  db.h spells.h
-	$(CC) -c $(CFLAGS) act.other.c
-act.social.o : act.social.c structs.h utils.h comm.h interpreter.h \
-  handler.h db.h spells.h
-	$(CC) -c $(CFLAGS) act.social.c
-act.wizard.o : act.wizard.c structs.h utils.h comm.h interpreter.h \
-  handler.h db.h spells.h limits.h
-	$(CC) -c $(CFLAGS) act.wizard.c
-handler.o : handler.c structs.h utils.h db.h
-	$(CC) -c $(CFLAGS) handler.c 
-db.o : db.c structs.h utils.h db.h comm.h handler.h
-	$(CC) -c $(CFLAGS) db.c
-interpreter.o : interpreter.c structs.h comm.h interpreter.h db.h utils.h \
-  limits.h
-	$(CC) -c $(CFLAGS) interpreter.c 
-utility.o : utility.c structs.h utils.h
-	$(CC) -c $(CFLAGS) utility.c
-spec_assign.o : spec_assign.c structs.h db.h
-	$(CC) -c $(CFLAGS) spec_assign.c
-spec_procs.o : spec_procs.c structs.h utils.h comm.h interpreter.h \
-  handler.h db.h spells.h limits.h
-	$(CC) -c $(CFLAGS) spec_procs.c
-limits.o : limits.c limits.h structs.h utils.h spells.h comm.h
-	$(CC) -c $(CFLAGS) limits.c
-fight.o : fight.c structs.h utils.h comm.h handler.h interpreter.h db.h \
-  spells.h
-	$(CC) -c $(CFLAGS) fight.c
-weather.o : weather.c structs.h utils.h comm.h handler.h interpreter.h db.h
-	$(CC) -c $(CFLAGS) weather.c
-shop.o : shop.c structs.h comm.h handler.h db.h interpreter.h utils.h
-	$(CC) -c $(CFLAGS) shop.c
-spells1.o : spells1.c structs.h utils.h comm.h db.h interpreter.h spells.h \
-  handler.h
-	$(CC) -c $(CFLAGS) spells1.c 
-spells2.o : spells2.c structs.h utils.h comm.h db.h interpreter.h spells.h \
-  handler.h
-	$(CC) -c $(CFLAGS) spells2.c 
-magic.o : spells2.c structs.h utils.h comm.h db.h interpreter.h spells.h \
-  handler.h
-	$(CC) -c $(CFLAGS) magic.c 
-spell_parser.o : spell_parser.c structs.h utils.h comm.h db.h interpreter.h \
-  spells.h handler.h
-	$(CC) -c $(CFLAGS) spell_parser.c 
-mobact.o : mobact.c utils.h structs.h db.h
-	$(CC) -c $(CFLAGS) mobact.c
-modify.o : modify.c structs.h utils.h interpreter.h handler.h db.h comm.h
-	$(CC) -c $(CFLAGS) modify.c
-reception.o : reception.c structs.h comm.h handler.h db.h interpreter.h \
-  utils.h spells.h
-	$(CC) -c $(CFLAGS) reception.c
-constants.o : constants.c limits.h structs.h
-	$(CC) -c $(CFLAGS) constants.c
-board.o : board.c structs.h comm.h
-	$(CC) -c $(CFLAGS) board.c
-list.o : list.c structs.h
-	$(CC) $(CFLAGS) -o list list.c
-delplay.o : delplay.c structs.h
-	$(CC) $(CFLAGS) -O -o delplay delplay.c
-signals.o : signals.c utils.h
-	$(CC) -c $(CFLAGS) signals.c
-mar_fiz_maz.o : mar_fiz_maz.c structs.h utils.h comm.h interpreter.h \
-  handler.h db.h spells.h limits.h
-	$(CC) -c $(CFLAGS) mar_fiz_maz.c
-dmserver : comm.c act.comm.c act.informative.c act.movement.c act.obj1.c act.obj2.c act.offensive.c act.other.c act.social.c act.wizard.c handler.c db.c interpreter.c utility.c spec_assign.c shop.c limits.c mobact.c fight.c modify.c weather.c spells1.c spells2.c spell_parser.c reception.c constants.c spec_procs.c signals.c board.c mar_fiz_maz.c magic.c
-	$(CC) -o dmserver $(CFLAGS) comm.o act.comm.o act.informative.o act.movement.o act.obj1.o act.obj2.o act.offensive.o act.other.o act.social.o act.wizard.o handler.o db.o interpreter.o utility.o spec_assign.o shop.o limits.o mobact.o fight.o modify.o weather.o spells1.o spells2.o spell_parser.o reception.o constants.o spec_procs.o signals.o board.o mar_fiz_maz.o magic.o -lcrypt
+# DikuMUD makefile 
+CC = gcc 
+CFLAGS = -g3 -O2 -pipe -fno-builtin-log
+LIBS= -lcrypt
+
+HEADERS = comm.h db.h handler.h interpreter.h limits.h maildef.h \
+	os.h spells.h structs.h utils.h prototypes.h 
+	
+CFILES= comm.c act.comm.c act.informative.c act.movement.c act.obj1.c \
+	act.obj2.c act.offensive.c act.other.c act.social.c act.wizard.c \
+	handler.c db.c interpreter.c utility.c spec_assign.c shop.c \
+	limits.c mobact.c fight.c modify.c weather.c spells1.c spells2.c \
+	spell_parser.c reception.c constants.c spec_procs.c signals.c \
+	board.c mar_fiz_maz.c magic.c changes.c 
+# .o versions of above
+OFILES= $(CFILES:.c=.o)
+
+OTHERSTUFF= mail.c os.c
+
+UTILITIES= insert_any.c repairgo.c list.c syntax_checker.c \
+	sign.c update.c delplay.c
+
+# documentation
+DOCS= actions.doc defs.doc license.doc running.doc time.doc combat.doc \
+	do_mail look.doc shops.doc values.doc comm.doc handler.doc macro.doc \
+	skills.doc database.doc interpreter.doc newstruct.doc spell_info.doc \
+	dbsup.doc levels.doc readme spells.doc
+PDOCS= $(patsubst %,doc/%,$(DOCS))	
+
+# data - zones, help, mobs, objects, rooms, etc.
+DATA= actions help_table news readme tinyworld.wld board.messages info \
+	pcobjs.obj tinyworld.mob tinyworld.zon credits messages players \
+	tinyworld.obj wizlist help motd poses tinyworld.shp
+PDATA= $(patsubst %,lib/%,$(DATA))	
+
+# Files in the standard distribution
+DISTFILES= $(CFILES) $(HEADERS) $(PDOCS) $(PDATA) $(UTILITIES) \
+	$(OTHERSTUFF) nightrun opstart readme INSTALL_NOTES \
+	makefile makefile.bor makefile.dgm makefile.vc makefile.lcc 
+PDIST= $(patsubst %,diku-alfa/%,$(DISTFILES))
+RELEASE=dist
+
+TARGETS= dmserver list delplay insert_any repairgo \
+	syntax_checker update sign
+OTARGETS=  list.o delplay.o insert_any.o repairgo.o syntax_checker.o \
+	update.o sign.o	
+
+all: $(TARGETS)
+
+dmserver : $(OFILES)
+	$(CC) $(CFLAGS) -o dmserver $(OFILES) $(LIBS)
+
+list : list.o
+	$(CC) $(CFLAGS) -o list list.o
+	
+delplay : delplay.o
+	$(CC) $(CFLAGS) -o delplay delplay.o
+
+insert_any : insert_any.o
+	$(CC) $(CFLAGS) -o insert_any insert_any.o
+
+repairgo : repairgo.o
+	$(CC) $(CFLAGS) -o repairgo repairgo.o
+
+syntax_checker : syntax_checker.o
+	$(CC) $(CFLAGS) -o syntax_checker syntax_checker.o
+
+update : update.o
+	$(CC) $(CFLAGS) -o update update.o
+
+sign : sign.o
+	$(CC) $(CFLAGS) -o sign sign.o
+
 clean:
-	rm *.o dmserver
+	-rm -f *.d $(OFILES) $(TARGETS) $(OTARGETS) 
+
+dist: 
+	ln -s ./ diku-alfa
+	tar czvf diku-alfa-$(RELEASE).tar.gz $(PDIST) 
+	rm diku-alfa
+
+# pull in dependency info for *existing* .o files
+OBJDEPENDS := $(OFILES) delplay.o list.o 
+-include $(OBJDEPENDS:.o=.d)
+	
+# compile and generate dependency info;
+# more complicated dependency computation, so all prereqs listed
+# will also become command-less, prereq-less targets
+#   sed:    append directory to object target. (gcc bug?)
+#   sed:    strip the target (everything before colon)
+#   sed:    remove any continuation backslashes
+#   fmt -1: list words one per line
+#   sed:    strip leading spaces
+#   sed:    add trailing colons
+%.o: %.c
+	$(CC) -c $(CFLAGS) $*.c -o $*.o 
+	$(CC) -MM $(CFLAGS) $*.c > $*.d
+	@mv -f $*.d $*.d.tmp
+	@sed -e 's|.*:|$*.o:|' < $*.d.tmp > $*.d
+	@sed -e 's/.*://' -e 's/\\$$//' < $*.d.tmp | fmt -1 | \
+	  sed -e 's/^ *//' -e 's/$$/:/' >> $*.d
+	@rm -f $*.d.tmp
