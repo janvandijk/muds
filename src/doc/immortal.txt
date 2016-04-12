@@ -1,8 +1,7 @@
-EnvyMud Release 2.0
-Monday, 25th December 1995
+EnvyMud Release 2.2
+Friday, 14th February 1997
 
-Kahn            michael@uclink.berkeley.edu
-Hatchet         hatchet@uclink.berkeley.edu
+Kahn            envy@envy.com
 
 
 === Immortal commands
@@ -38,4 +37,33 @@ bamfin          goto
 
 Commands available to L_HER and above: (Hero, level 50)
 wizhelp		immtalk
+
+
+
+=== How to create your first immortal.
+
+There is no automatic way to create immortals on a virgin Envy
+package.  The only way to do this is to use your favorite text editor
+and edit your immortal.
+
+1)  Go to the player directory and choose an immortal name.  Ie) Immortal
+
+2)  Change directory to the first initial of the immortal's name.  Ie) cd i.
+
+3)  Use an editor to create your immortal.  Ie) emacs Immortal
+
+4)  Put this into the file:
+
+#PLAYER
+Nm	Immortal~
+Lvl	54
+Immskll	imtlset advance ~
+End
+
+#END
+
+5)  Save and exit your editor and that is it.  Next time you log on,
+you'll have a DIRECTOR ready to go.
+
+See 'pfile.txt' for more information.
 

@@ -11,6 +11,8 @@
  *  EnvyMud 2.0 improvements copyright (C) 1995 by Michael Quan and        *
  *  Mitchell Tse.                                                          *
  *                                                                         *
+ *  EnvyMud 2.2 improvements copyright (C) 1996, 1997 by Michael Quan.     *
+ *                                                                         *
  *  In order to use any part of this Envy Diku Mud, you must comply with   *
  *  the original Diku license in 'license.doc', the Merc license in        *
  *  'license.txt', as well as the Envy license in 'license.nvy'.           *
@@ -90,6 +92,9 @@ typedef void GAME_FUN                   args( ( CHAR_DATA *ch,
  * Increase the max'es if you add more of something.
  * Adjust the pulse numbers to suit yourself.
  */
+#define MAX_CHUNKS                 27                    /* Used in ssm.c */
+
+#define EXP_PER_LEVEL		 1000
 #define MAX_SKILL		  156
 #define MAX_CLASS		    5
 #define MAX_RACE                   41
@@ -106,6 +111,24 @@ typedef void GAME_FUN                   args( ( CHAR_DATA *ch,
 #define PULSE_MOBILE		  (  5 * PULSE_PER_SECOND )
 #define PULSE_TICK		  ( 30 * PULSE_PER_SECOND )
 #define PULSE_AREA		  ( 60 * PULSE_PER_SECOND )
+
+/*
+ * Player character key data struct
+ * Stuff for new error trapping of corrupt pfiles.
+ */
+struct  key_data
+{
+    char        key[11];	/* Increase if you make a key > 11 chars */
+    int         string;		/* TRUE for string, FALSE for int        */
+    int         deflt;		/* Default value or pointer              */
+    void *      ptrs[7];	/* Increase if you have > 6 parms/line   */
+};
+
+#define MAND		3344556	/* Magic # for manditory field           */
+#define SPECIFIED	3344557 /* Key was used already.                 */
+#define DEFLT		3344558 /* Use default from fread_char_obj       */
+
+
 
 /*
  * Site ban structure.
@@ -180,6 +203,11 @@ struct  race_type
     int                 wis_mod;
     int                 dex_mod;
     int                 con_mod;
+    int                 hp_gain;
+    int                 mana_gain;
+    int                 move_gain;
+    int                 thirst_mod;
+    int                 hunger_mod;
     char *              dmg_message;
     char *              hate;
 };
@@ -199,6 +227,19 @@ struct  race_type
 #define RACE_PROTECTION		   1024
 #define RACE_SANCT		   2048
 #define RACE_WEAPON_WIELD	   4096
+#define RACE_MUTE                  8192
+
+
+/*
+ * Drunkeness communication structure.
+ */
+struct  struckdrunk
+{
+    int                 min_drunk_level;
+    int                 number_of_rep;
+    char               *replacement[11];
+};
+
 
 /*
  * Descriptor (channel) structure.
@@ -210,7 +251,7 @@ struct	descriptor_data
     CHAR_DATA *		character;
     CHAR_DATA *		original;
     char *		host;
-    int		        descriptor;
+    unsigned int        descriptor;
     int		        connected;
     bool		fcommand;
     char		inbuf		[ MAX_INPUT_LENGTH*4 ];
@@ -1204,8 +1245,8 @@ extern  int     gsn_vampiric_bite;
 
 #define MANA_COST( ch, sn )     ( IS_NPC( ch ) ? 0 : UMAX (                  \
 				skill_table[sn].min_mana,                    \
-				100 / ( 2 + ch->level -                      \
-				skill_table[sn].skill_level[ch->class] ) ) )
+				100 / ( 2 + UMAX ( 0, ch->level -            \
+				skill_table[sn].skill_level[ch->class] ) ) ) )
 
 #define IS_SWITCHED( ch )       ( ch->pcdata->switched )
 
@@ -1275,6 +1316,7 @@ extern	char *	const			title_table	[ MAX_CLASS   ]
 							[ MAX_LEVEL+1 ]
 							[ 2 ];
 extern  const   struct  race_type       race_table      [ MAX_RACE ];
+extern  const   struct  struckdrunk     drunk           [ ];
 
 
 
@@ -1333,6 +1375,7 @@ DECLARE_DO_FUN(	do_bamfin	);
 DECLARE_DO_FUN(	do_bamfout	);
 DECLARE_DO_FUN(	do_ban		);
 DECLARE_DO_FUN(	do_bash 	);
+DECLARE_DO_FUN(	do_beep 	);
 DECLARE_DO_FUN(	do_berserk 	);		/* by Thelonius */
 DECLARE_DO_FUN(	do_bet  	);		/* by Thelonius */
 DECLARE_DO_FUN( do_blank        );
@@ -1671,6 +1714,8 @@ char *	crypt		args( ( const char *key, const char *salt ) );
 #define CD	CHAR_DATA
 #define MID	MOB_INDEX_DATA
 #define OD	OBJ_DATA
+#define AD	AFFECT_DATA
+#define ED	EXTRA_DESCR_DATA
 #define OID	OBJ_INDEX_DATA
 #define RID	ROOM_INDEX_DATA
 #define SF	SPEC_FUN
@@ -1709,6 +1754,10 @@ void	act	         args( ( const char *format, CHAR_DATA *ch,
 /* db.c */
 void	boot_db		args( ( void ) );
 void	area_update	args( ( void ) );
+CD *	new_character	args( ( bool player ) );
+AD *	new_affect	args( ( void ) );
+OD *	new_object	args( ( void ) );
+ED *	new_extra_descr args( ( void ) );
 CD *	create_mobile	args( ( MOB_INDEX_DATA *pMobIndex ) );
 OD *	create_object	args( ( OBJ_INDEX_DATA *pObjIndex, int level ) );
 void	clear_char	args( ( CHAR_DATA *ch ) );
@@ -1718,10 +1767,10 @@ MID *	get_mob_index	args( ( int vnum ) );
 OID *	get_obj_index	args( ( int vnum ) );
 RID *	get_room_index	args( ( int vnum ) );
 char	fread_letter	args( ( FILE *fp ) );
-int	fread_number	args( ( FILE *fp ) );
-char *	fread_string	args( ( FILE *fp ) );
+int	fread_number	args( ( FILE *fp, int *status ) );
+char *	fread_string	args( ( FILE *fp, int *status ) );
 void	fread_to_eol	args( ( FILE *fp ) );
-char *	fread_word	args( ( FILE *fp ) );
+char *	fread_word	args( ( FILE *fp, int *status ) );
 void *	alloc_mem	args( ( int sMem ) );
 void *	alloc_perm	args( ( int sMem ) );
 void	free_mem	args( ( void *pMem, int sMem ) );

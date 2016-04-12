@@ -1,8 +1,7 @@
-EnvyMud Release 2.0
-Monday, 25th December 1995
+EnvyMud Release 2.2
+Friday, 14th February 1997
 
-Kahn		michael@uclink.berkeley.edu
-Hatchet		hatchet@uclink.berkeley.edu
+Kahn		envy@envy.com
 
 
 
@@ -77,7 +76,7 @@ this field as it appears in the name field of the race.
 === Adding a new race
 
 This section enumerates the changes that need to be made to the base
-level Envy 2.0 code necessary for the addition of a new race.
+level Envy 2.2 code necessary for the addition of a new race.
 
 MERC.H		- Increase MAX_RACE by as many races you add
 ------
@@ -85,6 +84,6 @@ MERC.H		- Increase MAX_RACE by as many races you add
 CONST.C		- Add race definition (structure) to race_table.
 -------		  Order does not matter
 
-Obviously adding a new race to Envy 2.0 is an easy task.  All is
+Obviously adding a new race to Envy 2.2 is an easy task.  All is
 required is good planning of what you wish this race to be and
 entering the appropriate data.

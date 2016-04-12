@@ -11,6 +11,8 @@
  *  EnvyMud 2.0 improvements copyright (C) 1995 by Michael Quan and        *
  *  Mitchell Tse.                                                          *
  *                                                                         *
+ *  EnvyMud 2.2 improvements copyright (C) 1996, 1997 by Michael Quan.     *
+ *                                                                         *
  *  In order to use any part of this Envy Diku Mud, you must comply with   *
  *  the original Diku license in 'license.doc', the Merc license in        *
  *  'license.txt', as well as the Envy license in 'license.nvy'.           *
@@ -39,14 +41,16 @@
  * -- Furey  26 Jan 1993
  */
 
+char version_str[] = "$VER: EnvyMud 2.0 *NIX";
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
 #include <unistd.h>
-#include <time.h>
 #include <sys/time.h>
+#include <time.h>
 #include <signal.h>
 /*
  * Socket and TCP/IP stuff.
@@ -61,7 +65,6 @@
 const	char	echo_off_str	[] = { IAC, WILL, TELOPT_ECHO, '\0' };
 const	char	echo_on_str	[] = { IAC, WONT, TELOPT_ECHO, '\0' };
 const	char 	go_ahead_str	[] = { IAC, GA, '\0' };
-
 
 /*
  * Global variables.
@@ -82,11 +85,10 @@ time_t		    current_time;	/* Time of this pulse		*/
  * OS-dependent local functions.
  */
 void	game_loop_unix		args( ( int control ) );
-int	init_socket		args( ( int port ) );
+int	init_socket		args( ( u_short port ) );
 void	new_descriptor		args( ( int control ) );
 bool	read_from_descriptor	args( ( DESCRIPTOR_DATA *d ) );
 bool	write_to_descriptor	args( ( int desc, char *txt, int length ) );
-
 
 /*
  * Other local functions (OS-independent).
@@ -105,8 +107,8 @@ void    bust_a_prompt           args( ( DESCRIPTOR_DATA *d ) );
 
 int main( int argc, char **argv )
 {
-    struct timeval now_time;
-    int port;
+    struct  timeval now_time;
+    u_short port;
     int control;
 
     /*
@@ -128,7 +130,7 @@ int main( int argc, char **argv )
     /*
      * Get the port number.
      */
-    port = 1234;
+    port = 4000;
     if ( argc > 1 )
     {
 	if ( !is_number( argv[1] ) )
@@ -163,7 +165,7 @@ int main( int argc, char **argv )
 
 
 
-int init_socket( int port )
+int init_socket( u_short port )
 {
     static struct sockaddr_in sa_zero;
            struct sockaddr_in sa;
@@ -232,6 +234,7 @@ void game_loop_unix( int control )
            struct timeval last_time;
 
     signal( SIGPIPE, SIG_IGN );
+
     gettimeofday( &last_time, NULL );
     current_time = (time_t) last_time.tv_sec;
 
@@ -254,7 +257,7 @@ void game_loop_unix( int control )
 	maxdesc	= control;
 	for ( d = descriptor_list; d; d = d->next )
 	{
-	    maxdesc = UMAX( maxdesc, d->descriptor );
+	    maxdesc = UMAX( (unsigned) maxdesc, d->descriptor );
 	    FD_SET( d->descriptor, &in_set  );
 	    FD_SET( d->descriptor, &out_set );
 	    FD_SET( d->descriptor, &exc_set );
@@ -406,7 +409,6 @@ void game_loop_unix( int control )
 		}
 	    }
 	}
-
 	gettimeofday( &last_time, NULL );
 	current_time = (time_t) last_time.tv_sec;
     }
@@ -418,17 +420,16 @@ void game_loop_unix( int control )
 
 void new_descriptor( int control )
 {
-           BAN_DATA        *pban;
     static DESCRIPTOR_DATA  d_zero;
            DESCRIPTOR_DATA *dnew;
     struct sockaddr_in      sock;
     struct hostent         *from;
+           BAN_DATA        *pban;
     char                    buf [ MAX_STRING_LENGTH ];
-    int                     desc;
-    size_t                  size;
+    size_t                  desc, size;
+    int                     addr;
 
     size = sizeof( sock );
-    getsockname( control, (struct sockaddr *) &sock, &size );
     if ( ( desc = accept( control, (struct sockaddr *) &sock, &size) ) < 0 )
     {
 	perror( "New_descriptor: accept" );
@@ -467,31 +468,23 @@ void new_descriptor( int control )
     dnew->outsize	= 2000;
     dnew->outbuf	= alloc_mem( dnew->outsize );
 
-    size = sizeof(sock);
-    if ( getpeername( desc, (struct sockaddr *) &sock, &size ) < 0 )
-    {
-	perror( "New_descriptor: getpeername" );
-	dnew->host = str_dup( "(unknown)" );
-    }
-    else
-    {
-	/*
-	 * Would be nice to use inet_ntoa here but it takes a struct arg,
-	 * which ain't very compatible between gcc and system libraries.
-	 */
-	int addr;
+    size = sizeof( sock );
 
-	addr = ntohl( sock.sin_addr.s_addr );
-	sprintf( buf, "%d.%d.%d.%d",
-	    ( addr >> 24 ) & 0xFF, ( addr >> 16 ) & 0xFF,
-	    ( addr >>  8 ) & 0xFF, ( addr       ) & 0xFF
-	    );
-	sprintf( log_buf, "Sock.sinaddr:  %s", buf );
-	log_string( log_buf );
-	from = gethostbyaddr( (char *) &sock.sin_addr,
-			     sizeof(sock.sin_addr), AF_INET );
-	dnew->host = str_dup( from ? from->h_name : buf );
-    }
+    /*
+     * Would be nice to use inet_ntoa here but it takes a struct arg,
+     * which ain't very compatible between gcc and system libraries.
+     */
+    addr = ntohl( sock.sin_addr.s_addr );
+    sprintf( buf, "%d.%d.%d.%d",
+	( addr >> 24 ) & 0xFF, ( addr >> 16 ) & 0xFF,
+	( addr >>  8 ) & 0xFF, ( addr       ) & 0xFF
+	);
+    sprintf( log_buf, "Sock.sinaddr:  %s", buf );
+    log_string( log_buf );
+    from = gethostbyaddr( (char *) &sock.sin_addr,
+			 sizeof(sock.sin_addr), AF_INET );
+    dnew->host = str_dup( from ? from->h_name : buf );
+
 	
     /*
      * Swiftest: I added the following to ban sites.  I don't
@@ -634,7 +627,7 @@ bool read_from_descriptor( DESCRIPTOR_DATA *d )
 	int nRead;
 
 	nRead = read( d->descriptor, d->inbuf + iStart,
-	    sizeof( d->inbuf ) - 10 - iStart );
+		     sizeof( d->inbuf ) - 10 - iStart );
 	if ( nRead > 0 )
 	{
 	    iStart += nRead;
@@ -646,7 +639,7 @@ bool read_from_descriptor( DESCRIPTOR_DATA *d )
 	    log_string( "EOF encountered on read." );
 	    return FALSE;
 	}
-	else if ( errno == EWOULDBLOCK || errno == EAGAIN )
+        else if ( errno == EWOULDBLOCK || errno == EAGAIN )
 	    break;
 	else
 	{
@@ -887,7 +880,7 @@ void bust_a_prompt( DESCRIPTOR_DATA *d )
 	    sprintf( buf2, "%d", ch->wait                              );
 	    i = buf2; break;
          case 'a' :
-            if( ch->level < 5 )
+            if( ch->level > 10 )
                sprintf( buf2, "%d", ch->alignment                      );
             else
                sprintf( buf2, "%s", IS_GOOD( ch ) ? "good"
@@ -996,7 +989,7 @@ bool write_to_descriptor( int desc, char *txt, int length )
 
     for ( iStart = 0; iStart < length; iStart += nWrite )
     {
-	nBlock = UMIN( length - iStart, 4096 );
+	nBlock = UMIN( length - iStart, 2048 );
 	if ( ( nWrite = write( desc, txt + iStart, nBlock ) ) < 0 )
 	    { perror( "Write_to_descriptor" ); return FALSE; }
     } 
@@ -1046,34 +1039,14 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
 
 	argument[0] = UPPER( argument[0] );
 
-	fOld = load_char_obj( d, argument );
-	ch   = d->character;
-
 	if ( !check_parse_name( argument ) )
 	{
-	    if ( !fOld )
-	    {
-	        write_to_buffer( d,
-				"Illegal name, try another.\r\nName: ", 0 );
-		return;
-	    }
-	    else
-	    {
-	        /*
-		 * Trap the "." and ".." logins.
-		 * Chars must be > level 1 here
-		 */
-	        if ( ch->level < 1 )
-		{
-		    write_to_buffer( d,
-				    "Illegal name, try another.\r\nName: ",
-				    0 );
-		    return;
-		}
-		sprintf( buf, "Illegal name:  %s", argument );
-	        bug( buf, 0 );
-	    }
+	    write_to_buffer( d, "Illegal name, try another.\r\nName: ", 0 );
+	    return;
 	}
+
+	fOld = load_char_obj( d, argument );
+	ch   = d->character;
 
 	if ( IS_SET( ch->act, PLR_DENY ) )
 	{
@@ -1486,7 +1459,7 @@ bool check_parse_name( char *name )
     /*
      * Reserved words.
      */
-    if ( is_name( name, "all auto imm immortal self someone" ) )
+    if ( is_name( name, "all auto imm immortal self someone . .. ./ ../ /" ) )
 	return FALSE;
 
     /*
@@ -1555,7 +1528,6 @@ bool check_parse_name( char *name )
  */
 bool check_reconnect( DESCRIPTOR_DATA *d, char *name, bool fConn )
 {
-    OBJ_DATA  *obj;
     CHAR_DATA *ch;
 
     for ( ch = char_list; ch; ch = ch->next )
@@ -1583,15 +1555,6 @@ bool check_reconnect( DESCRIPTOR_DATA *d, char *name, bool fConn )
 		sprintf( log_buf, "%s@%s reconnected.", ch->name, d->host );
 		log_string( log_buf );
 		d->connected = CON_PLAYING;
-
-		/*
-		 * Contributed by Gene Choi
-		 */
-		if ( ( obj = get_eq_char( ch, WEAR_LIGHT ) )
-		    && obj->item_type == ITEM_LIGHT
-		    && obj->value[2] != 0
-		    && ch->in_room )
-		    ++ch->in_room->light;
 	    }
 	    return TRUE;
 	}

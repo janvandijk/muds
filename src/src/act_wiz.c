@@ -11,6 +11,8 @@
  *  EnvyMud 2.0 improvements copyright (C) 1995 by Michael Quan and        *
  *  Mitchell Tse.                                                          *
  *                                                                         *
+ *  EnvyMud 2.2 improvements copyright (C) 1996, 1997 by Michael Quan.     *
+ *                                                                         *
  *  In order to use any part of this Envy Diku Mud, you must comply with   *
  *  the original Diku license in 'license.doc', the Merc license in        *
  *  'license.txt', as well as the Envy license in 'license.nvy'.           *
@@ -21,6 +23,11 @@
  *  around, comes around.                                                  *
  ***************************************************************************/
 
+#if defined( macintosh )
+#include <types.h>
+#else
+#include <sys/types.h>
+#endif
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -1571,7 +1578,7 @@ void do_advance( CHAR_DATA *ch, char *argument )
 	send_to_char( "Lowering a player's level!\r\n", ch );
 	send_to_char( "**** OOOOHHHHHHHHHH  NNNNOOOO ****\r\n",    victim );
 	victim->level    = 1;
-	victim->exp      = 1000;
+	victim->exp      = EXP_PER_LEVEL;
 	victim->max_hit  = 10;
 	victim->max_mana = 100;
 	victim->max_move = 100;
@@ -1595,7 +1602,7 @@ void do_advance( CHAR_DATA *ch, char *argument )
 	victim->level += 1;
 	advance_level( victim );
     }
-    victim->exp   = 1000 * UMAX( 1, victim->level );
+    victim->exp   = EXP_PER_LEVEL * UMAX( 1, victim->level );
     victim->trust = 0;
     return;
 }
@@ -2289,14 +2296,14 @@ void do_sset( CHAR_DATA *ch, char *argument )
 	for ( sn = 0; sn < MAX_SKILL; sn++ )
 	{
 	    if ( skill_table[sn].name )
-          {
+            {
 	        if ( skill_table[sn].skill_level[victim->class] <= LEVEL_HERO )
 		    victim->pcdata->learned[sn]	= value;
 		else
 		    if ( skill_table[sn].skill_level[victim->class]
 			<= get_trust( victim ) )
 		        victim->pcdata->learned[sn] = 1;
-          }
+            }
 	}
     }
     else
@@ -2953,15 +2960,7 @@ void do_oset( CHAR_DATA *ch, char *argument )
 	    return;
 	}
 
-	if ( !extra_descr_free )
-	{
-	    ed			= alloc_perm( sizeof( *ed ) );
-	}
-	else
-	{
-	    ed			= extra_descr_free;
-	    extra_descr_free	= extra_descr_free->next;
-	}
+	ed			= new_extra_descr();
 
 	ed->keyword		= str_dup( arg3     );
 	ed->description		= str_dup( argument );
@@ -3537,6 +3536,12 @@ void do_sstime( CHAR_DATA *ch, char *argument )
 
 }
 
+/*
+ * Modifications contributed by
+ * Canth (phule@xs4all.nl)
+ * Maniac (v942346@si.hhs.nl)
+ * Vego (v942429@si.hhs.nl)
+ */
 void do_imtlset( CHAR_DATA *ch, char *argument )
 {
 
@@ -3545,8 +3550,9 @@ void do_imtlset( CHAR_DATA *ch, char *argument )
     char       arg1 [ MAX_INPUT_LENGTH  ];
     char       buf  [ MAX_STRING_LENGTH ];
     char       buf1 [ MAX_STRING_LENGTH ];
+    bool       fAll = FALSE;
     int        cmd;
-    int        col = 0;
+    int        col  = 0;
 
     rch = get_char( ch );
     
@@ -3557,8 +3563,8 @@ void do_imtlset( CHAR_DATA *ch, char *argument )
 
     if ( arg1[0] == '\0' )
     {
-	send_to_char( "Syntax: imtlset <victim> + <immortal skills>\r\n", ch );
-	send_to_char( "or:     imtlset <victim> -\r\n",                   ch );
+	send_to_char( "Syntax: imtlset <victim> +|- <immortal skill>\r\n",ch );
+	send_to_char( "or:     imtlset <victim> +|- all\r\n",             ch );
 	send_to_char( "or:     imtlset <victim>\r\n",                     ch );
 	return;
     }
@@ -3586,45 +3592,105 @@ void do_imtlset( CHAR_DATA *ch, char *argument )
     {
 	buf[0] = '\0';
 	smash_tilde( argument );
-	if ( argument[0] == '+' )
+	
+	argument = one_argument( argument, arg1 );
+
+	if ( !str_cmp( argument, "all" ) )
 	{
-	    if ( victim->pcdata->immskll )
-	        strcat( buf, victim->pcdata->immskll );
-	    argument++;
-	    while ( isspace( *argument ) )
-	        argument++;
+	    fAll = TRUE;
+	}
+
+	if ( arg1[0] == '+' )
+	{
+	    if ( !fAll )
+	    {
+		if ( victim->pcdata->immskll )
+		    sprintf( buf, "%s", victim->pcdata->immskll );
+
+		if ( is_name( argument, victim->pcdata->immskll ) )
+		{
+		    send_to_char( "That skill has already been set.\r\n", ch );
+		    return;
+		}
+
+	    }
+
 	    for ( cmd = 0; cmd_table[cmd].name[0] != '\0'; cmd++ )
 	    {
 		if ( cmd_table[cmd].level > get_trust( rch ) )
 		    continue;
-		if ( !str_cmp( argument, cmd_table[cmd].name ) )
-		    break;
-	    }	      
-	    if ( cmd_table[cmd].name[0] == '\0' )
-	    {
-		send_to_char( "That is not an immskill.\r\n", ch );
-		return;
+		if ( fAll )
+		 {
+		    if (   cmd_table[cmd].level <= victim->level
+			&& cmd_table[cmd].level >= LEVEL_HERO
+			&& str_infix( cmd_table[cmd].name,
+				     "reboo sla shutdow :" ) )
+		    {
+			strcat( buf, cmd_table[cmd].name );
+			strcat( buf, " " );
+		    }
+		} 
+		else /* Add only one skill */
+		{
+		    if ( !str_cmp( argument, cmd_table[cmd].name ) )
+		        break;
+		}
 	    }
-	    if ( !str_infix( argument, victim->pcdata->immskll ) )
+
+	    if ( !fAll )
 	    {
-		send_to_char( "That skill has already been set.\r\n", ch );
-		return;
+		if (   cmd_table[cmd].name[0] == '\0'
+		    || is_name( argument, "reboo sla shutdow :" ) )
+		{
+		    send_to_char( "That is not an immskill.\r\n", ch );
+		    return;
+		}
+
+		strcat( buf, argument );
+		strcat( buf, " " ); /* This line is really not needed but makes
+				       pfile look nice - Kahn */
 	    }
 	}
-
-	if ( argument[0] == '-' )
+	else /* arg1[0] == '-' */
 	{
-	    free_string( victim->pcdata->immskll );
-	    victim->pcdata->immskll = str_dup( "" );
-	    send_to_char( "Immskills have been deleted.\r\n", ch );
-	    return;
+	    if ( fAll )
+	    {
+		free_string( victim->pcdata->immskll );
+		victim->pcdata->immskll = str_dup( "" );
+		send_to_char( "All Immskills have been deleted.\r\n", ch );
+		return;
+	    }
+	    else /* Remove one skill */
+	    {
+	        char  *buf2 = NULL;
+		char  arg3[ MAX_INPUT_LENGTH ];
+		char  arg2[ MAX_INPUT_LENGTH ];
+
+		argument = one_argument( argument, arg2 );
+
+		sprintf( buf2, "%s", victim->pcdata->immskll );
+
+		if ( !is_name( arg2, victim->pcdata->immskll ) )
+		  {
+		    send_to_char( "That Immskill is not set.\r\n", ch );
+		    return;
+		  }
+
+		while ( buf2[0] != '\0' )
+		  {
+		    buf2 = one_argument( buf2, arg3 );
+		    if ( str_cmp( arg3, arg2 ) )
+		      {
+			strcat( buf, arg3 );
+			strcat( buf, " " );
+		      }
+		  }
+	    }
 	}
 
-	strcat( buf, argument );
-	strcat( buf, " " ); /* This line is really not needed but makes
-			       pfile look nice - Kahn */
 	free_string( victim->pcdata->immskll );
 	victim->pcdata->immskll = str_dup( buf );
+
     }
 
     sprintf( buf, "Immortal skills set for %s:\r\n", victim->name );
@@ -3633,7 +3699,7 @@ void do_imtlset( CHAR_DATA *ch, char *argument )
     for ( cmd = 0; cmd_table[cmd].name[0] != '\0'; cmd++ )
     {
         if ( cmd_table[cmd].level < LEVEL_HERO
-	    || str_infix( cmd_table[cmd].name, victim->pcdata->immskll ) )
+	    || !is_name( cmd_table[cmd].name, victim->pcdata->immskll ) )
 	    continue;
 
 	sprintf( buf, "%-10s", cmd_table[cmd].name );

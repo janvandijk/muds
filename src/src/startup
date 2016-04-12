@@ -4,11 +4,11 @@
 # With changes from Kahn.
 
 # Set the port number.
-set port = 4000
+set port = 9500
 if ( "$1" != "" ) set port="$1"
 
 # Change to area directory.
-cd /EnvyMud/area
+cd ../area
 
 # Set limits.
 nohup
@@ -32,7 +32,14 @@ while ( 1 )
     endif
 
     # Run envy.
-    ../src/envy2 $port >&! $logfile
+    # Check if already running
+    set matches = `netstat -a | grep ":$port " | grep -c LISTEN`
+    if ( $matches >= 1 ) then
+        # Already running
+        echo MUD Already running.
+        exit 0
+    endif
+    ../src/envy $port >&! $logfile
 
     if ( -e core ) then
 	\mv core ../src/
@@ -44,5 +51,5 @@ while ( 1 )
 	exit 0
     endif
 
-    sleep 10
+    sleep 5
 end
