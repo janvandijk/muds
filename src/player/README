@@ -1,13 +1,14 @@
-Merc release 2.2
-Wednesday 24 November 1993
+EnvyMud release 1.0
+Thursday, 30th June 1994
 
-Kahn
-Hatchet
+Kahn		michael@uclink.berkeley.edu
+Thelonius	dave@mechatro2.berkeley.edu
+Kith		kith@marble.bu.edu
+Hatchet		hatchet@uclink.berkeley.edu
+
+
 
 === Player directory
 
 	This directory contains all the subdirectories containing the
 player files sorted by first initial.
-	Included is a player directory parser for those who have the old
-playerfile directory.
-	All the old playerfiles are compatable in 2.2.

@@ -1,9 +1,17 @@
-Merc Release 2.2
-Wednesday 24 November 1993
+EnvyMud release 1.0
+Thursday, 30th June 1994
 
-Kahn
-Hatchet
+Kahn		michael@uclink.berkeley.edu
+Thelonius	dave@mechatro2.berkeley.edu
+Kith		kith@marble.bu.edu
+Hatchet		hatchet@uclink.berkeley.edu
 
+
+
+This is completely from MERC 2.2 documentation written by Furey with names
+changed to match the release
+
+-----------------------------------------------------------------------------
 
 
 === 'I'm running a Mud so I can learn C programming!'
@@ -47,7 +55,7 @@ through the two-step learning cycle MANY times to master it.
 
 === The Environment
 
-Computer: the big or little box that you're using to run Merc.  Computers come
+Computer: the big or little box that you're using to run Envy.  Computers come
     from a _manufacturer_ and have a _model_ name.  Here is a list of common
     manufacturers and models that you're likely to encounter:
 
@@ -64,7 +72,7 @@ Computer: the big or little box that you're using to run Merc.  Computers come
 	Sequent		Symmetry
 	Sequent		Balance
 
-    As far as hardware goes, Merc will run on any 32-bit hardware.
+    As far as hardware goes, Envy will run on any 32-bit hardware.
 
 Operating system: the lowest level program running on your computer.  Most
     common computers run Unix or some variant of it, such as SunOS, Ultrix,
@@ -85,19 +93,19 @@ Operating system: the lowest level program running on your computer.  Most
     running Unix have a lot more in common with other machines running
     Unix than they have with Vax'es running VMS.
 
-    As far as operating systems go, Merc will run on Unix or Unix variants with
+    As far as operating systems go, Envy will run on Unix or Unix variants with
     TCP/IP networking compatible with Berkeley Unix.  It will also run, in
-    single-user mode only, on MS-DOS.  With a reasonable amount of work, Merc
+    single-user mode only, on MS-DOS.  With a reasonable amount of work, Envy
     can be ported to any operating system that provides TCP service for telnet
     connections.
 
-Languages: Merc is written in C.  ANSI (the American National Standards
-    Institute) has a specification for the C language, and Merc is written in
+Languages: Envy is written in C.  ANSI (the American National Standards
+    Institute) has a specification for the C language, and Envy is written in
     Ansi Standard C.
 
     The most popular compiler for Ansi Standard C is the Gnu 'gcc' compiler
     produced by the Free Software Foundation.  It's available by anonymous
-    ftp from prep.ai.mit.edu.  Merc compiles just fine with Gcc 1.38, so
+    ftp from prep.ai.mit.edu.  Envy compiles just fine with Gcc 1.38, so
     you can probably use 1.42 and skip the much larger 2.X versions.
 
     You don't have to use gcc.  IBM RS/6000's running the AIX operating system
@@ -106,9 +114,7 @@ Languages: Merc is written in C.  ANSI (the American National Standards
     work.
 
     Unfortunately, there are still many machines out there without an Ansi
-    standard C compiler.  (Sun is the worst offender in this regard).  You
-    can attempt to compile Merc with a non-Ansi (traditional) C compiler by
-    using the 'mktrad' script.  See trad.txt for details.
+    standard C compiler.  (Sun is the worst offender in this regard).
 
 If you don't know what the manufacturer and model of your computer is, as well
 as its operating system, and whether the C compiler is Ansi or non-Ansi, then
@@ -180,7 +186,7 @@ around with broken programs trying to find ONE bug at a time.
 
 The next technique beyond desk-checking is the time-honored technique of
 inserting 'print' statements into the code, and then watching the logged
-values.  Within Merc code, you can call 'printf' or 'fprintf' to dump
+values.  Within Envy code, you can call 'printf' or 'fprintf' to dump
 interesting values at interesting times.  Where and when to dump these values
 is an art, which you will learn only with practice.
 
@@ -223,7 +229,7 @@ have rendered your process unable to continue.
 
 One reads a 'core' file with a debugger.  The two most popular debuggers on
 Unix are 'adb' and 'gdb', although occasionally one finds 'dbx'.  Typically
-one starts a debugger like this: 'adb merc' or 'gdb merc core'.
+one starts a debugger like this: 'adb envy' or 'gdb envy core'.
 
 The first thing, and often the only thing, you need to do inside the debugger
 is take a stack trace.   In 'adb', the command for this is '$c'.  In gdb,
@@ -241,25 +247,25 @@ If you have access to a program named 'Purify' ... learn how to use it.
 
 Here is how to profile a program:
 
-(1) Remove all the .o files and the 'merc' executable:
+(1) Remove all the .o files and the 'envy' executable:
 
-	rm *.o 'merc'
+	rm *.o 'envy'
 
 (2) Edit your makefile, and change the PROF= line:
 
 	PROF    = -p
 
-(3) Remake merc:
+(3) Remake envy:
 
 	make
 
-(4) Run merc as usual.  Shutdown the game with shutdown when you have run long
+(4) Run envy as usual.  Shutdown the game with shutdown when you have run long
     enough to get a good profiling base.  If you crash the game, or kill the
     process externally, you won't get profiling information.
 
 (5) Run the 'prof' command:
 
-	prof merc > prof.out
+	prof envy > prof.out
 
 (6) Read prof.out.  Run 'man prof' to understand the format of the output.
 

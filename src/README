@@ -1,19 +1,22 @@
-Merc Release 2.2
-Wednesday 24 November 1993
+EnvyMud release 1.0
+Thursday, 30th June 1994
 
-Kahn
-Hatchet
+Kahn		michael@uclink.berkeley.edu
+Thelonius	dave@mechatro2.berkeley.edu
+Kith		kith@marble.bu.edu
+Hatchet		hatchet@uclink.berkeley.edu
+
 
 
 === Introduction
 
-Merc Diku Mud is a Diku Mud with many enhancements and contributions.  See our
-'contrib.txt' and 'help merc' for acknowledgements.  Send us your contribution,
+EnvyMud is a Merc Diku Mud with many enhancements and contributions.  See our
+'contrib.txt' and 'help envy' for acknowledgements.  Send us your contribution,
 and you'll be in there too!
 
-Enjoy our mud.  May your visit here be ... Mercenary.
+Enjoy our mud.  May your visit here be ... Fun.
 
-This is the 2.2 production release of Merc.
+This is the 1.0 production release of Envy.
 
 
 
@@ -29,6 +32,12 @@ enhancements to Diku Mud.  These enhancements are copyright 1992, 1993 by
 Michael Chastain, Michael Quan, and Mitchell Tse.  Our license agreement is in
 'license.txt'.
 
+Envy Diku Mud is a derivative of the original Merc Diku Mud release 2.2 and
+is subject to their copyright and license agreement.  EnvyMud contains
+substantial enhancements to Merc 2.2.  These enhancements are copyright 1994
+by Michael Quan, David Love, Guilherme 'Willie' Arnold, and Mitchell Tse.
+Our license agreement is in 'license.nvy'.
+
 The license terms boil down to this: the people who wrote this mud want due
 credit for their work.
 
@@ -39,17 +48,20 @@ credit for their work.
 	area	Area files.
 	doc	Documentation.
 	log	Log files    (initially empty).
-	player	Player files (initially empty).
+	player	Divided into subdirectories for player files (initially empty).
 	src	Source files.
+
+Each directory contains a README file that is designed to explain the contents
+and purpose of that particular directory.  Please READ them!
 
 
 
 === How to Install
 
 First, group with your highest level Unix guru, and have him or her tank.
-Merc is easier to install than other muds, but every site is different.
+Envy is easier to install than other muds, but every site is different.
 
-(1) Get the release Merc_22.tar.gz from one of these fine
+(1) Get the release Envy_10.tar.gz from one of these fine
     anonymous ftp sites:
 
 	ferkel.ucsb.edu (most files moved to ftp.tcp.com)
@@ -59,7 +71,7 @@ Merc is easier to install than other muds, but every site is different.
 
 (2) Unpack the release.
 
-	gzip -d Merc_22.tar.gz | tar xvf -
+	gzip -d Envy_10.tar.gz | tar xvf -
 
 (3) Go into the 'src' directory.  Choose the Makefile for your operating
     system and copy it into 'Makefile':
@@ -67,10 +79,12 @@ Merc is easier to install than other muds, but every site is different.
 	Makefile	Most machines with 'gcc'
 	Makefile.aix	AIX
 	Makefile.hp	Hp/UX
+	Makefile.irx	Most machines running IRIX
 	Makefile.mip	Mips Risc/OS
 	Makefile.nex	NeXT
 	Makefile.sol	SunSoft Solaris 2.1
-	Makefile.tra	Traditional C (see 'trad.txt')
+	Makefile.sys	Sequent SysV
+	Makefile.tek	Tektronix xd88s
 
     See 'port.txt' for more information on porting, including the
     single-user MsDos and Macintosh versions.
@@ -84,13 +98,13 @@ Merc is easier to install than other muds, but every site is different.
 
     If you encounter errors with 'make', send us your 'make.out' file:
 
-	mail -s make.out merc@garnet.berkeley.edu < make.out
+	mail -s make.out michael@uclink.berkeley.edu < make.out
 
     Also we'll need to know what kind of hardware, operating system,
     and C compiler you have.
 
-    We will help you get Merc running, but obviously we can't guarantee
-    Merc will run on any particular machine.
+    We will help you get Envy running, but obviously we can't guarantee
+    Envy will run on any particular machine.
 
 (5) Start the game:
 
@@ -102,9 +116,9 @@ Merc is easier to install than other muds, but every site is different.
     player file and change your level.  (After the first immortal,
     you can advance the rest).
 
-(7) If you haven't already done so, read 'license.doc' and 'license.txt'.
-    Because Merc is a derivative work of Diku Mud, you must register
-    your mud with the original Diku implementors.
+(7) If you haven't already done so, read 'license.doc', 'license.txt',
+    and 'license.nvy'.  Because Envy is a derivative work of Diku Mud, you
+    must register your mud with the original Diku implementors.
   
 (8) Of course you're going to change the title screen, help files, and so on.
     Don't just globally erase the 'Merc' references, ok?  You wouldn't
@@ -114,12 +128,15 @@ Merc is easier to install than other muds, but every site is different.
 
 === Support
 
-First, read the documentation in the 'doc' directory.  We rewrote all of the
-documentation files from scratch for the 2.0 Alpha release, and have been
+First, read the documentation in the 'doc' directory.  We updated all of the
+documentation files from MERC 2.2 for the Envy 1.0 release, and have been
 keeping them up-to-date since.
 
 Also check the 'wizhelp' command and read the 'help' descriptions for the
 individual immortal commands.
+
+(Immortal commands are considered Skills now and must be edited into
+ playerfiles manually.  See 'pfile.txt' for more details)
 
 We have a mailing list, at 'merc@kpc.com'.  Send mail to 'merc-request@kpc.com'
 to join the list.
@@ -134,8 +151,8 @@ Specific information means: an adb or gdb stack trace (if you're reporting a
 crash), or a syslog with the relevant commands logged.  The player files are
 ascii files -- dump them into your mail message too.
 
-If your e-mail is too vague, we're likely to bounce it back.  There are three
-of us and dozens of you -- we simply can't engage in long-distance debugging,
+If your e-mail is too vague, we're likely to bounce it back.  There are two
+of us and hundreds of you -- we simply can't engage in long-distance debugging,
 on unknown platforms, with the added factor of more code that you've dropped in
 since the release.
 
@@ -143,18 +160,11 @@ since the release.
 
 === Future Plans
 
-Merc 2.2 is THE last release of MERC Industries.  MERC Industries had
-officially disolved October 13, 1993.  MERC 2.2 is a compilation of
-various bug and typo fixes along with a few new worlds.  MERC 2.2 also has
-a variable line pager, MOBPrograms, and player settable prompt.
+Envy 1.0 is one of the first of platforms created to go beyond the original
+limitations of Merc Muds.  Envy 1.0 is a compiliation of bug fixes, new code
+and general improvements over the Merc 2.2 release code.
 
-All future correspondence should be forwarded to the merc mailing list at
-merc@kpc.com.  The end of our development is the beginning of yours.
+Enjoy.
 
-Enjoy,
-Kahn
-Hatchet
-MERC Industries  11/24/93
-
-Originally released 11/24/1993.
-Updated for GCC4 compatibility 2/22/2006 by Samson.
+Originaly released 6/30/1994.
+Updated for GCC4 compatibility 3/5/2006 by Samson.

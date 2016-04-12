@@ -1,4 +1,4 @@
-#AREA	{10 30} Mahatma    Little Haven/Glass Fortress~
+#AREA	{10 30} Mahatma Little Haven~
 
 #MOBILES
 #1801
@@ -124,7 +124,7 @@ an ice staff~
 A frozen branch lies on the ground.~
 ~
 4 1 16385
-21 3 3 202
+21~ 3~ 3~ frost breath~
 7 1900 200
 #1802
 wand fire~
@@ -132,7 +132,7 @@ a wand of fire~
 A glowing ember of wood melts the snow beneath it.~
 ~
 3 1 16385
-15 3 3 26
+15~ 3~ 3~ fireball~
 7 1900 200
 #1803
 flaming axe~
@@ -140,19 +140,19 @@ a flaming axe~
 An axe of blue flame boils the water beneath it.~
 ~
 5 1 8193
-0 2 15 3
+0~ 2~ 15~ 3~
 14 5000 500
 A
 13 2
 A
 18 2
 #1804
-shield southwind~
+shield south wind~
 the Shield of the South Wind~
 A beautiful shield lies at your feet.~
 ~
 9 1 513
-10 0 0 0
+10~ 0~ 0~ 0~
 8 1000000 2000
 A
 1 1
@@ -166,21 +166,22 @@ a sprig of mints~
 A sprig of mint sprouts at your feet.~
 ~
 1 65 16385
-0 0 0 0
+0~ 0~ 0~ 0~
 1 20 10
 A
 14 100
 A
 13 1
 #1806
-fuchsia potion~
-a fuchsia potion~
+fuschia potion~
+a fuschia potion~
 A pinkish purple potion is on the floor.~
 ~
 10 0 1
-15 67 35 0
+15~ shield~ remove curse~ ~
 1 100 100
 #0
+
 
 #ROOMS
 #1801
@@ -191,10 +192,10 @@ teeming with all sorts of life.  The ocean is alive!
 You wonder about the creatures below.
 ~
 18 0 7
-D1 
+D0
 ~
 ~
-0 -1 3200
+0 0 222
 D3
 ~
 ~

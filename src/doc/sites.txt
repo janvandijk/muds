@@ -1,8 +1,10 @@
-Merc Release 2.2
-Wednesday 24 November 1993
+EnvyMud Release 1.0
+Thursday, 30th June 1994
 
-Kahn
-Hatchet
+Kahn		michael@uclink.berkeley.edu
+Thelonius	dave@mechatro2.berkeley.edu
+Kith		kith@marble.bu.edu
+Hatchet		hatchet@uclink.berkeley.edu
 
 
 
@@ -17,29 +19,23 @@ us all!
 
 These are the MERC muds we know of:
 
-	Dragon Mud	eve.assumption.edu		5000
-	Rivers of Mud	cie-2.uoregon.edu		9000
-	Oriental Mud	ntu.ac.sg			4000
-	Frog Mud	brant.ma.iup.edu		2222
-	N.I. Mud (NIM)	164.11.2.18			4000
-	Dark Castle	cscns.com			6666
-	Acme Mud	mud.cc.geneseo.edu		9000
-	Worm Mud	mud.cc.geneseo.edu		4000
-	Dutch Mountains	129.125.134.4			9000
-	North. CrossRds	ugsparc13.eecg.toronto.edu	9000
-	Hidden Worlds	cns.cscns.com			4000
-	What Mud	icarus.weber.edu		4000
-	Aldara Mud	lore.acs.calpoly.edu		4000
-	Salems Lot	138.67.1.3			5666
-	Mortal Realms	krypton.ee.utulsa.edu		4000
-	Mud Lite	next2.haas.berkeley.edu		4000
-	Vego Mud	screech.alfred.edu		9000
-	Ulti Mud	bolero.rahul.net		4000
-	Random Merc	jambo.cc.columbia.edu		9000
-	Mystic Realms	dikumud.sju.edu (host exist?)	4000
-	The Land Mud	nora.gih.no			4000
-	DragonFire	mhoro.cc.columbia.edu		7000
-			pdp1.csie.nctu.edu.tw		4040
-			cscns.com			4444
-	NIM's Mud	rtd.com				9999
-
+Dragon Mud		eve.assumption.edu		5000
+Acme Mud		mud.cc.geneseo.edu		9000
+Worm Mud		mud.cc.geneseo.edu		4000
+Dutch Mountains		129.125.134.4			9000
+North. CrossRoads	ugsparc13.eecg.toronto.edu	9002
+Hidden Worlds		cns.cscns.com			4000
+The Land Mud		nora.gih.no			4000
+Murky Mud II		150.204.38.33			4567
+Stormy Mountain		harp.cc.msstate.edu		9000
+Conch Mud		aann.tyrell.net			4000
+Mystic Adventure	miniac.etu.gel.ulaval.ca	4000
+Mortal Realms		hydrogen.ee.utulsa.edu		4321
+Farside			farside.atinc.com		3000
+PK Mud			kennedy.ecn.uoknor.edu		5000
+Rip's Quest		kennedy.ecn.uoknor.edu		5500
+Vego Mud		spotted.alfred.edu		4000
+Troll Mud		ouray.denver.colorado.edu	9000 ( 9001 )
+Aldara Mud III		one.fcasd.edu			4000
+Legend of the Winds	140.113.17.168			4040
+The Dragon Realm	ccnett1.ntu.edu.tw		3000

@@ -31,7 +31,7 @@ This rat looks like ... a rat.
 8 8 0
 #3802
 Snigger snake~
-Snigger the Cute Man-Eating Snake~
+Snigger~
 Snigger, Icaza's cute man-eating snake, slithers around the room.
 ~
 Snigger is a pretty big snake, at 7 feet and growing.  Although Icaza swears
@@ -44,7 +44,7 @@ Poisonous?  Why don't you find out?
 8 8 1
 #3803
 Sammy Sam kitten~
-Sammy, Hatchet's Cute Flesh-Clawing Kitten~
+Sammy~
 Sammy, Hatchet's cute flesh-clawing kitten, meows in a corner.
 ~
 Sammy is a cute little kitten, probably weighs less than 3 pounds, but she has
@@ -198,9 +198,9 @@ him escape.
 8 8 1
 #3815
 god mortal manifestation~
-the mortal manifestation of Overlord Hatchet~
-The mortal manifestation of Overlord Hatchet sits here, whispering to
-Goddess Icaza.
+the mortal Hatchet~
+The mortal manifestation of Overlord Hatchet sits here, whispering
+to Goddess Icaza.
 ~
 Even in his mortal, statuesque form, Hatchet smirks a bit.  He smiles at your
 entrance, and welcomes you to join in conversation.
@@ -211,7 +211,7 @@ entrance, and welcomes you to join in conversation.
 8 8 1
 #3816
 goddess mortal manifestation~
-the mortal manifestation of Goddess Icaza~
+the mortal Icaza~
 The mortal manifestation of Goddess Icaza sits here, whispering to
 Overlord Hatchet.
 ~
@@ -245,7 +245,7 @@ a silver key~
 A silver key rest here, making a clean perimeter wherever it touches.~
 ~
 18 0 1
-3838 0 0 0
+3838~ 0~ 0~ 0~
 1 0 0
 E
 silver key~
@@ -261,7 +261,7 @@ a key on a necklace~
 A necklace with a key on it is on the floor.~
 ~
 18 0 1|4
-3827 0 0 0
+3827~ 0~ 0~ 0~
 1 0 0
 #3803
 key iron~
@@ -269,7 +269,7 @@ an iron key~
 An iron key is on the floor.~
 ~
 18 0 1
-3831 0 0 0
+3831~ 0~ 0~ 0~
 1 0 0
 #3804
 wall walls~
@@ -277,7 +277,7 @@ the walls~
 The old wooden walls look like they are about to fall down on you.~
 ~
 15 0 0
-300 0 0 0
+300~ 0~ 0~ 0~
 1 0 0
 E
 wall walls~
@@ -290,7 +290,7 @@ the walls of the cave~
 The walls gleam with hidden treasures!~
 ~
 15 0 0
-300 0 0 0
+300~ 0~ 0~ 0~
 1 0 0
 E
 wall walls cave caves cavern~
@@ -303,7 +303,7 @@ the box~
 ~
 ~
 15 0 0
-300 0 0 0
+300~ 0~ 0~ 0~
 1 0 0
 #3807
 crate~
@@ -311,7 +311,7 @@ the crate~
 ~
 ~
 15 0 0
-300 0 0 0
+300~ 0~ 0~ 0~
 1 0 0
 #3808
 table~
@@ -319,7 +319,7 @@ the table~
 ~
 ~
 15 0 0
-300 0 0 0
+300~ 0~ 0~ 0~
 1 0 0
 #3809
 stool~
@@ -327,7 +327,7 @@ the stool~
 A lone stool sits on the floor.~
 ~
 5 0 1|8192
-0 2 2 8
+0~ 2~ 2~ 8~
 10 0 0
 A
 18 -1
@@ -343,7 +343,7 @@ food fit for rats~
 Some food fit for rats gathers dust on the floor and assimilates.~
 ~
 19 0 1
-15 0 0 0
+15~ 0~ 0~ 0~
 5 0 0
 E
 food~
@@ -355,7 +355,7 @@ a wooden stake~
 A wooden stake is against the wall.~
 ~
 5 0 1|8192
-0 2 2 11
+0~ 2~ 2~ 11~
 5 0 0
 E
 stake wooden~
@@ -368,7 +368,7 @@ the shrine~
 ~
 ~
 15 0 0
-200 0 0 0
+200~ 0~ 0~ 0~
 5 0 0
 E
 shrine~
@@ -381,7 +381,7 @@ a long rusted knife~
 A long bladed knife is rusting on the floor.~
 ~
 5 0 1|8192
-0 2 3 3
+0~ 2~ 3~ 3~
 7 0 0
 A
 19 1
@@ -395,7 +395,7 @@ a tin bracer~
 A tin bracer is rusting on the floor.~
 ~
 9 0 1|4096
-4 0 0 0
+4~ 0~ 0~ 0~
 5 0 0
 #3815
 tin leggings~
@@ -403,7 +403,7 @@ tin leggings~
 A pair of tin leggings rusts on the floor.~
 ~
 9 0 1|32
-4 0 0 0
+4~ 0~ 0~ 0~
 5 0 0
 #3816
 tin armguards~
@@ -411,7 +411,7 @@ tin armguards~
 A pair of tin armguards rusts on the floor.~
 ~
 9 0 1|256
-4 0 0 0
+4~ 0~ 0~ 0~
 5 0 0
 #3817
 flail spiked~
@@ -419,7 +419,7 @@ a spiked flail~
 A spiked flail rests on the floor.~
 ~
 5 0 1|8192
-0 3 3 7
+0~ 3~ 3~ 7~
 5 0 0
 A
 19 2
@@ -429,7 +429,7 @@ a barbed whip~
 A barbed whip is curled up on the floor.~
 ~
 5 0 1|8192
-0 3 4 4
+0~ 3~ 4~ 4~
 10 0 0
 A
 18 1
@@ -441,7 +441,7 @@ Holy Rod of Icaza~
 A rod of gold rests millimeters from the floor.~
 ~
 4 1|2|64|256|1024|2048 1|16384
-10 3 3 34
+10~ 3~ 3~ protection~
 10 0 0
 A
 17 -5
@@ -460,7 +460,7 @@ a torch~
 A torch is here.~
 ~
 1 0 1
-0 0 99 0
+0~ 0~ 99~ 0~
 3 0 0
 #3821
 treasure gold coins~
@@ -468,7 +468,7 @@ the treasure of gold coins~
 A big pile of gold coins is in the middle of the room!~
 ~
 20 1 1
-2000 0 0 0
+2000~ 0~ 0~ 0~
 10 0 0
 #3822
 sapphire gem~
@@ -476,7 +476,7 @@ a sapphire gem~
 A big sapphire gem glitters on the floor.~
 ~
 8 0 1
-0 0 0 0
+0~ 0~ 0~ 0~
 5 0 0
 #3823
 ruby gem~
@@ -484,8 +484,128 @@ a ruby gem~
 A big ruby gem glitters on the floor.~
 ~
 8 0 1
-0 0 0 0
+0~ 0~ 0~ 0~
 5 0 3
+#3824
+minigun mini gun mini-gun~
+a 30mm Minigun~
+A big Minigun is resting against the floor.~
+~
+3 0 1|16384
+20~ 999~ 999~ general purpose~
+5 0 0
+#3825
+book poetry poems~
+a book of poetry~
+A book of poetry is beckoning you to read it.~
+~
+8 0 1
+0~ 0~ 0~ 0~
+1 0 0
+E
+book poetry poems~
+This book of poetry is written by Hatchet for his loving Goddess, Icaza.  There
+are 4 poems in this book currently.  To read them, read ONE, TWO, THREE, or
+FOUR.
+~
+E
+one~
+.
+			Dear Icaza
+
+		Roses are red,
+		Violets are blue.
+		For being my love,
+		I write this book for you.
+
+Inspired by and dedicated for the fair lady Icaza.
+by Hatchet, 3/7/94
+~
+E
+two~
+.
+		Little Girl
+
+One day, I happened upon a little girl,
+Sitting on the stump of a tree.
+She was dressed in blue, head full of curls,
+And she was smiling at me!
+
+"Hello, dear old man," she says to me.
+"I'm going to Wonderland!
+If you would like to come join me,
+Please, take hold of my hand!"
+
+I had barely touched her hand,
+When she ran off at a tear,
+Pulling me to a far away land
+That only she knew where.
+
+I watched this girl run like the fire,
+She must be under twenty.
+But she didn't slow, she didn't tire,
+While I hobbled behind, panting aplenty.
+
+Suddenly, we both started flying,
+With the Earth shrinking behind.
+I thought I must be dying,
+Or just losing my mind!
+
+"Where are we going, what is your name?",
+I yelled to the little girl.
+But nothing will distract this dame,
+As through a hole we hurl.
+
+I was suddenly filled with white light.
+Wondering what would next happen.
+But then I was no longer afright,
+As I saw what must be Heaven!
+
+Tranquil plains blossomed before my eyes
+As we came down to land.
+I looked around, from green grass to blue skies.
+This must be Wonderland!
+
+We finally stopped, our destination here,
+As we came upon a grand plaza.
+She leaned over, whispered to my ear,
+"I am Goddess Icaza."
+
+Inspired by and dedicated to the fair lady Icaza.
+3/7/94 by Hatchet
+~
+E
+three~
+.
+		Untitled
+	I read a poem to my love,
+	One that comes to me unbidden.
+	It is a simple poem, written by simple me,
+	but writing such a poem
+	makes me laugh, and it makes her cry
+	And I know that at that very moment,
+	we are both experiencing the same emotion, Love.
+
+Inspired by and dedicated to the fair lady Icaza
+by Hatchet 3/14/94
+~
+E
+four~
+.
+		Untitled
+	Leaves swirling around us,
+	Raindrops in our hair.
+	Locked within one another's embrace,
+	Lost in our own world.
+
+	We kiss softly, longingly,
+	Secure within our own warmth.
+	People scurry around us,
+	Oblivious to us, we oblivious to them.
+
+Inspired by and dedicated to the fair lady Icaza
+by Hatchet 4/4/94
+~
 #0
 
 
@@ -1322,7 +1442,9 @@ M 0 3813 3 3831		Slave in cage
 M 0 3814 2 3837		Slave working
 M 0 3814 2 3835		Slave working
 M 0 3815 1 3840		Mortal Hatchet
+E 1 3824 9 17		Wielding a Minigun!
 M 0 3816 1 3840		Mortal Icaza
+E 1 3824 9 17		Wielding a Minigun!
 M 0 3817 1 3819		Ooze in room
 *
 M 0 3809 1 3826		Drake in the Drake's Lair
@@ -1333,6 +1455,7 @@ O 0 3801 9 3827		Key lying on the ground
 O 0 3821 9 3827		Treasure on the ground
 *
 M 0 3802 1 3842		Snigger in Icaza's room
+O 0 3825 1 3842		Book of Poetry
 M 0 3803 1 3841		Sammy in Hatchet's room
 *
 S

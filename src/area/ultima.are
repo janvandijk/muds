@@ -65,7 +65,7 @@ sheep has pure white fleece.
 0 0
 0 0 0
 #2405
-katrina woman shepherd~
+woman shepherd~
 Katrina the Shepherd~
 Katrina the Shepherd is her looking over the village.
 ~
@@ -369,7 +369,7 @@ The Prisoner seems to a be slimy character.  He was a thief, and
 Justice was done to him.  You glimpse light shining off of
 something black in his hands.
 ~
-2|128 32768|65536 -666 S
+2|128 32768 -666 S
 11 0 0 0d0+0 0d0+0
 0 0
 0 0 1
@@ -905,7 +905,8 @@ huge and you fear as it grabs for you.
 #2468
 armourer~
 the armourer~
-The Armourer stands here.~
+The Armourer stands here.
+~
 The Armourer sells... armour.
 ~
 2  4 1000 S
@@ -936,6 +937,8 @@ The Boatseller sells... boats.
 0 0 1
 #0
 
+
+
 #OBJECTS
 #2400
 mantra compassion mu~
@@ -943,7 +946,7 @@ Mu~
 Mu, the Mantra of Compassion is here.~
 ~
 18 2 1
-0 0 0 0
+0~ 0~ 0~ 0~
 1 0 0
 #2401
 mantra humility lum~
@@ -951,7 +954,7 @@ Lum~
 Lum, the Mantra of Humility is here.~
 ~
 18 2 1
-0 0 0 0
+0~ 0~ 0~ 0~
 1 0 0
 #2402
 mantra justice beh~
@@ -959,7 +962,7 @@ Beh~
 Beh, the Mantra of Justice is here.~
 ~
 18 2 1
-0 0 0 0
+0~ 0~ 0~ 0~
 1 0 0
 #2403
 mantra spirituality ohm~
@@ -967,7 +970,7 @@ Ohm~
 Ohm, the Mantra of Spirituality is here.~
 ~
 18 2 1
-0 0 0 0
+0~ 0~ 0~ 0~
 1 0 0
 #2404
 mantra honesty ahm~
@@ -975,7 +978,7 @@ Ahm~
 ahm, the Mantra of Honesty is here.~
 ~
 18 2 1
-0 0 0 0
+0~ 0~ 0~ 0~
 1 0 0
 #2405
 mantra sacrifice cah~
@@ -983,7 +986,7 @@ Cah~
 Cah, the Mantra of Sacrifice is here.~
 ~
 18 2 1
-0 0 0 0
+0~ 0~ 0~ 0~
 1 0 0
 #2406
 mantra valor ra~
@@ -991,7 +994,7 @@ Ra~
 Ra, the Mantra of Valor is here.~
 ~
 18 2 1
-0 0 0 0
+0~ 0~ 0~ 0~
 1 0 0
 #2407
 mantra honor summ~ 
@@ -999,7 +1002,7 @@ Summ~
 Summ, the Mantra of Honor is here.~
 ~
 18 2 1
-0 0 0 0
+0~ 0~ 0~ 0~
 1 0 0
 #2408
 moonstone~
@@ -1007,7 +1010,7 @@ Moonstone~
 A totally featureless Moonstone is here.~
 ~
 18 0 1
-0 0 0 0
+0~ 0~ 0~ 0~
 1 0 0
 #2409
 moonstone~
@@ -1015,7 +1018,7 @@ Moonstone~
 A totally featureless Moonstone is here.~
 ~
 18 0 1
-0 0 0 0
+0~ 0~ 0~ 0~
 1 0 0
 #2410
 moonstone~
@@ -1023,7 +1026,7 @@ Moonstone~
 A totally featureless Moonstone is here.~
 ~
 18 0 1
-0 0 0 0
+0~ 0~ 0~ 0~
 1 0 0
 #2411
 moonstone~
@@ -1031,7 +1034,7 @@ Moonstone~
 A totally featureless Moonstone is here.~
 ~
 18 0 1
-0 0 0 0
+0~ 0~ 0~ 0~
 1 0 0
 #2412
 moonstone~
@@ -1039,7 +1042,7 @@ Moonstone~
 A totally featureless Moonstone is here.~
 ~
 18 0 1
-0 0 0 0
+0~ 0~ 0~ 0~
 1 0 0
 #2413
 moonstone~
@@ -1047,7 +1050,7 @@ Moonstone~
 A totally featureless Moonstone is here.~
 ~
 18 0 1
-0 0 0 0
+0~ 0~ 0~ 0~
 1 0 0
 #2414
 moonstone~
@@ -1055,7 +1058,7 @@ Moonstone~
 A totally featureless Moonstone is here.~
 ~
 18 0 1
-0 0 0 0
+0~ 0~ 0~ 0~
 1 0 0
 #2415
 moonstone~
@@ -1063,7 +1066,7 @@ Moonstone~
 A totally featureless Moonstone is here.~
 ~
 18 0 1
-0 0 0 0
+0~ 0~ 0~ 0~
 1 0 0
 #2416
 hourglass~
@@ -1071,7 +1074,7 @@ the Hourglass~
 You feel an aura of power emanating from the Hourglass.~
 ~
 18 1 1|16384
-0 0 0 0
+0~ 0~ 0~ 0~
 1 0 0
 A
 9 -50
@@ -1083,7 +1086,7 @@ the shepherd's crook~
 The crook lies here.~
 ~
 5 0 8193
-0 0 0 7
+0~ 0~ 0~ 7~
 4 0 0
 #2418
 doll~
@@ -1091,7 +1094,7 @@ the doll~
 An old rag doll is here.~
 ~
 13 128 1
-0 0 0 0
+0~ 0~ 0~ 0~
 30 0 0
 E
 rag old doll~
@@ -1103,7 +1106,7 @@ Katrina's sword~
 Katrina's sword gleams prettily.~
 ~
 5 1024 8193
-0 0 0 1
+0~ 0~ 0~ 1~
 2 0 0
 E
 sword~
@@ -1116,7 +1119,7 @@ a wrinkled scroll~
 A scroll rescued from the spider's web.~
 ~
 2 0 1
-10 23 0 0
+10~ earthquake~ ~ ~
 1 0 0
 #2421
 dagger~
@@ -1124,7 +1127,7 @@ a magic dagger~
 The magic dagger lies here, pulsating.~
 ~
 5 2 8193
-0 0 0 11
+0~ 0~ 0~ 11~
 4 0 0
 A
 3 2
@@ -1136,7 +1139,7 @@ a robe~
 The robes of a mage lies here.~
 ~
 9 0 1025
-0 0 0 0
+0~ 0~ 0~ 0~
 5 0 0
 E
 robe~
@@ -1148,7 +1151,7 @@ horseshoes~
 Smithy's horseshoes are here.~
 ~
 9 1 65
-0 0 0 0
+0~ 0~ 0~ 0~
 7 0 0
 A
 14 50
@@ -1160,7 +1163,7 @@ a mandolin~
 The fine instrument lies here.~
 ~
 5 0 8193
-0 0 0 6
+0~ 0~ 0~ 6~
 5 0 0
 #2425
 cup~
@@ -1168,7 +1171,7 @@ a cup~
 The beggar's cup is here.~
 ~
 15 0 5
-0 0 0 0 
+0~ 0~ 0~ 0~ 
 1 0 0
 #2426
 gold~
@@ -1176,7 +1179,7 @@ some gold pieces~
 Gold pieces.~
 ~
 20 0 1
-50 0 0 0
+50~ 0~ 0~ 0~
 5 0 0
 #2427
 bottle~
@@ -1184,7 +1187,7 @@ the bottle~
 Iolo's bottle sits here.~
 ~
 10 0 1
-11 15 201 0
+11~ cure critical~ fire breath~ ~
 1 0 0
 #2428
 bow~
@@ -1192,7 +1195,7 @@ Iolo's bow~
 Iolo's bow stands against a wall.~
 ~
 5 3 8193
-0 0 0 6
+0~ 0~ 0~ 6~
 4 0 0
 E
 bow iolo~
@@ -1208,7 +1211,7 @@ a chicken~
 A chicken is lying on the ground.~
 ~
 5 1024 8193
-0 0 0 7
+0~ 0~ 0~ 7~
 6 0 0
 E
 chicken~
@@ -1225,7 +1228,7 @@ the Infinity Bow~
 The Infinity Bow floats here.~
 ~
 5 1|2|1024 8193
-0 0 0 6
+0~ 0~ 0~ 6~
 3 0 0
 E
 infinity bow~
@@ -1243,7 +1246,7 @@ a wooden spear~
 A simple wooden spear lies here.~
 ~
 5 0 8193
-0 0 0 2
+0~ 0~ 0~ 2~
 4 0 0
 #2432
 club~
@@ -1251,7 +1254,7 @@ a stone club~
 A stone club is here.~
 ~
 5 0 8193
-0 0 0 7
+0~ 0~ 0~ 7~
 10 0 0
 #2433
 gavel~
@@ -1259,7 +1262,7 @@ a gavel~
 The Judge's gavel lies here.~
 ~
 5 1024 8193
-0 0 0 7
+0~ 0~ 0~ 7~
 5 0 0
 E
 judge gavel~
@@ -1271,17 +1274,17 @@ A
 A
 12 10
 #2434
-staff~
+staff jannas~
 a staff~
 Janna's staff lies here.~
 ~
 5 1025 8193
-0 0 0 8
+0~ 0~ 0~ 8~
 7 0 0
 E
 staff~
-Jaana's staff is strangely shaped, in a double helix form.  As
-you look at the two snake-like pieces of wood, they seems to
+Janna's staff is strangely shaped, in a double helix form.  As
+you look at the two snake-like pieces of wood, they seem to
 move.
 ~
 A
@@ -1292,10 +1295,10 @@ a sword~
 Geoffrey's sword gleams in the sun.~
 ~
 5 1025 8193
-0 0 0 3
+0~ 0~ 0~ 3~
 7 0 0
 E
-geoffrey sword~
+geoffreys sword~
 Geoffrey's sword is heavy but sharp.  When you touch the jeweled
 hilt, power floods into your arm.~
 A
@@ -1306,7 +1309,7 @@ a sword~
 A simple sword is here.~
 ~
 5 0 8193
-0 0 0 1
+0~ 0~ 0~ 1~
 5 0 0
 #2437
 sword bastard~
@@ -1314,7 +1317,7 @@ a bastard sword~
 Simon's monstrous bastard sword lies here.~
 ~
 5 1025 8193
-0 0 0 3
+0~ 0~ 0~ 3~
 18 0 0
 E
 sword bastard~
@@ -1340,7 +1343,7 @@ a hammer~
 A tinker's hammer lies here.~
 ~
 5 0 8193
-0 0 0 8
+0~ 0~ 0~ 8~
 12 0 0
 #2439
 sword~
@@ -1348,7 +1351,7 @@ a sword~
 Julia's hot, glowing sword lies here.~
 ~
 5 1025 8193
-0 0 0 1
+0~ 0~ 0~ 1~
 8 0 0
 E
 glowing sword hot~
@@ -1369,7 +1372,7 @@ the Amulet of Love~
 The most beautiful amulet lies in a pile here.~
 ~
 9 1025|2048 5
-0 0 0 0
+0~ 0~ 0~ 0~
 1 0 0
 A
 20 -5
@@ -1389,7 +1392,7 @@ a shiny sword~
 A sword lies on the ground.~
 ~
 5 0 8193
-0 0 0 1
+0~ 0~ 0~ 1~
 10 0 0
 A
 18 2
@@ -1399,7 +1402,7 @@ shiny armour~
 A paladin's suit of armour lies here.~
 ~
 9 0 9
-0 0 0 0
+0~ 0~ 0~ 0~
 15 0 0
 A
 1 1
@@ -1411,7 +1414,7 @@ a rapier~
 Dupre's rapier is here.~
 ~
 5 1025  8193
-0 0 0 11
+0~ 0~ 0~ 11~
 13 0 0 
 A
 1 1
@@ -1423,7 +1426,7 @@ a boomerang~
 A gargoyle's boomerang is here.~
 ~
 5 2 8193
-0 0 0 6
+0~ 0~ 0~ 6~
 6 0 0
 E
 boomerang~
@@ -1441,7 +1444,7 @@ a rusty sword~
 A corroded, rusty sword is here.~
 ~
 5 128|4096 8193
-0 0 0 1
+0~ 0~ 0~ 1~
 9 0 0
 A
 9 100
@@ -1451,7 +1454,7 @@ a rusty shield~
 A spiked rusty shield lies here.~
 ~
 9 128|4096 513
-0 0 0 0
+0~ 0~ 0~ 0~
 5 0 0
 A
 19 3
@@ -1463,7 +1466,7 @@ a magic cloak~
 A magic cloak is here.~
 ~
 9 1 5
-0 0 0 0
+0~ 0~ 0~ 0~
 6 0 0
 A
 12 10
@@ -1475,7 +1478,7 @@ an aura of power~
 A bright light of power shoots into the air.~
 ~
 9 1 9
-0 0 0 0
+0~ 0~ 0~ 0~
 1 0 0
 A
 17 10
@@ -1487,7 +1490,7 @@ a big red face~
 The empty shell of the Guardian head lies here.~
 ~
 9 4|16|512|2048 17
-0 0 0 0
+0~ 0~ 0~ 0~
 10 0 0
 E
 face head helmet red~
@@ -1510,7 +1513,7 @@ a spiked mace~
 Waves of corruption come off this evilly enchanted spiked mace.~
 ~
 5 16|512|2048 8193
-0 0 0 7
+0~ 0~ 0~ 7~
 5 0 0
 A
 19 6
@@ -1522,7 +1525,7 @@ a completely black  armour~
 This completely black armor reeks of death.~
 ~
 9 4|16|512|2048 9
-0 0 0 0
+0~ 0~ 0~ 0~
 9 0 0
 A
 17 5
@@ -1537,7 +1540,7 @@ You see a very oddly shaped charm...  it might be worth it to
 look at its shape.~
 ~
 9 16|512|2048 5
-0 0 0 0
+0~ 0~ 0~ 0~
 3 0 0
 E
 shape~
@@ -1556,7 +1559,7 @@ an evil gem~
 The evil gem pulsates.~
 ~
 4 4|16|512|2048 16385
-60 1 1 27
+60~ 1~ 1~ harm~
 1 0 0
 A
 12 50
@@ -1568,7 +1571,7 @@ Sentri's helmet~
 Sentri's helmet is here.~
 ~
 9 1024 17
-0 0 0 0
+0~ 0~ 0~ 0~
 30 0 0
 A
 4 2
@@ -1580,7 +1583,7 @@ Sentri's sleeves~
 Sentri's sleeves lies here.~
 ~
 9 1024 257
-0 0 0 0
+0~ 0~ 0~ 0~
 40 0 0
 A
 1 2
@@ -1592,7 +1595,7 @@ Sentri's girth~
 Sentri's girth is here.~
 ~
 9 1024 2049
-0 0 0 0
+0~ 0~ 0~ 0~
 40 0 0
 A
 13 15
@@ -1604,7 +1607,7 @@ Sentri's two-handed sword~
 Sentri's two-handed sword is here.~
 ~
 5 1024 8193
-0 0 0 3
+0~ 0~ 0~ 3~
 20 0 0
 A
 18 3
@@ -1616,7 +1619,7 @@ Sentri's gloves~
 Sentri's gloves are here.~
 ~
 9 1024 129
-0 0 0 0
+0~ 0~ 0~ 0~
 40 0 0
 A
 18 3
@@ -1628,7 +1631,7 @@ Sentri's boots~
 Sentri's boots are here.~
 ~
 9 1024 65
-0 0 0 0
+0~ 0~ 0~ 0~
 40 0 0
 A
 2 1
@@ -1640,7 +1643,7 @@ Sentri's leggings~
 Sentri left his leggings here.~
 ~
 9 1024 33
-0 0 0 0
+0~ 0~ 0~ 0~
 40 0 0
 A
 2 1
@@ -1652,7 +1655,7 @@ Sentri's armour~
 Sentri left his armour here.~
 ~
 9 1024 9
-0 0 0 0
+0~ 0~ 0~ 0~
 30 0 0
 A
 18 3
@@ -1664,7 +1667,7 @@ a Fellowship medallion~
 A triangular shaped medallion is here.~
 ~
 9 0 5
-0 0 0 0
+0~ 0~ 0~ 0~
 6 0 0
 A
 12 10
@@ -1676,7 +1679,7 @@ The Glass Sword~
 The most amazingly well crafted sword lies here.~
 ~
 5 32|64|256 8193
-0 0 0 1
+0~ 0~ 0~ 1~
 4 0 0
 E
 glass sword~
@@ -1701,7 +1704,7 @@ British's crown~
 A jewel encrusted crown is here.~
 ~
 9 1 17
-0 0 0 0
+0~ 0~ 0~ 0~
 10 0 0
 E
 british crown~
@@ -1724,7 +1727,7 @@ A pure gold sceptre is topped with a perfect crystal orb of
 power.~
 ~
 9 1 16385
-0 0 0 0
+0~ 0~ 0~ 0~
 1 0 0
 E
 sceptre~
@@ -1751,7 +1754,7 @@ British's amulet~
 A silver amulet lies here.~
 ~
 9 1 5
-0 0 0 0
+0~ 0~ 0~ 0~
 1 0 0
 E
 amulet~
@@ -1771,7 +1774,7 @@ a fountain~
 A fountain shaped in an Ankh pours water.~
 ~
 25 0 0
-0 0 0 0
+0~ 0~ 0~ 0~
 1000 0 0
 #2468
 boat~
@@ -1779,9 +1782,11 @@ a boat~
 A boat lies here.~
 ~
 22 0 1
-0 0 0 0
+0~ 0~ 0~ 0~
 20 0 0
 #0
+
+
 
 #ROOMS
 #2400
@@ -3693,7 +3698,7 @@ D3
 0 -1 2500
 D4
 ~
-~
+moongate gate moon~
 2 2412 2502
 S
 #2502
@@ -3862,7 +3867,7 @@ door~
 S
 #2513
 The Beach~
-This beach ends here.  You can go east or north.
+This beach ends here.  You can go east or west.
 ~
 4 1 0
 D3
@@ -5000,7 +5005,7 @@ S
 The Enlightenment~
 A voice booms out, "You are now eight part enlightened.  To truly
 become an Avatar though you must experience what he has
-experience.  Go through the time warp and fight his enemies. 
+experienced.  Go through the time warp and fight his enemies. 
 Beware only High Mortals should attempt this challenge."
 ~
 0 0 0
@@ -5380,5 +5385,10 @@ R 0 2525 4
 R 0 2526 4
 S
 
+#SHOPS
+ 2468	9  0  0  0  0	110   90	0 23 ; armorer
+ 2469   5  0  0  0  0   110   90	0 23 ; weaponsmith
+ 2470  22  0  0  0  0   110   90	0 23 ; boatseller
+0
 #$
 

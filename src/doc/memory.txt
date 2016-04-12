@@ -1,29 +1,29 @@
-Merc Release 2.2
-Wednesday 24 November 1993
+EnvyMud release 1.0
+Thursday, 30th June 1994
 
-Kahn
-Hatchet
+Kahn		michael@uclink.berkeley.edu
+Thelonius	dave@mechatro2.berkeley.edu
+Kith		kith@marble.bu.edu
+Hatchet		hatchet@uclink.berkeley.edu
 
 
 
 === Memory Management Overview
 
-Merc contains the following memory regions: run file memory; stack; string
+Envy contains the following memory regions: run file memory; stack; string
 space; and permanent space.  The approximate sizes of these regions are:
 
-    Run file memory	 240 k
-    Stack		  20 k
-    String space	1020 k
-    Permanent space	 830 k
-    TOTAL		2110 k
+    Run file memory	 832 k
+    Stack		 584 k
+    String space	1390 k
+    Permanent space	2234 k
+    TOTAL		5040 k
 
 
 
 === Run File Memory
 
-The merc executable file has about 200k of code, 4k of initialized data, and
-32k of uninitialized data.  This was measured on an MsDos system using djgpp
-version 1.10.
+The envy executable file has about 840k of code.
 
 This size is small compared to the total size, and there is little you can do
 to change it.
@@ -32,13 +32,13 @@ to change it.
 
 === Stack
 
-We have never measured stack usage, but estimate it's somewhere between 10k and
-30k.  Merc has a wide, shallow calling tree.  The largest consumers of stack
-memory are local buffers of size MAX_STRING_LENGTH.
+We have never measured stack usage, but estimate it's somewhere between 580k
+and 600k.  Envy has a wide, shallow calling tree.  The largest consumers of
+stack memory are local buffers of size MAX_STRING_LENGTH.
 
-If you port Merc to a machine with 64k or less of stack, you should instrument
-your object code with stack-usage measurements.  Most compilers for machines in
-this range have an option to do this.
+If you port Envy to a machine with 1024k or less of stack, you should
+instrument your object code with stack-usage measurements.  Most compilers
+for machines in this range have an option to do this.
 
 
 
@@ -90,12 +90,12 @@ operating system can page out almost all of the string space without affecting
 performance.
 
 After boot time the unused end of string space is wasted.  This amounts to
-about 80k in Merc 2.0.  On a VM system this space is unused space is paged out
+about 110k in Envy 1.0.  On a VM system this space is unused space is paged out
 quickly, so it doesn't hurt to leave it alone.  However, you can recover this
 space easily by lowering MAX_STRING.  If perchance you set MAX_STRING too low
 you will get a boot-time error, but never any operational errors.
 
-If you add a lot of areas you may need to increase MAX_STRING.  Again, Merc
+If you add a lot of areas you may need to increase MAX_STRING.  Again, Envy
 will tell you when you've run out.
 
 
@@ -107,18 +107,18 @@ the created mobiles and objects; descriptor and player character structures;
 you name it.
 
 This space is dynamically allocated from calloc() in large blocks, which are
-carved up and handed out as needed by alloc_perm().  As distributed, Merc 2.0
-uses about 830k of permanent space.
+carved up and handed out as needed by alloc_perm().  As distributed, Envy 1.0
+uses about 2234k of permanent space.
 
 Unlike string space, permanent space grows on demand; alloc_perm() calloc's and
 carves up as many blocks as needed as the game runs.
 
 You can adjust the block size by changing MAX_PERM_BLOCK in 'db.c'.  Adjustment
-will have only a minor effect on space and time usage.  If you port Merc to a 
+will have only a minor effect on space and time usage.  If you port Envy to a 
 new system with a 64k or 32k limit on calloc() size, you could simply change
 MAX_PERM_BLOCK to the largest calloc'able block on your system.
 
-Merc never calls free() to return memory.  Instead, memory is recycled for
+Envy never calls free() to return memory.  Instead, memory is recycled for
 future use.  This has two advantages: it's faster to recycle a block than to
 call free(), and it's faster to allocate a block from a free list than to
 allocate one from calloc() or alloc_perm().  Most of the structure types have

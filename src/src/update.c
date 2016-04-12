@@ -5,96 +5,112 @@
  *  Merc Diku Mud improvments copyright (C) 1992, 1993 by Michael          *
  *  Chastain, Michael Quan, and Mitchell Tse.                              *
  *                                                                         *
- *  In order to use any part of this Merc Diku Mud, you must comply with   *
- *  both the original Diku license in 'license.doc' as well the Merc       *
- *  license in 'license.txt'.  In particular, you may not remove either of *
- *  these copyright notices.                                               *
+ *  Envy Diku Mud improvements copyright (C) 1994 by Michael Quan, David   *
+ *  Love, Guilherme 'Willie' Arnold, and Mitchell Tse.                     *
+ *                                                                         *
+ *  In order to use any part of this Envy Diku Mud, you must comply with   *
+ *  the original Diku license in 'license.doc', the Merc license in        *
+ *  'license.txt', as well as the Envy license in 'license.nvy'.           *
+ *  In particular, you may not remove either of these copyright notices.   *
  *                                                                         *
  *  Much time and thought has gone into this software and you are          *
  *  benefitting.  We hope that you share your changes too.  What goes      *
  *  around, comes around.                                                  *
  ***************************************************************************/
 
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#endif
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
 #include "merc.h"
 
+/*
+ * Externals
+ */ 
+extern  bool            merc_down;
 
+/*
+ * Globals
+ */
+bool    delete_obj;
+bool    delete_char;
 
 /*
  * Local functions.
  */
-int hit_gain args( ( CHAR_DATA * ch ) );
-int mana_gain args( ( CHAR_DATA * ch ) );
-int move_gain args( ( CHAR_DATA * ch ) );
-void mobile_update args( ( void ) );
-void weather_update args( ( void ) );
-void char_update args( ( void ) );
-void obj_update args( ( void ) );
-void aggr_update args( ( void ) );
+int	hit_gain        args( ( CHAR_DATA *ch ) );
+int	mana_gain       args( ( CHAR_DATA *ch ) );
+int	move_gain       args( ( CHAR_DATA *ch ) );
+void	mobile_update   args( ( void ) );
+void	weather_update  args( ( void ) );
+void	char_update     args( ( void ) );
+void	obj_update      args( ( void ) );
+void	aggr_update     args( ( void ) );
 
 
 
 /*
  * Advancement stuff.
  */
-void advance_level( CHAR_DATA * ch )
+void advance_level( CHAR_DATA *ch )
 {
-   char buf[MAX_STRING_LENGTH];
-   int add_hp;
-   int add_mana;
-   int add_move;
-   int add_prac;
+    char buf [ MAX_STRING_LENGTH ];
+    int  add_hp;
+    int  add_mana;
+    int  add_move;
+    int  add_prac;
 
-   sprintf( buf, "the %s", title_table[ch->class][ch->level][ch->sex == SEX_FEMALE ? 1 : 0] );
-   set_title( ch, buf );
+    sprintf( buf, "the %s",
+	title_table [ch->class] [ch->level] [ch->sex == SEX_FEMALE ? 1 : 0] );
+    set_title( ch, buf );
 
-   add_hp = con_app[get_curr_con( ch )].hitp + number_range( class_table[ch->class].hp_min, class_table[ch->class].hp_max );
-   add_mana = class_table[ch->class].fMana ? number_range( 2, ( 2 * get_curr_int( ch ) + get_curr_wis( ch ) ) / 8 ) : 0;
-   add_move = number_range( 5, ( get_curr_con( ch ) + get_curr_dex( ch ) ) / 4 );
-   add_prac = wis_app[get_curr_wis( ch )].practice;
+    add_hp      = con_app[get_curr_con( ch )].hitp + number_range(
+		    class_table[ch->class].hp_min,
+		    class_table[ch->class].hp_max );
+    add_mana    = class_table[ch->class].fMana
+        ? number_range(2, ( 2 * get_curr_int( ch ) + get_curr_wis( ch ) ) / 8 )
+	: 0;
+    add_move    =
+      number_range( 5, ( get_curr_con( ch ) + get_curr_dex( ch ) ) / 4 );
+    add_prac    = wis_app[get_curr_wis( ch )].practice;
 
-   add_hp = UMAX( 1, add_hp );
-   add_mana = UMAX( 0, add_mana );
-   add_move = UMAX( 10, add_move );
+    add_hp               = UMAX(  1, add_hp   );
+    add_mana             = UMAX(  0, add_mana );
+    add_move             = UMAX( 10, add_move );
 
-   ch->max_hit += add_hp;
-   ch->max_mana += add_mana;
-   ch->max_move += add_move;
-   ch->practice += add_prac;
+    ch->max_hit 	+= add_hp;
+    ch->max_mana	+= add_mana;
+    ch->max_move	+= add_move;
+    ch->practice	+= add_prac;
 
-   if( !IS_NPC( ch ) )
-      REMOVE_BIT( ch->act, PLR_BOUGHT_PET );
+    if ( !IS_NPC( ch ) )
+	REMOVE_BIT( ch->act, PLR_BOUGHT_PET );
 
-   sprintf( buf,
-            "Your gain is: %d/%d hp, %d/%d m, %d/%d mv %d/%d prac.\r\n",
-            add_hp, ch->max_hit, add_mana, ch->max_mana, add_move, ch->max_move, add_prac, ch->practice );
-   send_to_char( buf, ch );
-   return;
-}
+    sprintf( buf,
+	    "Your gain is: %d/%d hp, %d/%d m, %d/%d mv %d/%d prac.\r\n",
+	    add_hp,	ch->max_hit,
+	    add_mana,	ch->max_mana,
+	    add_move,	ch->max_move,
+	    add_prac,	ch->practice );
+    send_to_char( buf, ch );
+    return;
+}   
 
 
 
-void gain_exp( CHAR_DATA * ch, int gain )
+void gain_exp( CHAR_DATA *ch, int gain )
 {
-   if( IS_NPC( ch ) || ch->level >= LEVEL_HERO )
-      return;
+    if ( IS_NPC( ch ) || ch->level >= LEVEL_HERO )
+	return;
 
-   ch->exp = UMAX( 1000, ch->exp + gain );
-   while( ch->level < LEVEL_HERO && ch->exp >= 1000 * ( ch->level + 1 ) )
-   {
-      send_to_char( "You raise a level!!  ", ch );
-      ch->level += 1;
-      advance_level( ch );
-   }
+    ch->exp = UMAX( 1000, ch->exp + gain );
+    while ( ch->level < LEVEL_HERO && ch->exp >= 1000 * ( ch->level + 1 ) )
+    {
+	send_to_char( "You raise a level!!  ", ch );
+	ch->level += 1;
+	advance_level( ch );
+    }
 
-   return;
+    return;
 }
 
 
@@ -102,283 +118,248 @@ void gain_exp( CHAR_DATA * ch, int gain )
 /*
  * Regeneration stuff.
  */
-int hit_gain( CHAR_DATA * ch )
+int hit_gain( CHAR_DATA *ch )
 {
-   int gain;
+    int gain;
 
-   if( IS_NPC( ch ) )
-   {
-      gain = ch->level * 3 / 2;
-   }
-   else
-   {
-      gain = UMIN( 5, ch->level );
+    if ( IS_NPC( ch ) )
+    {
+	gain = ch->level * 3 / 2;
+    }
+    else
+    {
+	gain = UMIN( 5, ch->level );
 
-      switch ( ch->position )
-      {
-         case POS_SLEEPING:
-            gain += get_curr_con( ch );
-            break;
-         case POS_RESTING:
-            gain += get_curr_con( ch ) / 2;
-            break;
-      }
+	switch ( ch->position )
+	{
+	case POS_SLEEPING: gain += get_curr_con( ch );		break;
+	case POS_RESTING:  gain += get_curr_con( ch ) / 2;	break;
+	}
 
-      if( ch->pcdata->condition[COND_FULL] == 0 )
-         gain /= 2;
+	if ( ch->pcdata->condition[COND_FULL  ] == 0 )
+	    gain /= 2;
 
-      if( ch->pcdata->condition[COND_THIRST] == 0 )
-         gain /= 2;
+	if ( ch->pcdata->condition[COND_THIRST] == 0 )
+	    gain /= 2;
 
-   }
+    }
 
-   if( IS_AFFECTED( ch, AFF_POISON ) )
-      gain /= 4;
+    if ( IS_AFFECTED( ch, AFF_POISON ) )
+	gain /= 4;
 
-   return UMIN( gain, ch->max_hit - ch->hit );
+    return UMIN( gain, ch->max_hit - ch->hit );
 }
 
 
 
-int mana_gain( CHAR_DATA * ch )
+int mana_gain( CHAR_DATA *ch )
 {
-   int gain;
+    int gain;
 
-   if( IS_NPC( ch ) )
-   {
-      gain = ch->level;
-   }
-   else
-   {
-      gain = UMIN( 5, ch->level / 2 );
+    if ( IS_NPC( ch ) )
+    {
+	gain = ch->level;
+    }
+    else
+    {
+	gain = UMIN( 5, ch->level / 2 );
 
-      switch ( ch->position )
-      {
-         case POS_SLEEPING:
-            gain += get_curr_int( ch ) * 2;
-            break;
-         case POS_RESTING:
-            gain += get_curr_int( ch );
-            break;
-      }
+	switch ( ch->position )
+	{
+	case POS_SLEEPING: gain += get_curr_int( ch ) * 2;	break;
+	case POS_RESTING:  gain += get_curr_int( ch );		break;
+	}
 
-      if( ch->pcdata->condition[COND_FULL] == 0 )
-         gain /= 2;
+	if ( ch->pcdata->condition[COND_FULL  ] == 0 )
+	    gain /= 2;
 
-      if( ch->pcdata->condition[COND_THIRST] == 0 )
-         gain /= 2;
+	if ( ch->pcdata->condition[COND_THIRST] == 0 )
+	    gain /= 2;
 
-   }
+    }
 
-   if( IS_AFFECTED( ch, AFF_POISON ) )
-      gain /= 4;
+    if ( IS_AFFECTED( ch, AFF_POISON ) )
+	gain /= 4;
 
-   return UMIN( gain, ch->max_mana - ch->mana );
+    return UMIN( gain, ch->max_mana - ch->mana );
 }
 
 
 
-int move_gain( CHAR_DATA * ch )
+int move_gain( CHAR_DATA *ch )
 {
-   int gain;
+    int gain;
 
-   if( IS_NPC( ch ) )
-   {
-      gain = ch->level;
-   }
-   else
-   {
-      gain = UMAX( 15, 2 * ch->level );
+    if ( IS_NPC( ch ) )
+    {
+	gain = ch->level;
+    }
+    else
+    {
+	gain = UMAX( 15, 2 * ch->level );
 
-      switch ( ch->position )
-      {
-         case POS_SLEEPING:
-            gain += get_curr_dex( ch );
-            break;
-         case POS_RESTING:
-            gain += get_curr_dex( ch ) / 2;
-            break;
-      }
+	switch ( ch->position )
+	{
+	case POS_SLEEPING: gain += get_curr_dex( ch );		break;
+	case POS_RESTING:  gain += get_curr_dex( ch ) / 2;	break;
+	}
 
-      if( ch->pcdata->condition[COND_FULL] == 0 )
-         gain /= 2;
+	if ( ch->pcdata->condition[COND_FULL  ] == 0 )
+	    gain /= 2;
 
-      if( ch->pcdata->condition[COND_THIRST] == 0 )
-         gain /= 2;
-   }
+	if ( ch->pcdata->condition[COND_THIRST] == 0 )
+	    gain /= 2;
+    }
 
-   if( IS_AFFECTED( ch, AFF_POISON ) )
-      gain /= 4;
+    if ( IS_AFFECTED( ch, AFF_POISON ) )
+	gain /= 4;
 
-   return UMIN( gain, ch->max_move - ch->move );
+    return UMIN( gain, ch->max_move - ch->move );
 }
 
 
 
-void gain_condition( CHAR_DATA * ch, int iCond, int value )
+void gain_condition( CHAR_DATA *ch, int iCond, int value )
 {
-   int condition;
+    int condition;
 
-   if( value == 0 || IS_NPC( ch ) || ch->level >= LEVEL_HERO )
-      return;
+    if ( value == 0 || IS_NPC( ch ) || ch->level >= LEVEL_HERO )
+	return;
 
-   condition = ch->pcdata->condition[iCond];
-   ch->pcdata->condition[iCond] = URANGE( 0, condition + value, 48 );
+    condition				= ch->pcdata->condition[ iCond ];
+    ch->pcdata->condition[iCond]	= URANGE( 0, condition + value, 48 );
 
-   if( ch->pcdata->condition[iCond] == 0 )
-   {
-      switch ( iCond )
-      {
-         case COND_FULL:
-            send_to_char( "You are hungry.\r\n", ch );
-            break;
+    if ( ch->pcdata->condition[iCond] == 0 )
+    {
+	switch ( iCond )
+	{
+	case COND_FULL:
+	    send_to_char( "You are hungry.\r\n",    ch );
+	    break;
 
-         case COND_THIRST:
-            send_to_char( "You are thirsty.\r\n", ch );
-            break;
+	case COND_THIRST:
+	    send_to_char( "You are thirsty.\r\n",   ch );
+	    break;
 
-         case COND_DRUNK:
-            if( condition != 0 )
-               send_to_char( "You are sober.\r\n", ch );
-            break;
-      }
-   }
+	case COND_DRUNK:
+	    if ( condition != 0 )
+		send_to_char( "You are sober.\r\n", ch );
+	    break;
+	}
+    }
 
-   return;
+    return;
 }
 
 
 
 /*
  * Mob autonomous action.
- * This function takes 25% to 35% of ALL Merc cpu time.
+ * This function takes 25% of ALL Merc cpu time.
  * -- Furey
  */
 void mobile_update( void )
 {
-   CHAR_DATA *ch;
-   CHAR_DATA *ch_next;
-   EXIT_DATA *pexit;
-   int door;
+    CHAR_DATA *ch;
+    EXIT_DATA *pexit;
+    int        door;
 
-   /*
-    * Examine all mobs. 
-    */
-   for( ch = char_list; ch != NULL; ch = ch_next )
-   {
-      ch_next = ch->next;
+    /* Examine all mobs. */
+    for ( ch = char_list; ch; ch = ch->next )
+    {
+        if ( ch->deleted )
+	    continue;
 
-      if( !IS_NPC( ch ) || ch->in_room == NULL || IS_AFFECTED( ch, AFF_CHARM ) )
-         continue;
+	if ( !IS_NPC( ch )
+	    || !ch->in_room
+	    || IS_AFFECTED( ch, AFF_CHARM ) )
+	    continue;
 
-      /*
-       * Examine call for special procedure 
-       */
-      if( ch->spec_fun != 0 )
-      {
-         if( ( *ch->spec_fun ) ( ch ) )
-            continue;
-      }
+	/* Examine call for special procedure */
+	if ( ch->spec_fun != 0 )
+	{
+	    if ( ( *ch->spec_fun ) ( ch ) )
+		continue;
+	}
 
-      /*
-       * That's all for sleeping / busy monster 
-       */
-      if( ch->position < POS_STANDING )
-         continue;
+	/* That's all for sleeping / busy monster */
+	if ( ch->position < POS_STANDING )
+	    continue;
 
-      /*
-       * MOBprogram random trigger 
-       */
-      if( ch->in_room->area->nplayer > 0 )
-      {
-         mprog_random_trigger( ch );
-         /*
-          * If ch dies or changes
-          * position due to it's random
-          * trigger continue - Kahn 
-          */
-         if( ch->position < POS_STANDING )
-            continue;
-      }
+	/* Scavenge */
+	if ( IS_SET( ch->act, ACT_SCAVENGER )
+	    && ch->in_room->contents
+	    && number_bits( 2 ) == 0 )
+	{
+	    OBJ_DATA *obj;
+	    OBJ_DATA *obj_best;
+	    int       max;
 
-      /*
-       * Scavenge 
-       */
-      if( IS_SET( ch->act, ACT_SCAVENGER ) && ch->in_room->contents != NULL && number_bits( 2 ) == 0 )
-      {
-         OBJ_DATA *obj;
-         OBJ_DATA *obj_best;
-         int max;
+	    max         = 1;
+	    obj_best    = 0;
+	    for ( obj = ch->in_room->contents; obj; obj = obj->next_content )
+	    {
+		if ( CAN_WEAR( obj, ITEM_TAKE )
+		    && obj->cost > max
+		    && can_see_obj( ch, obj ) )
+		{
+		    obj_best    = obj;
+		    max         = obj->cost;
+		}
+	    }
 
-         max = 1;
-         obj_best = 0;
-         for( obj = ch->in_room->contents; obj; obj = obj->next_content )
-         {
-            if( CAN_WEAR( obj, ITEM_TAKE ) && obj->cost > max )
-            {
-               obj_best = obj;
-               max = obj->cost;
-            }
-         }
+	    if ( obj_best )
+	    {
+		obj_from_room( obj_best );
+		obj_to_char( obj_best, ch );
+		act( "$n gets $p.", ch, obj_best, NULL, TO_ROOM );
+	    }
+	}
 
-         if( obj_best )
-         {
-            obj_from_room( obj_best );
-            obj_to_char( obj_best, ch );
-            act( "$n gets $p.", ch, obj_best, NULL, TO_ROOM );
-         }
-      }
+	/* Wander */
+	if ( !IS_SET( ch->act, ACT_SENTINEL )
+	    && ( door = number_bits( 5 ) ) <= 5
+	    && ( pexit = ch->in_room->exit[door] )
+	    &&   pexit->to_room
+	    &&   !IS_SET( pexit->exit_info, EX_CLOSED )
+	    &&   !IS_SET( pexit->to_room->room_flags, ROOM_NO_MOB )
+	    && ( !IS_SET( ch->act, ACT_STAY_AREA )
+		||   pexit->to_room->area == ch->in_room->area ) )
+	{
+	    move_char( ch, door );
+	}
 
-      /*
-       * Wander 
-       */
-      if( !IS_SET( ch->act, ACT_SENTINEL )
-          && ( door = number_bits( 5 ) ) <= 5
-          && ( pexit = ch->in_room->exit[door] ) != NULL
-          && pexit->to_room != NULL
-          && !IS_SET( pexit->exit_info, EX_CLOSED )
-          && !IS_SET( pexit->to_room->room_flags, ROOM_NO_MOB )
-          && ( !IS_SET( ch->act, ACT_STAY_AREA ) || pexit->to_room->area == ch->in_room->area ) )
-      {
-         move_char( ch, door );
-         /*
-          * If ch changes position due
-          * to it's or someother mob's
-          * movement via MOBProgs,
-          * continue - Kahn 
-          */
-         if( ch->position < POS_STANDING )
-            continue;
-      }
+	/* Flee */
+	if ( ch->hit < ( ch->max_hit / 2 )
+	    && ( door = number_bits( 3 ) ) <= 5
+	    && ( pexit = ch->in_room->exit[door] )
+	    &&   pexit->to_room
+	    &&   !IS_SET( pexit->exit_info, EX_CLOSED )
+	    &&   !IS_SET( pexit->to_room->room_flags, ROOM_NO_MOB ) )
+	{
+	    CHAR_DATA *rch;
+	    bool       found;
 
-      /*
-       * Flee 
-       */
-      if( ch->hit < ( ch->max_hit / 2 )
-          && ( door = number_bits( 3 ) ) <= 5
-          && ( pexit = ch->in_room->exit[door] ) != NULL
-          && pexit->to_room != NULL
-          && !IS_SET( pexit->exit_info, EX_CLOSED ) && !IS_SET( pexit->to_room->room_flags, ROOM_NO_MOB ) )
-      {
-         CHAR_DATA *rch;
-         bool found;
+	    found = FALSE;
+	    for ( rch  = pexit->to_room->people;
+		  rch;
+		  rch  = rch->next_in_room )
+	    {
+	        if ( rch->deleted )
+		    continue;
+		if ( !IS_NPC( rch ) )
+		{
+		    found = TRUE;
+		    break;
+		}
+	    }
+	    if ( !found )
+		move_char( ch, door );
+	}
 
-         found = FALSE;
-         for( rch = pexit->to_room->people; rch != NULL; rch = rch->next_in_room )
-         {
-            if( !IS_NPC( rch ) )
-            {
-               found = TRUE;
-               break;
-            }
-         }
-         if( !found )
-            move_char( ch, door );
-      }
+    }
 
-   }
-
-   return;
+    return;
 }
 
 
@@ -388,131 +369,137 @@ void mobile_update( void )
  */
 void weather_update( void )
 {
-   char buf[MAX_STRING_LENGTH];
-   DESCRIPTOR_DATA *d;
-   int diff;
+    DESCRIPTOR_DATA *d;
+    char             buf [ MAX_STRING_LENGTH ];
+    int              diff;
 
-   buf[0] = '\0';
+    buf[0] = '\0';
 
-   switch ( ++time_info.hour )
-   {
-      case 5:
-         weather_info.sunlight = SUN_LIGHT;
-         strcat( buf, "The day has begun.\r\n" );
-         break;
+    switch ( ++time_info.hour )
+    {
+    case  5:
+	weather_info.sunlight = SUN_LIGHT;
+	strcat( buf, "The day has begun.\r\n" );
+	break;
 
-      case 6:
-         weather_info.sunlight = SUN_RISE;
-         strcat( buf, "The sun rises in the east.\r\n" );
-         break;
+    case  6:
+	weather_info.sunlight = SUN_RISE;
+	strcat( buf, "The sun rises in the east.\r\n" );
+	break;
 
-      case 19:
-         weather_info.sunlight = SUN_SET;
-         strcat( buf, "The sun slowly disappears in the west.\r\n" );
-         break;
+    case 19:
+	weather_info.sunlight = SUN_SET;
+	strcat( buf, "The sun slowly disappears in the west.\r\n" );
+	break;
 
-      case 20:
-         weather_info.sunlight = SUN_DARK;
-         strcat( buf, "The night has begun.\r\n" );
-         break;
+    case 20:
+	weather_info.sunlight = SUN_DARK;
+	strcat( buf, "The night has begun.\r\n" );
+	break;
 
-      case 24:
-         time_info.hour = 0;
-         time_info.day++;
-         break;
-   }
+    case 24:
+	time_info.hour = 0;
+	time_info.day++;
+	break;
+    }
 
-   if( time_info.day >= 35 )
-   {
-      time_info.day = 0;
-      time_info.month++;
-   }
+    if ( time_info.day   >= 35 )
+    {
+	time_info.day = 0;
+	time_info.month++;
+    }
 
-   if( time_info.month >= 17 )
-   {
-      time_info.month = 0;
-      time_info.year++;
-   }
+    if ( time_info.month >= 17 )
+    {
+	time_info.month = 0;
+	time_info.year++;
+    }
 
-   /*
-    * Weather change.
-    */
-   if( time_info.month >= 9 && time_info.month <= 16 )
-      diff = weather_info.mmhg > 985 ? -2 : 2;
-   else
-      diff = weather_info.mmhg > 1015 ? -2 : 2;
+    /*
+     * Weather change.
+     */
+    if ( time_info.month >= 9 && time_info.month <= 16 )
+	diff = weather_info.mmhg >  985 ? -2 : 2;
+    else
+	diff = weather_info.mmhg > 1015 ? -2 : 2;
 
-   weather_info.change += diff * dice( 1, 4 ) + dice( 2, 6 ) - dice( 2, 6 );
-   weather_info.change = UMAX( weather_info.change, -12 );
-   weather_info.change = UMIN( weather_info.change, 12 );
+    weather_info.change   += diff * dice( 1, 4 ) + dice( 2, 6 ) - dice( 2, 6 );
+    weather_info.change    = UMAX( weather_info.change, -12 );
+    weather_info.change    = UMIN( weather_info.change,  12 );
 
-   weather_info.mmhg += weather_info.change;
-   weather_info.mmhg = UMAX( weather_info.mmhg, 960 );
-   weather_info.mmhg = UMIN( weather_info.mmhg, 1040 );
+    weather_info.mmhg     += weather_info.change;
+    weather_info.mmhg      = UMAX( weather_info.mmhg,  960 );
+    weather_info.mmhg      = UMIN( weather_info.mmhg, 1040 );
 
-   switch ( weather_info.sky )
-   {
-      default:
-         bug( "Weather_update: bad sky %d.", weather_info.sky );
-         weather_info.sky = SKY_CLOUDLESS;
-         break;
+    switch ( weather_info.sky )
+    {
+    default: 
+	bug( "Weather_update: bad sky %d.", weather_info.sky );
+	weather_info.sky = SKY_CLOUDLESS;
+	break;
 
-      case SKY_CLOUDLESS:
-         if( weather_info.mmhg < 990 || ( weather_info.mmhg < 1010 && number_bits( 2 ) == 0 ) )
-         {
-            strcat( buf, "The sky is getting cloudy.\r\n" );
-            weather_info.sky = SKY_CLOUDY;
-         }
-         break;
+    case SKY_CLOUDLESS:
+	if (     weather_info.mmhg <  990
+	    || ( weather_info.mmhg < 1010 && number_bits( 2 ) == 0 ) )
+	{
+	    strcat( buf, "The sky is getting cloudy.\r\n" );
+	    weather_info.sky = SKY_CLOUDY;
+	}
+	break;
 
-      case SKY_CLOUDY:
-         if( weather_info.mmhg < 970 || ( weather_info.mmhg < 990 && number_bits( 2 ) == 0 ) )
-         {
-            strcat( buf, "It starts to rain.\r\n" );
-            weather_info.sky = SKY_RAINING;
-         }
+    case SKY_CLOUDY:
+	if (     weather_info.mmhg <  970
+	    || ( weather_info.mmhg <  990 && number_bits( 2 ) == 0 ) )
+	{
+	    strcat( buf, "It starts to rain.\r\n" );
+	    weather_info.sky = SKY_RAINING;
+	}
 
-         if( weather_info.mmhg > 1030 && number_bits( 2 ) == 0 )
-         {
-            strcat( buf, "The clouds disappear.\r\n" );
-            weather_info.sky = SKY_CLOUDLESS;
-         }
-         break;
+	if ( weather_info.mmhg > 1030 && number_bits( 2 ) == 0 )
+	{
+	    strcat( buf, "The clouds disappear.\r\n" );
+	    weather_info.sky = SKY_CLOUDLESS;
+	}
+	break;
 
-      case SKY_RAINING:
-         if( weather_info.mmhg < 970 && number_bits( 2 ) == 0 )
-         {
-            strcat( buf, "Lightning flashes in the sky.\r\n" );
-            weather_info.sky = SKY_LIGHTNING;
-         }
+    case SKY_RAINING:
+	if ( weather_info.mmhg <  970 && number_bits( 2 ) == 0 )
+	{
+	    strcat( buf, "Lightning flashes in the sky.\r\n" );
+	    weather_info.sky = SKY_LIGHTNING;
+	}
 
-         if( weather_info.mmhg > 1030 || ( weather_info.mmhg > 1010 && number_bits( 2 ) == 0 ) )
-         {
-            strcat( buf, "The rain stopped.\r\n" );
-            weather_info.sky = SKY_CLOUDY;
-         }
-         break;
+	if (     weather_info.mmhg > 1030
+	    || ( weather_info.mmhg > 1010 && number_bits( 2 ) == 0 ) )
+	{
+	    strcat( buf, "The rain stopped.\r\n" );
+	    weather_info.sky = SKY_CLOUDY;
+	}
+	break;
 
-      case SKY_LIGHTNING:
-         if( weather_info.mmhg > 1010 || ( weather_info.mmhg > 990 && number_bits( 2 ) == 0 ) )
-         {
-            strcat( buf, "The lightning has stopped.\r\n" );
-            weather_info.sky = SKY_RAINING;
-            break;
-         }
-         break;
-   }
+    case SKY_LIGHTNING:
+	if (     weather_info.mmhg > 1010
+	    || ( weather_info.mmhg >  990 && number_bits( 2 ) == 0 ) )
+	{
+	    strcat( buf, "The lightning has stopped.\r\n" );
+	    weather_info.sky = SKY_RAINING;
+	    break;
+	}
+	break;
+    }
 
-   if( buf[0] != '\0' )
-   {
-      for( d = descriptor_list; d != NULL; d = d->next )
-      {
-         if( d->connected == CON_PLAYING && IS_OUTSIDE( d->character ) && IS_AWAKE( d->character ) )
-            send_to_char( buf, d->character );
-      }
-   }
+    if ( buf[0] != '\0' )
+    {
+	for ( d = descriptor_list; d; d = d->next )
+	{
+	    if ( d->connected == CON_PLAYING
+		&& IS_OUTSIDE( d->character )
+		&& IS_AWAKE  ( d->character ) )
+		send_to_char( buf, d->character );
+	}
+    }
 
-   return;
+    return;
 }
 
 
@@ -522,146 +509,156 @@ void weather_update( void )
  * This function is performance sensitive.
  */
 void char_update( void )
-{
-   CHAR_DATA *ch;
-   CHAR_DATA *ch_next;
-   CHAR_DATA *ch_save;
-   CHAR_DATA *ch_quit;
-   time_t save_time;
+{   
+    CHAR_DATA *ch;
+    CHAR_DATA *ch_save;
+    CHAR_DATA *ch_quit;
+    time_t     save_time;
 
-   save_time = current_time;
-   ch_save = NULL;
-   ch_quit = NULL;
-   for( ch = char_list; ch != NULL; ch = ch_next )
-   {
-      AFFECT_DATA *paf;
-      AFFECT_DATA *paf_next;
+    ch_save	= NULL;
+    ch_quit	= NULL;
+    save_time	= current_time;
 
-      ch_next = ch->next;
+    for ( ch = char_list; ch; ch = ch->next )
+    {
+	AFFECT_DATA *paf;
 
-      /*
-       * Find dude with oldest save time.
-       */
-      if( !IS_NPC( ch )
-          && ( ch->desc == NULL || ch->desc->connected == CON_PLAYING ) && ch->level >= 2 && ch->save_time < save_time )
-      {
-         ch_save = ch;
-         save_time = ch->save_time;
-      }
+	if ( ch->deleted )
+	    continue;
 
-      if( ch->position >= POS_STUNNED )
-      {
-         if( ch->hit < ch->max_hit )
-            ch->hit += hit_gain( ch );
+	/*
+	 * Find dude with oldest save time.
+	 */
+	if ( !IS_NPC( ch )
+	    && ( !ch->desc || ch->desc->connected == CON_PLAYING )
+	    &&   ch->level >= 2
+	    &&   ch->save_time < save_time )
+	{
+	    ch_save	= ch;
+	    save_time	= ch->save_time;
+	}
 
-         if( ch->mana < ch->max_mana )
-            ch->mana += mana_gain( ch );
+	if ( ch->position >= POS_STUNNED )
+	{
+	    if ( ch->hit  < ch->max_hit  )
+		ch->hit  += hit_gain( ch );
 
-         if( ch->move < ch->max_move )
-            ch->move += move_gain( ch );
-      }
+	    if ( ch->mana < ch->max_mana )
+		ch->mana += mana_gain( ch );
 
-      if( ch->position == POS_STUNNED )
-         update_pos( ch );
+	    if ( ch->move < ch->max_move )
+		ch->move += move_gain( ch );
+	}
 
-      if( !IS_NPC( ch ) && ch->level < LEVEL_IMMORTAL )
-      {
-         OBJ_DATA *obj;
+	if ( ch->position == POS_STUNNED )
+	    update_pos( ch );
 
-         if( ( obj = get_eq_char( ch, WEAR_LIGHT ) ) != NULL && obj->item_type == ITEM_LIGHT && obj->value[2] > 0 )
-         {
-            if( --obj->value[2] == 0 && ch->in_room != NULL )
-            {
-               --ch->in_room->light;
-               act( "$p goes out.", ch, obj, NULL, TO_ROOM );
-               act( "$p goes out.", ch, obj, NULL, TO_CHAR );
-               extract_obj( obj );
-            }
-         }
+	if ( !IS_NPC( ch ) && ( ch->level < LEVEL_IMMORTAL
+			       || ( !ch->desc && !IS_SWITCHED( ch ) ) ) )
+	{
+	    OBJ_DATA *obj;
 
-         if( ++ch->timer >= 12 )
-         {
-            if( ch->was_in_room == NULL && ch->in_room != NULL )
-            {
-               ch->was_in_room = ch->in_room;
-               if( ch->fighting != NULL )
-                  stop_fighting( ch, TRUE );
-               act( "$n disappears into the void.", ch, NULL, NULL, TO_ROOM );
-               send_to_char( "You disappear into the void.\r\n", ch );
-               save_char_obj( ch );
-               char_from_room( ch );
-               char_to_room( ch, get_room_index( ROOM_VNUM_LIMBO ) );
-            }
-         }
+	    if ( ( obj = get_eq_char( ch, WEAR_LIGHT ) )
+		&& obj->item_type == ITEM_LIGHT
+		&& obj->value[2] > 0 )
+	    {
+		if ( --obj->value[2] == 0 && ch->in_room )
+		{
+		    --ch->in_room->light;
+		    act( "$p goes out.", ch, obj, NULL, TO_ROOM );
+		    act( "$p goes out.", ch, obj, NULL, TO_CHAR );
+		    extract_obj( obj );
+		}
+	    }
 
-         if( ch->timer > 30 )
-            ch_quit = ch;
+	    if ( ++ch->timer >= 10 )
+	    {
+		if ( !ch->was_in_room && ch->in_room )
+		{
+		    ch->was_in_room = ch->in_room;
+		    if ( ch->fighting )
+			stop_fighting( ch, TRUE );
+		    send_to_char( "You disappear into the void.\r\n", ch );
+		    act( "$n disappears into the void.",
+			ch, NULL, NULL, TO_ROOM );
+		    save_char_obj( ch );
+		    char_from_room( ch );
+		    char_to_room( ch, get_room_index( ROOM_VNUM_LIMBO ) );
+		}
+	    }
 
-         gain_condition( ch, COND_DRUNK, -1 );
-         gain_condition( ch, COND_FULL, -1 );
-         gain_condition( ch, COND_THIRST, -1 );
-      }
+	    if ( ch->timer > 20 && !IS_SWITCHED( ch ) )
+		ch_quit = ch;
 
-      for( paf = ch->affected; paf != NULL; paf = paf_next )
-      {
-         paf_next = paf->next;
-         if( paf->duration > 0 )
-            paf->duration--;
-         else if( paf->duration < 0 )
-            ;
-         else
-         {
-            if( paf_next == NULL || paf_next->type != paf->type || paf_next->duration > 0 )
-            {
-               if( paf->type > 0 && skill_table[paf->type].msg_off )
-               {
-                  send_to_char( skill_table[paf->type].msg_off, ch );
-                  send_to_char( "\r\n", ch );
-               }
-            }
+	    gain_condition( ch, COND_DRUNK,  -1 );
+	    gain_condition( ch, COND_FULL,   -1 );
+	    gain_condition( ch, COND_THIRST, -1 );
+	}
 
-            affect_remove( ch, paf );
-         }
-      }
+	for ( paf = ch->affected; paf; paf = paf->next )
+	{
+	    if ( paf->deleted )
+	        continue;
+	    if ( paf->duration > 0 )
+		paf->duration--;
+	    else if ( paf->duration < 0 )
+		;
+	    else
+	    {
+		if ( !paf->next
+		    || paf->next->type != paf->type
+		    || paf->next->duration > 0 )
+		{
+		    if ( paf->type > 0 && skill_table[paf->type].msg_off )
+		    {
+			send_to_char( skill_table[paf->type].msg_off, ch );
+			send_to_char( "\r\n", ch );
+		    }
+		}
+	  
+		affect_remove( ch, paf );
+	    }
+	}
 
-      /*
-       * Careful with the damages here,
-       *   MUST NOT refer to ch after damage taken,
-       *   as it may be lethal damage (on NPC).
-       */
-      if( IS_AFFECTED( ch, AFF_POISON ) )
-      {
-         act( "$n shivers and suffers.", ch, NULL, NULL, TO_ROOM );
-         send_to_char( "You shiver and suffer.\r\n", ch );
-         damage( ch, ch, 2, gsn_poison );
-      }
-      else if( ch->position == POS_INCAP )
-      {
-         damage( ch, ch, 1, TYPE_UNDEFINED );
-      }
-      else if( ch->position == POS_MORTAL )
-      {
-         damage( ch, ch, 2, TYPE_UNDEFINED );
-      }
-   }
+	/*
+	 * Careful with the damages here,
+	 *   MUST NOT refer to ch after damage taken,
+	 *   as it may be lethal damage (on NPC).
+	 */
+	if ( IS_AFFECTED( ch, AFF_POISON ) )
+	{
+	    send_to_char( "You shiver and suffer.\r\n", ch );
+	    act( "$n shivers and suffers.", ch, NULL, NULL, TO_ROOM );
+	    damage( ch, ch, 2, gsn_poison );
+	}
+	else if ( ch->position == POS_INCAP )
+	{
+	    damage( ch, ch, 1, TYPE_UNDEFINED );
+	}
+	else if ( ch->position == POS_MORTAL )
+	{
+	    damage( ch, ch, 2, TYPE_UNDEFINED );
+	}
+    }
 
-   /*
-    * Autosave and autoquit.
-    * Check that these chars still exist.
-    */
-   if( ch_save != NULL || ch_quit != NULL )
-   {
-      for( ch = char_list; ch != NULL; ch = ch_next )
-      {
-         ch_next = ch->next;
-         if( ch == ch_save )
-            save_char_obj( ch );
-         if( ch == ch_quit )
-            do_quit( ch, "" );
-      }
-   }
+    /*
+     * Autosave and autoquit.
+     * Check that these chars still exist.
+     */
+    if ( ch_save || ch_quit )
+    {
+	for ( ch = char_list; ch; ch = ch->next )
+	{
+	    if ( ch->deleted )
+	        continue;
+	    if ( ch == ch_save )
+		save_char_obj( ch );
+	    if ( ch == ch_quit )
+		do_quit( ch, "" );
+	}
+    }
 
-   return;
+    return;
 }
 
 
@@ -671,53 +668,83 @@ void char_update( void )
  * This function is performance sensitive.
  */
 void obj_update( void )
-{
-   OBJ_DATA *obj;
-   OBJ_DATA *obj_next;
+{   
+    OBJ_DATA *obj;
+    OBJ_DATA *obj_next;
 
-   for( obj = object_list; obj != NULL; obj = obj_next )
-   {
-      CHAR_DATA *rch;
-      char *message;
+    for ( obj = object_list; obj; obj = obj_next )
+    {
+	CHAR_DATA *rch;
+	char      *message;
 
-      obj_next = obj->next;
+	obj_next = obj->next;
+	if ( obj->deleted )
+	    continue;
 
-      if( obj->timer <= 0 || --obj->timer > 0 )
-         continue;
+	if ( obj->timer < -1 )
+	    obj->timer = -1;
 
-      switch ( obj->item_type )
-      {
-         default:
-            message = "$p vanishes.";
-            break;
-         case ITEM_FOUNTAIN:
-            message = "$p dries up.";
-            break;
-         case ITEM_CORPSE_NPC:
-            message = "$p decays into dust.";
-            break;
-         case ITEM_CORPSE_PC:
-            message = "$p decays into dust.";
-            break;
-         case ITEM_FOOD:
-            message = "$p decomposes.";
-            break;
-      }
+	if ( obj->timer < 0 )
+	    continue;
 
-      if( obj->carried_by != NULL )
-      {
-         act( message, obj->carried_by, obj, NULL, TO_CHAR );
-      }
-      else if( obj->in_room != NULL && ( rch = obj->in_room->people ) != NULL )
-      {
-         act( message, rch, obj, NULL, TO_ROOM );
-         act( message, rch, obj, NULL, TO_CHAR );
-      }
+	/*
+	 *  Bug fix:  used to shift to obj_free if an object whose
+	 *  timer ran out contained obj->next.  Bug was reported
+	 *  only when the object(s) inside also had timer run out
+	 *  during the same tick.     --Thelonius (Monk)
+	 */
+	if ( --obj->timer == 0 )
+	{
+	    switch ( obj->item_type )
+	    {
+	    	default:              message = "$p vanishes.";         break;
+    		case ITEM_FOUNTAIN:   message = "$p dries up.";         break;
+    		case ITEM_CORPSE_NPC: message = "$p decays into dust."; break;
+    		case ITEM_CORPSE_PC:  message = "$p decays into dust."; break;
+    		case ITEM_FOOD:       message = "$p decomposes.";       break;
+	    }
+    
+	    if ( obj->carried_by )
+	    {
+	        act( message, obj->carried_by, obj, NULL, TO_CHAR );
+	    }
+	    else
+	      if ( obj->in_room
+		  && ( rch = obj->in_room->people ) )
+	      {
+		  act( message, rch, obj, NULL, TO_ROOM );
+		  act( message, rch, obj, NULL, TO_CHAR );
+	      }
+    
+	    if ( obj == object_list )
+	    {
+	        extract_obj( obj );
+   
+	        obj_next = object_list;
+	    }
+	    else				/* (obj != object_list) */
+	    {
+	        OBJ_DATA *previous;
+   
+	        for ( previous = object_list; previous;
+		     previous = previous->next )
+	        {
+		    if ( previous->next == obj )
+	     		break;
+	        }
+   
+		if ( !previous )  /* Can't see how, but... */
+		    bug( "Obj_update: obj %d no longer in object_list",
+    			obj->pIndexData->vnum );
+    
+	        extract_obj( obj );
+    
+	        obj_next = previous->next;
+	    }
+	}
+    }
 
-      extract_obj( obj );
-   }
-
-   return;
+    return;
 }
 
 
@@ -729,97 +756,323 @@ void obj_update( void )
  *     for each mob in room
  *         aggress on some random PC
  *
- * This function takes 25% to 35% of ALL Merc cpu time.
- * Unfortunately, checking on each PC move is too tricky,
- *   because we don't the mob to just attack the first PC
- *   who leads the party into the room.
+ * This function takes .2% of total CPU time.
  *
- * -- Furey
+ * -Kahn
  */
 void aggr_update( void )
 {
-   CHAR_DATA *wch;
-   CHAR_DATA *wch_next;
-   CHAR_DATA *ch;
-   CHAR_DATA *ch_next;
-   CHAR_DATA *vch;
-   CHAR_DATA *vch_next;
-   CHAR_DATA *victim;
+    CHAR_DATA       *ch;
+    CHAR_DATA       *mch;
+    CHAR_DATA       *vch;
+    CHAR_DATA       *victim;
+    DESCRIPTOR_DATA *d;
 
-   for( wch = char_list; wch != NULL; wch = wch_next )
-   {
-      wch_next = wch->next;
+    /*
+     * Let's not worry about link dead characters. -Kahn
+     */
+    for ( d = descriptor_list; d; d = d->next )
+    {
+	ch = d->character;
 
-      /*
-       * MOBProgram ACT_PROG trigger 
-       */
-      if( IS_NPC( wch ) && wch->mpactnum > 0 && wch->in_room->area->nplayer > 0 )
-      {
-         MPROG_ACT_LIST *tmp_act, *tmp2_act;
-         for( tmp_act = wch->mpact; tmp_act != NULL; tmp_act = tmp_act->next )
-         {
-            mprog_wordlist_check( tmp_act->buf, wch, tmp_act->ch, tmp_act->obj, tmp_act->vo, ACT_PROG );
-            free_string( tmp_act->buf );
-         }
-         for( tmp_act = wch->mpact; tmp_act != NULL; tmp_act = tmp2_act )
-         {
-            tmp2_act = tmp_act->next;
-            free_mem( tmp_act, sizeof( MPROG_ACT_LIST ) );
-         }
-         wch->mpactnum = 0;
-         wch->mpact = NULL;
-      }
+	if ( d->connected != CON_PLAYING
+	    || ch->level >= LEVEL_IMMORTAL
+	    || !ch->in_room )
+	    continue;
 
-      if( IS_NPC( wch ) || wch->level >= LEVEL_IMMORTAL || wch->in_room == NULL )
-         continue;
+	/* mch wont get hurt */
+	for ( mch = ch->in_room->people; mch; mch = mch->next_in_room )
+	{
+	    int count;
 
-      for( ch = wch->in_room->people; ch != NULL; ch = ch_next )
-      {
-         int count;
+	    if ( !IS_NPC( mch )
+		|| mch->deleted
+		|| !IS_SET( mch->act, ACT_AGGRESSIVE )
+		|| mch->fighting
+		|| IS_AFFECTED( mch, AFF_CHARM )
+		|| !IS_AWAKE( mch )
+		|| ( IS_SET( mch->act, ACT_WIMPY ) && IS_AWAKE( ch ) )
+		|| !can_see( mch, ch ) )
+		continue;
 
-         ch_next = ch->next_in_room;
+	    /*
+	     * Ok we have a 'ch' player character and a 'mch' npc aggressor.
+	     * Now make the aggressor fight a RANDOM pc victim in the room,
+	     *   giving each 'vch' an equal chance of selection.
+	     */
+	    count  = 0;
+	    victim = NULL;
+	    for ( vch = mch->in_room->people; vch; vch = vch->next_in_room )
+	    {
+	        if ( IS_NPC( vch )
+		    || vch->deleted
+		    || vch->level >= LEVEL_IMMORTAL )
+		    continue;
 
-         if( !IS_NPC( ch )
-             || !IS_SET( ch->act, ACT_AGGRESSIVE )
-             || ch->fighting != NULL
-             || IS_AFFECTED( ch, AFF_CHARM )
-             || !IS_AWAKE( ch ) || ( IS_SET( ch->act, ACT_WIMPY ) && IS_AWAKE( wch ) ) || !can_see( ch, wch ) )
-            continue;
+		if ( ( !IS_SET( mch->act, ACT_WIMPY ) || !IS_AWAKE( vch ) )
+		    && can_see( mch, vch ) )
+		{
+		    if ( number_range( 0, count ) == 0 )
+			victim = vch;
+		    count++;
+		}
+	    }
 
-         /*
-          * Ok we have a 'wch' player character and a 'ch' npc aggressor.
-          * Now make the aggressor fight a RANDOM pc victim in the room,
-          *   giving each 'vch' an equal chance of selection.
-          */
-         count = 0;
-         victim = NULL;
-         for( vch = wch->in_room->people; vch != NULL; vch = vch_next )
-         {
-            vch_next = vch->next_in_room;
+	    if ( !victim )
+	        continue;
 
-            if( !IS_NPC( vch )
-                && vch->level < LEVEL_IMMORTAL
-                && ( !IS_SET( ch->act, ACT_WIMPY ) || !IS_AWAKE( vch ) ) && can_see( ch, vch ) )
-            {
-               if( number_range( 0, count ) == 0 )
-                  victim = vch;
-               count++;
-            }
-         }
+	    multi_hit( mch, victim, TYPE_UNDEFINED );
 
-         if( victim == NULL )
-         {
-            bug( "Aggr_update: null victim.", count );
-            continue;
-         }
+	} /* mch loop */
 
-         multi_hit( ch, victim, TYPE_UNDEFINED );
-      }
-   }
+    } /* descriptor loop */
 
-   return;
+    return;
 }
 
+/* Update the check on time for autoshutdown */
+void time_update( void )
+{
+    FILE            *fp;
+    char            *curr_time;
+    char             buf [ MAX_STRING_LENGTH ];
+    
+    if ( down_time == "*" )
+        return;
+    curr_time = ctime( &current_time );
+    if ( !str_infix( warning1, curr_time ) )
+    {
+	sprintf( buf, "First Warning!\r\nShutdown at %s system time\r\n",
+		down_time );
+	send_to_all_char( buf );
+	free_string( warning1 );
+	warning1 = str_dup( "*" );
+    }
+    if ( !str_infix( warning2, curr_time ) )
+    {
+	sprintf( buf, "Second Warning!\r\nShutdown at %s system time\r\n",
+		down_time );
+	send_to_all_char( buf );
+	free_string( warning2 );
+	warning2 = str_dup( "*" );
+    }
+    if ( !str_infix( down_time, curr_time ) )
+    {
+	send_to_all_char( "Shutdown by system.\r\n" );
+	log_string( "Shutdown by system." );
+
+	end_of_game( );
+
+	fclose( fpReserve );
+	if ( !( fp = fopen( SHUTDOWN_FILE, "a" ) ) )
+	{
+	    perror( SHUTDOWN_FILE );
+	    bug( "Could not open the Shutdown file!", 0 );
+	}
+	else
+	{
+	    fprintf( fp, "Shutdown by System\n" );
+	    fclose ( fp );
+	}
+	fpReserve = fopen ( NULL_FILE, "r" );
+	merc_down = TRUE;
+    }
+    
+    return;
+
+}
+
+/*
+ * Remove deleted EXTRA_DESCR_DATA from objects.
+ * Remove deleted AFFECT_DATA from chars and objects.
+ * Remove deleted CHAR_DATA and OBJ_DATA from char_list and object_list.
+ */
+void list_update( void )
+{
+            CHAR_DATA *ch;
+            CHAR_DATA *ch_next;
+            OBJ_DATA  *obj;
+            OBJ_DATA  *obj_next;
+    extern  bool       delete_obj;
+    extern  bool       delete_char;
+
+    if ( delete_char )
+        for ( ch = char_list; ch; ch = ch_next )
+	  {
+	    AFFECT_DATA *paf;
+	    AFFECT_DATA *paf_next;
+	    
+	    for ( paf = ch->affected; paf; paf = paf_next )
+	      {
+		paf_next = paf->next;
+		
+		if ( paf->deleted || ch->deleted )
+		  {
+		    if ( ch->affected == paf )
+		      {
+			ch->affected = paf->next;
+		      }
+		    else
+		      {
+			AFFECT_DATA *prev;
+			
+			for ( prev = ch->affected; prev; prev = prev->next )
+			  {
+			    if ( prev->next == paf )
+			      {
+				prev->next = paf->next;
+				break;
+			      }
+			  }
+			
+			if ( !prev )
+			  {
+			    bug( "List_update: cannot find paf on ch.", 0 );
+			    continue;
+			  }
+		      }
+		    
+		    paf->next   = affect_free;
+		    affect_free = paf;
+		  }
+	      }
+
+	    ch_next = ch->next;
+	    
+	    if ( ch->deleted )
+	      {
+		if ( ch == char_list )
+		  {
+		    char_list = ch->next;
+		  }
+		else
+		  {
+		    CHAR_DATA *prev;
+
+		    for ( prev = char_list; prev; prev = prev->next )
+		      {
+			if ( prev->next == ch )
+			  {
+			    prev->next = ch->next;
+			    break;
+			  }
+		      }
+		    
+		    if ( !prev )
+		      {
+			char buf [ MAX_STRING_LENGTH ];
+			
+			sprintf( buf, "List_update: char %s not found.",
+				ch->name );
+			bug( buf, 0 );
+			continue;
+		      }
+		  }
+		
+		free_char( ch );
+	      }
+	  }
+
+    if ( delete_obj )
+      for ( obj = object_list; obj; obj = obj_next )
+	{
+	  AFFECT_DATA      *paf;
+	  AFFECT_DATA      *paf_next;
+	  EXTRA_DESCR_DATA *ed;
+	  EXTRA_DESCR_DATA *ed_next;
+
+	  for ( ed = obj->extra_descr; ed; ed = ed_next )
+	    {
+	      ed_next = ed->next;
+	      
+	      if ( obj->deleted )
+		{
+		  free_string( ed->description );
+		  free_string( ed->keyword     );
+		  ed->next         = extra_descr_free;
+		  extra_descr_free = ed;
+		}
+	    }
+
+	  for ( paf = obj->affected; paf; paf = paf_next )
+	    {
+	      paf_next = paf->next;
+	      
+	      if ( obj->deleted )
+		{
+		  if ( obj->affected == paf )
+		    {
+		      obj->affected = paf->next;
+		    }
+		  else
+		    {
+		      AFFECT_DATA *prev;
+		      
+		      for ( prev = obj->affected; prev; prev = prev->next )
+			{
+			  if ( prev->next == paf )
+			    {
+			      prev->next = paf->next;
+			      break;
+			    }
+			}
+
+		      if ( !prev )
+			{
+			  bug( "List_update: cannot find paf on obj.", 0 );
+			  continue;
+			}
+		    }
+		  
+		  paf->next   = affect_free;
+		  affect_free = paf;
+		}
+	    }
+
+	  obj_next = obj->next;
+
+	  if ( obj->deleted )
+	    {
+	      if ( obj == object_list )
+		{
+		  object_list = obj->next;
+		}
+	      else
+		{
+		  OBJ_DATA *prev;
+		  
+		  for ( prev = object_list; prev; prev = prev->next )
+		    {
+		      if ( prev->next == obj )
+			{
+			  prev->next = obj->next;
+			  break;
+			}
+		    }
+		  
+		  if ( !prev )
+		    {
+		      bug( "List_update: obj %d not found.",
+			  obj->pIndexData->vnum );
+		      continue;
+		    }
+		}
+
+
+	      free_string( obj->name        );
+	      free_string( obj->description );
+	      free_string( obj->short_descr );
+	      --obj->pIndexData->count;
+
+	      obj->next	= obj_free;
+	      obj_free	= obj;
+	    }
+	}
+
+    delete_obj  = FALSE;
+    delete_char = FALSE;
+    return;
+}
 
 
 /*
@@ -829,38 +1082,40 @@ void aggr_update( void )
  */
 void update_handler( void )
 {
-   static int pulse_area;
-   static int pulse_mobile;
-   static int pulse_violence;
-   static int pulse_point;
+    static int pulse_area;
+    static int pulse_mobile;
+    static int pulse_violence;
+    static int pulse_point;
 
-   if( --pulse_area <= 0 )
-   {
-      pulse_area = number_range( PULSE_AREA / 2, 3 * PULSE_AREA / 2 );
-      area_update(  );
-   }
+    if ( --pulse_area     <= 0 )
+    {
+	pulse_area	= number_range( PULSE_AREA / 2, 3 * PULSE_AREA / 2 );
+	area_update	( );
+    }
 
-   if( --pulse_violence <= 0 )
-   {
-      pulse_violence = PULSE_VIOLENCE;
-      violence_update(  );
-   }
+    if ( --pulse_violence <= 0 )
+    {
+	pulse_violence  = PULSE_VIOLENCE;
+	violence_update ( );
+    }
 
-   if( --pulse_mobile <= 0 )
-   {
-      pulse_mobile = PULSE_MOBILE;
-      mobile_update(  );
-   }
+    if ( --pulse_mobile   <= 0 )
+    {
+	pulse_mobile    = PULSE_MOBILE;
+	mobile_update   ( );
+    }
 
-   if( --pulse_point <= 0 )
-   {
-      pulse_point = number_range( PULSE_TICK / 2, 3 * PULSE_TICK / 2 );
-      weather_update(  );
-      char_update(  );
-      obj_update(  );
-   }
+    if ( --pulse_point    <= 0 )
+    {
+	pulse_point     = number_range( PULSE_TICK / 2, 3 * PULSE_TICK / 2 );
+	weather_update  ( );
+	char_update     ( );
+	obj_update      ( );
+	list_update     ( );
+    }
 
-   aggr_update(  );
-   tail_chain(  );
-   return;
+    time_update( );
+    aggr_update( );
+    tail_chain( );
+    return;
 }

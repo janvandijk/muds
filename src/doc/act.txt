@@ -1,20 +1,37 @@
-Merc Release 2.2
-Wednesday 24 November 1993
+EnvyMud release 1.0
+Thursday, 30th June 1994
 
-Kahn
-Hatchet
+Kahn		michael@uclink.berkeley.edu
+Thelonius	dave@mechatro2.berkeley.edu
+Kith		kith@marble.bu.edu
+Hatchet		hatchet@uclink.berkeley.edu
 
 
 === The function 'send_to_char'
 
-The central output functions are 'send_to_char' and 'act'.  Of the two,
-'send_to_char' is much simpler, faster, and less powerful.
+The central output functions are 'send_to_char', 'send_to_all_char', and
+'act'.  Of the three, 'send_to_char' is much simpler, faster, and less
+powerful.
 
 The interface for send_to_char is:
 
     void send_to_char( const char *txt, CHAR_DATA *ch )
 
 The string 'txt' is sent to the character 'ch'.  That's all there is to it.
+
+
+
+=== The function 'send_to_all_char'
+
+The function 'send_to_all_char' does away with multiple blocks of code in
+sending to all active descriptors.  This is useful for functions like
+system warnings and echos.
+
+The interface for send_to_all_char is:
+
+    void send_to_all_char( const char *text )
+
+The string 'text' is sent to all characters with active descriptors.
 
 
 
@@ -59,11 +76,6 @@ function.
 	    TO_NOTVICT	Send to all chars in room except 'ch' and 'vict'.
 
 	In every case, only characters in the same room as 'ch' are considered.
-
-    Global boolean MOBTRIGGER;
-
-	This is the global variable used to allow the mobprograms to trigger.
-	It is default TRUE.
 
 Each awake character in the same room as 'ch' is considered for output.  (Thus
 'ch' must always be a legitimate character whose location is not NOWHERE).  If
